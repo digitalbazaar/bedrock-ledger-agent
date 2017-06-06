@@ -11,7 +11,7 @@ enables the management of ledger agents.
 ## The Ledger Agent API
 
 * Ledger Agent API
-  * api.create(actor, configBlock, options, (err, ledgerAgent))
+  * api.create(actor, ledgerId, options, (err, ledgerAgent))
   * api.get(actor, agentId, options, (err, ledgerAgent))
   * api.delete(actor, agentId, options, callback(err))
   * api.getAgentIterator(actor, options, callback(err, iterator))
