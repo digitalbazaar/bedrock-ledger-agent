@@ -1,0 +1,29 @@
+{
+  "name": "bedrock-ledger-agent",
+  "version": "0.1.0-0",
+  "description": "Bedrock module that provides management of ledger agents.",
+  "main": "./lib",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalbazaar/bedrock-ledger-agent.git"
+  },
+  "author": {
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "http://digitalbazaar.com"
+  },
+  "bugs": {
+    "url": "https://github.com/digitalbazaar/bedrock-ledger-agent/issues"
+  },
+  "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
+  "dependencies": {
+    "async": "^2.4.0"
+  },
+  "peerDependencies": {
+    "bedrock": "^1.2.4",
+    "bedrock-permission": "^2.3.2"
+  },
+  "engines": {
+    "node": ">=6.3.0"
+  }
+}
