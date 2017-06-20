@@ -3,42 +3,39 @@
 A [bedrock][] module for the creation and management of
 [Web Ledger Agents](https://w3c.github.io/web-ledger/).
 The Web Ledger ecosystem consists of Ledger Agents,
-Ledger agents, Ledgers, Blocks, and Events. This API
-enables the management of ledger agents.
+Ledger Nodes, Ledgers, Blocks, and Events.
 
 ![An image of the Web Ledger ecosystem](https://w3c.github.io/web-ledger/diagrams/ecosystem.svg)
 
 ## The Ledger Agent API
 
 * Ledger Agent API
-  * api.create(actor, ledgerId, options, (err, ledgerAgent))
+  * api.add(actor, ledgerNodeId, options, (err, ledgerAgent))
   * api.get(actor, agentId, options, (err, ledgerAgent))
-  * api.delete(actor, agentId, options, callback(err))
+  * api.remove(actor, agentId, options, callback(err))
   * api.getAgentIterator(actor, options, callback(err, iterator))
 * Metadata API
   * ledgerAgent.meta.get(actor, options, (err, ledgerMeta))
 * Blocks API
   * ledgerAgent.blocks.get(actor, blockId, options, callback(err, block))
 * Events API
-  * ledgerAgent.events.create(actor, event, options, (err, event))
+  * ledgerAgent.events.add(actor, event, options, (err, event))
   * ledgerAgent.events.get(actor, eventId, options, (err, event))
 
 ## Quick Examples
 
 ```
-npm install bedrock-ledger-agent bedrock-ledger-storage-mongodb bedrock-ledger-authz-signature
+npm install bedrock-ledger-agent
 ```
 
 ```js
 const agent = require('bedrock-ledger-agent');
-require('bedrock-ledger-storage-mongodb');
-require('bedrock-ledger-authz-signature');
-
 const actor = 'admin';
 const agentId = 'https://example.com/ledger-agents/eb8c22dc';
+const options = {};
 
 agent.get(actor, agentId, options, (err, ledgerAgent) => {
-  ledgerAgent.events.create( /* new ledger event details go here */);
+  ledgerAgent.events.add( /* new ledger event details go here */);
     /* ... do other operations on the ledger */
   });
 });
@@ -50,15 +47,16 @@ For documentation on configuration, see [config.js](./lib/config.js).
 
 ## Ledger Agent API
 
-### Create a Ledger Agent
+### Add a Ledger Agent
 
-Create a new ledger agent given a set of options. If a config block
-is specified in the options, a new ledger will be created. If only
-a ledgerId is provided, a new ledger agent will be created to connect
-to an existing ledger.
+Create a new ledger agent given a set of options. If a ledgerNodeId is 
+provided, a new ledger agent will be created to connect to an 
+existing ledger. If a config block is specified in the options, 
+a new ledger and corresponding ledger node will be created, ignoring
+any specified ledgerNodeId.
 
 * actor - the actor performing the action.
-* ledgerId - the URI of the ledger to associated the agent with.
+* ledgerNodeId - the ID for the ledger node to connect to.
 * options - a set of options used when creating the agent.
   * configBlock - the configuration block for the agent.
   * storage - the storage subsystem for the ledger (default: 'mongodb').
@@ -69,7 +67,6 @@ to an existing ledger.
   * ledgerAgent - the ledger agent associated with the agent.
 
 ```javascript
-const ledgerId = 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59';
 const configBlock = {
   id: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59/blocks/1',
   type: 'WebLedgerConfigurationBlock',
@@ -103,9 +100,9 @@ const options = {
   configBlock: configBlock
 };
 
-agent.create(actor, ledgerId, options, (err, ledgerAgent) => {
+agent.create(actor, null, options, (err, ledgerAgent) => {
   if(err) {
-    throw new Error('Failed to create ledger:', err);
+    throw new Error('Failed to create ledger agent:', err);
   }
 
   console.log('Ledger agent created:', ledgerAgent.id);
@@ -114,12 +111,11 @@ agent.create(actor, ledgerId, options, (err, ledgerAgent) => {
 
 ### Get a Specific Ledger Agent
 
-Gets a ledger agent given a agentId and a set of options.
+Gets a ledger agent given an agentId and a set of options.
 
 * actor - the actor performing the action.
 * agentId - the URI of the agent.
 * options - a set of options used when creating the agent.
-  * storage - the storage subsystem for the ledger (default 'mongodb').
 * callback(err, ledgerAgent) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise
   * ledgerAgent - A ledger agent that can be used to
@@ -132,20 +128,20 @@ const options = {};
 
 agent.get(actor, agentId, options, (err, ledgerAgent) => {
   if(err) {
-    throw new Error('Failed to create ledger:', err);
+    throw new Error('Failed to get ledger agent:', err);
   }
 
   console.log('Ledger agent retrieved', ledgerAgent.id);
 });
 ```
 
-### Delete a Ledger Agent
+### Remove a Ledger Agent
 
-Delete an existing ledger given a agentId and a set of options.
+Remove an existing ledger agent given an agentId and a set of options.
 
 * actor - the actor performing the action.
 * agentId - the URI of the agent.
-* options - a set of options used when deleting the agent.
+* options - a set of options used when removing the agent.
 * callback(err) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise
 
@@ -153,27 +149,26 @@ Delete an existing ledger given a agentId and a set of options.
 const agentId = 'https://example.com/ledger-agents/eb8c22dc';
 const options = {};
 
-agent.delete(actor, agentId, options, err => {
+agent.remove(actor, agentId, options, err => {
   if(err) {
-    throw new Error('Failed to delete ledger agent:', err);
+    throw new Error('Failed to remove ledger agent:', err);
   }
 
-  console.log('Ledger agent deleted.');
+  console.log('Ledger agent removed.');
 });
 ```
 
 ### Iterate Through All Ledger Agents
 
 Gets an iterator that will iterate over all ledger agents in 
-the system. The iterator will return a ledger agent ID which 
-can be passed to the api.get() call to fetch an instance of 
-a ledger agent.
+the system. The iterator will return a ledger agent which
+can be used to operate on the corresponding ledger node.
 
 * actor - the actor performing the action.
 * options - a set of options to use when retrieving the list.
 * callback(err, iterator) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise
-  * iterator - An iterator that returns a list of ledger agent IDs.
+  * iterator - An iterator that returns a list of ledger agents.
 
 ```javascript
 const actor = 'admin';
@@ -184,8 +179,8 @@ bedrockagent.getagentIterator(actor, options, (err, iterator) => {
     throw new Error('Failed to fetch iterator for ledger agents:', err);
   }
 
-  for(let agentId of iterator) {
-    console.log('Ledger agent:',  agentId);
+  for(let ledgerAgent of iterator) {
+    console.log('Ledger agent:',  ledgerAgent.id);
   }
 });
 ```
