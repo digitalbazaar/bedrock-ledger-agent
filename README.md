@@ -236,9 +236,9 @@ ledgerAgent.blocks.get(actor, blockId, options, (err, block) => {
 
 ## Ledger Agent Events API
 
-### Create a Ledger Event
+### Add a Ledger Event
 
-Creates an event to associate with a ledger given an
+Adds an event to associate with a ledger given an
 event and a set of options.
 
 * actor - the actor performing the action.
@@ -246,7 +246,9 @@ event and a set of options.
 * options - a set of options used when creating the event.
 * callback(err) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise.
-  * event - the event that was written to the database.
+  * result - the result of the add call
+    * event - the event that was stored
+    * meta - metadata associated with the event
 
 ```javascript
 const actor = 'admin';
@@ -271,36 +273,36 @@ const event = {
 }
 const options = {};
 
-ledgerAgent.events.create(actor, event, options, (err, event) => {
+ledgerAgent.events.add(actor, event, options, (err, result) => {
   if(err) {
     throw new Error('Failed to create the event:', err);
   }
 
-  console.log('Event creation successful:', event.id);
+  console.log('Event addition successful:', result.meta.eventHash);
 });
 ```
 
 ### Get a Ledger Event
 
-Gets an event associated with the ledger given an eventID
-and a set of options.
+Gets an event associated with the ledger given an event
+hash and a set of options.
 
 * actor - the actor performing the action.
-* eventId - the event to fetch from the agent.
+* eventHash - the has of the event to fetch from the agent.
 * options - a set of options used when retrieving the event.
 * callback(err) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise.
-  * event - the event that was retrieved from the database.
+  * event - the event associated with the given event hash.
 
 ```javascript
-const eventId = 'urn:uuid:76b17d64-abb1-4d19-924f-427a743489f0';
+const eventHash = 'ni:///sha-256;ji1zfToxarRb0L7R7a_a9pHQs10Pk-hwqFsTlXpOLkb';
 
-ledgerAgent.events.get(actor, eventId, options, (err, event) => {
+ledgerAgent.events.get(actor, eventHash, options, (err, event) => {
   if(err) {
     throw new Error('Event retrieval failed:', err);
   }
 
-  console.log('Event retrieval successful:', events);
+  console.log('Event retrieval successful:', event);
 });
 ```
 
