@@ -7,6 +7,23 @@ Ledger Nodes, Ledgers, Blocks, and Events.
 
 ![An image of the Web Ledger ecosystem](https://w3c.github.io/web-ledger/diagrams/ecosystem.svg)
 
+## The HTTP API
+
+* GET /ledger-agents
+  * Get a list of all ledger agents
+* POST /ledger-agents?owner={OWNER_ID}
+  * Create a new ledger agent
+* GET /ledger-agent/{AGENT_ID}
+  * Get status information on a particular ledger agent
+* POST /ledger-agent/{AGENT_ID}/events
+  * Add a new event
+* GET /ledger-agent/{AGENT_ID}/events?id=EVENT_ID
+  * Get an existing event
+* GET /ledger-agent/{AGENT_ID}/blocks?id=BLOCK_ID
+  * Get an existing block
+* GET /ledger-agent/{AGENT_ID}/query
+  * Query the current state of an object in the system
+
 ## The Ledger Agent API
 
 * Ledger Agent API
@@ -28,7 +45,7 @@ const agentId = 'https://example.com/ledger-agents/eb8c22dc';
 const options = {};
 
 agent.get(actor, agentId, options, (err, ledgerAgent) => {
-  ledgerAgent.events.add( /* new ledger event details go here */);
+  ledgerAgent.node.events.add( /* new ledger event details go here */);
     /* ... do other operations on the ledger */
   });
 });
@@ -93,7 +110,7 @@ const options = {
   configBlock: configBlock
 };
 
-agent.create(actor, null, options, (err, ledgerAgent) => {
+agent.add(actor, null, options, (err, ledgerAgent) => {
   if(err) {
     throw new Error('Failed to create ledger agent:', err);
   }
