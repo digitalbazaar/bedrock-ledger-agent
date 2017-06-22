@@ -15,8 +15,6 @@ const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const uuid = require('uuid/v4');
 
-const baseUri = 'http://example.com';
-
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
 
@@ -28,6 +26,7 @@ describe('Ledger Agent API', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   describe('regularUser as actor', () => {
+    let ledgerNodeId = null;
     const mockIdentity = mockData.identities.regularUser;
     let actor;
     before(done => {
@@ -36,8 +35,7 @@ describe('Ledger Agent API', () => {
         done(err);
       });
     });
-    it('should create a ledger agent', done => {
-      const ledgerId = 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59';
+    it('should add a ledger agent for a new ledger', done => {
       const configBlock = {
         id: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59/blocks/1',
         type: 'WebLedgerConfigurationBlock',
@@ -68,10 +66,15 @@ describe('Ledger Agent API', () => {
         }
       };
       const options = {
-        configBlock: configBlock
+        configBlock: configBlock,
+        storage: 'mongodb',
+        private: true
       };
 
-      brLedgerAgent.create(actor, ledgerId, options, (err, storage) => {
+      brLedgerAgent.add(actor, null, options, (err, ledgerAgent) => {
+        should.not.exist(err);
+        should.exist(ledgerAgent);
+        should.exist(ledgerAgent.id);
         done();
       });
     });
@@ -95,7 +98,7 @@ describe('Ledger Agent API', () => {
     });
   });
   describe('admin as actor', () => {
-    const mockIdentity = mockData.identities.regularUser;
+    const mockIdentity = mockData.identities.adminUser;
     let actor;
     before(done => {
       brIdentity.get(null, mockIdentity.identity.id, (err, result) => {
