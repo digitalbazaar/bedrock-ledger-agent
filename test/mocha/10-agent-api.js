@@ -89,10 +89,40 @@ describe('Ledger Agent API', () => {
         });
       });
     });
-    it.skip('should iterate over their ledgers', done => {
-      done();
+    it('should iterate over their ledger agents', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock
+      }
+      const testAgents = [];
+      const iteratorAgents = [];
+      async.auto({
+        create: callback => async.times(10, (i, callback) =>
+          brLedgerAgent.add(actor, null, options, (err, result) => {
+            testAgents.push(result.id);
+            callback();
+          }), callback),
+        getIterator: ['create', (results, callback) => {
+          const options = {};
+          brLedgerAgent.getAgentIterator(actor, options, (err, iterator) => {
+            should.not.exist(err);
+            callback(null, iterator);
+          });
+        }],
+        iterate: ['getIterator', (results, callback) => {
+          async.eachSeries(results.getIterator, (promise, callback) => {
+            promise.then(ledgerAgent => {
+              iteratorAgents.push(ledgerAgent.id);
+              callback();
+            }).catch(err => { throw err });
+          }, callback);
+        }],
+        test: ['iterate', (results, callback) => {
+          iteratorAgents.should.include.members(testAgents);
+          callback();
+        }]
+      }, done);
     });
-    it.skip('should delete their ledger', done => {
+    it.skip('should remove their ledger agent', done => {
       done();
     });
     it.skip('should not get non-owned ledger', done => {
