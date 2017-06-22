@@ -14,7 +14,7 @@ module.exports = api;
 
 api.createIdentity = function(userName) {
   var newIdentity = {
-    id: 'did:' + uuid(),
+    id: 'did:v1:' + uuid(),
     type: 'Identity',
     sysSlug: userName,
     label: userName,

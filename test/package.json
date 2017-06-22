@@ -26,11 +26,20 @@
   "dependencies": {
     "async": "^2.4.0",
     "bedrock": "^1.2.4",
+    "bedrock-did-client": "^1.0.0",
     "bedrock-identity": "^4.6.0",
+    "bedrock-key": "^4.0.0",
     "bedrock-ledger": "digitalbazaar/bedrock-ledger#cm3",
+    "bedrock-ledger": "digitalbazaar/bedrock-ledger-agent",
+    "bedrock-ledger-storage-mongodb": "digitalbazaar/bedrock-ledger-storage-mongodb",
     "bedrock-mongodb": "^3.0.0",
+    "bedrock-passport": "^3.2.1",
     "bedrock-permission": "^2.3.2",
+    "bedrock-rest": "^2.0.2",
+    "bedrock-server": "^2.2.0",
     "bedrock-test": "^1.2.0",
+    "bedrock-validation": "^2.2.1",
+    "bedrock-views": "^5.0.2",
     "grunt": "^1.0.1",
     "jsonld-signatures": "^1.1.5"
   }

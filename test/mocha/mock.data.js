@@ -11,8 +11,8 @@ module.exports = mock;
 const identities = mock.identities = {};
 let userName;
 
-// identity with permission to access its own agreements
-userName = 'authorizedUser';
+// identity with permission to access its own ledgers
+userName = 'regularUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
 identities[userName].identity.sysResourceRole.push({
@@ -25,7 +25,37 @@ userName = 'unauthorizedUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
 
-const ledgers = mock.ledgers = {};
+const blocks = mock.blocks = {
+  configBlock: {
+    id: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59/blocks/1',
+    type: 'WebLedgerConfigurationBlock',
+    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+    consensusMethod: {
+      type: 'Continuity2017'
+    },
+    configurationAuthorizationMethod: {
+      type: 'ProofOfSignature2016',
+      approvedSigner: [
+        'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+      ],
+      minimumSignaturesRequired: 1
+    },
+    writeAuthorizationMethod: {
+      type: 'ProofOfSignature2016',
+      approvedSigner: [
+        'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+      ],
+      minimumSignaturesRequired: 1
+    },
+    signature: {
+      type: 'RsaSignature2017',
+      created: '2017-10-24T05:33:31Z',
+      creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
+      domain: 'example.com',
+      signatureValue: 'eyiOiJJ0eXAK...EjXkgFWFO'
+    }
+  }
+};
 
 // constants
 mock.authorizedSignerUrl = 'https://example.com' + '/keys/authorized-key-1';

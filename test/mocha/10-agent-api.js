@@ -36,45 +36,15 @@ describe('Ledger Agent API', () => {
       });
     });
     it('should add a ledger agent for a new ledger', done => {
-      const configBlock = {
-        id: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59/blocks/1',
-        type: 'WebLedgerConfigurationBlock',
-        ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-        consensusMethod: {
-          type: 'Continuity2017'
-        },
-        configurationAuthorizationMethod: {
-          type: 'ProofOfSignature2016',
-          approvedSigner: [
-            'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
-          ],
-          minimumSignaturesRequired: 1
-        },
-        writeAuthorizationMethod: {
-          type: 'ProofOfSignature2016',
-          approvedSigner: [
-            'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
-          ],
-          minimumSignaturesRequired: 1
-        },
-        signature: {
-          type: 'RsaSignature2017',
-          created: '2017-10-24T05:33:31Z',
-          creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
-          domain: 'example.com',
-          signatureValue: 'eyiOiJJ0eXAK...EjXkgFWFO'
-        }
-      };
       const options = {
-        configBlock: configBlock,
-        storage: 'mongodb',
-        private: true
+        configBlock: mockData.blocks.configBlock
       };
 
       brLedgerAgent.add(actor, null, options, (err, ledgerAgent) => {
         should.not.exist(err);
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
+        should.exist(ledgerAgent.service.ledgerEventService);
         done();
       });
     });
@@ -97,7 +67,7 @@ describe('Ledger Agent API', () => {
       done();
     });
   });
-  describe('admin as actor', () => {
+  describe.skip('admin as actor', () => {
     const mockIdentity = mockData.identities.adminUser;
     let actor;
     before(done => {
