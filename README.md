@@ -71,7 +71,7 @@ any specified ledgerNodeId.
   * configBlock - the configuration block for the agent.
   * storage - the storage subsystem for the ledger (default: 'mongodb').
   * private - if true, only the actor should be able to access the 
-      created ledger.
+      created ledger (default: true).
 * callback(err, ledger) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise
   * ledgerAgent - the ledger agent associated with the agent.
