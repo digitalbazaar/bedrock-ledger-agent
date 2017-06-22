@@ -69,8 +69,25 @@ describe('Ledger Agent API', () => {
         });
       });
     });
-    it.skip('should get their ledger', done => {
-      done();
+    it('should get existing ledger agent', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock
+      };
+
+      brLedgerAgent.add(actor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {};
+        const ledgerAgentId = firstLa.id;
+        brLedgerAgent.get(actor, ledgerAgentId, options, (err, ledgerAgent) => {
+          should.not.exist(err);
+          should.exist(ledgerAgent);
+          should.exist(ledgerAgent.id);
+          should.exist(ledgerAgent.service.ledgerEventService);
+          ledgerAgent.id.should.equal(firstLa.id);
+          done();
+        });
+      });
     });
     it.skip('should iterate over their ledgers', done => {
       done();
