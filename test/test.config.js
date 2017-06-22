@@ -22,6 +22,9 @@ roles['bedrock-ledger-agent.test'] = {
   label: 'Test Role',
   comment: 'Role for Test User',
   sysPermission: [
+    permissions.LEDGER_AGENT_ACCESS.id,
+    permissions.LEDGER_AGENT_CREATE.id,
+    permissions.LEDGER_AGENT_REMOVE.id
   ]
 };
 

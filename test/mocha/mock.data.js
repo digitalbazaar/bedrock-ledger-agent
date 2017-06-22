@@ -12,95 +12,23 @@ const identities = mock.identities = {};
 let userName;
 
 // identity with permission to access its own agreements
-userName = 'regularUser';
+userName = 'authorizedUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
-// identities[userName].identity.sysResourceRole.push({
-//   sysRole: 'bedrock-ledger.test',
-//   generateResource: 'id'
-// });
+identities[userName].identity.sysResourceRole.push({
+  sysRole: 'bedrock-ledger-agent.test',
+  generateResource: 'id'
+});
 
 // // identity with no permissions
-// userName = 'noPermission';
-// identities[userName] = {};
-// identities[userName].identity = helpers.createIdentity(userName);
+userName = 'unauthorizedUser';
+identities[userName] = {};
+identities[userName].identity = helpers.createIdentity(userName);
 
 const ledgers = mock.ledgers = {};
 
 // constants
-const GENESIS_HASH =
-  'urn:sha256:0000000000000000000000000000000000000000000000000000000000000000';
 mock.authorizedSignerUrl = 'https://example.com' + '/keys/authorized-key-1';
-
-ledgers.alpha = {
-  config: {
-    '@context': 'https://w3id.org/webledger/v1',
-    id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3/events/1',
-    type: 'LedgerConfigurationEvent',
-    ledgerConfig: {
-      id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3',
-      type: 'LedgerConfiguration',
-      name: 'testLedger',
-      description: 'A test Verifiable Claims ledger',
-      storageMechanism: 'SequentialList',
-      consensusAlgorithm: {
-        type: 'ProofOfSignature2016',
-        approvedSigner: [mock.authorizedSignerUrl],
-        minimumSignaturesRequired: 1
-      }
-    },
-    previousEvent: {
-      hash: GENESIS_HASH
-    }
-  },
-  events: [{
-    '@context': [
-      'https://w3id.org/webledger/v1',
-      'https://w3id.org/test/v1'
-    ],
-    id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3/events/2',
-    type: 'LedgerStorageEvent',
-    replacesObject: [{
-      id: 'https://example.us.gov/credentials/234234542',
-      type: ['Credential', 'EmergencyResponseCredential'],
-      claim: {
-        id: 'did:370d4e2c-8839-4588-9ff7-2fda89da341f',
-        emsLicense: {
-          id: 'ems:FF-37-48573',
-          status: 'valid'
-        }
-      }
-    }],
-    previousEvent: {
-      id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3/events/1',
-      // FIXME: should the hash be included here?
-      hash: 'urn:sha256:'
-    }
-  }, {
-    '@context': [
-      'https://w3id.org/webledger/v1',
-      'https://w3id.org/test/v1'
-    ],
-    id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3/events/3',
-    type: 'LedgerStorageEvent',
-    replacesObject: [{
-      id: 'https://example.us.gov/credentials/234234542',
-      type: ['Credential', 'EmergencyResponseCredential'],
-      claim: {
-        id: 'did:370d4e2c-8839-4588-9ff7-2fda89da341f',
-        emsLicense: {
-          id: 'ems:FF-37-48573',
-          status: 'revoked'
-        }
-      }
-    }],
-    previousEvent: {
-      id: 'did:c02915fc-672d-4568-8e6e-b12a0b35cbb3/events/2',
-      // FIXME: should the hash be included here?
-      hash: 'urn:sha256:'
-    }
-  }]
-};
 
 // all mock keys for all groups
 mock.groups = {
