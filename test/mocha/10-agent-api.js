@@ -48,6 +48,27 @@ describe('Ledger Agent API', () => {
         done();
       });
     });
+    it('should add a ledger agent for an existing ledger node', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock
+      };
+
+      brLedgerAgent.add(actor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {};
+        const ledgerNodeId = firstLa.node.id;
+        brLedgerAgent.add(actor, ledgerNodeId, options, (err, ledgerAgent) => {
+          should.not.exist(err);
+          should.exist(ledgerAgent);
+          should.exist(ledgerAgent.id);
+          should.exist(ledgerAgent.service.ledgerEventService);
+          ledgerAgent.id.should.not.equal(firstLa.id);
+          ledgerAgent.node.id.should.equal(ledgerNodeId);
+          done();
+        });
+      });
+    });
     it.skip('should get their ledger', done => {
       done();
     });
