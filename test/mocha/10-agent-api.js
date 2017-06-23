@@ -26,21 +26,27 @@ describe('Ledger Agent API', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   describe('regularUser as actor', () => {
-    let ledgerNodeId = null;
-    const mockIdentity = mockData.identities.regularUser;
-    let actor;
+    let regularActor;
+    let adminActor;
     before(done => {
-      brIdentity.get(null, mockIdentity.identity.id, (err, result) => {
-        actor = result;
-        done(err);
-      });
-    });
+      async.auto({
+        getRegularUser: callback => brIdentity.get(
+          null, mockData.identities.regularUser.identity.id, (err, result) => {
+          regularActor = result;
+          callback(err);
+        }),
+        getAdminUser: callback => brIdentity.get(
+          null, mockData.identities.adminUser.identity.id, (err, result) => {
+          adminActor = result;
+          callback(err);
+    })}, err => done(err))});
     it('should add a ledger agent for a new ledger', done => {
       const options = {
-        configBlock: mockData.blocks.configBlock
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
       };
 
-      brLedgerAgent.add(actor, null, options, (err, ledgerAgent) => {
+      brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
         should.not.exist(err);
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
@@ -50,15 +56,18 @@ describe('Ledger Agent API', () => {
     });
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
-        configBlock: mockData.blocks.configBlock
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
       };
 
-      brLedgerAgent.add(actor, null, options, (err, firstLa) => {
+      brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
         should.not.exist(err);
 
-        const options = {};
+        const options = {
+          owner: regularActor.id
+        };
         const ledgerNodeId = firstLa.node.id;
-        brLedgerAgent.add(actor, ledgerNodeId, options, (err, ledgerAgent) => {
+        brLedgerAgent.add(regularActor, ledgerNodeId, options, (err, ledgerAgent) => {
           should.not.exist(err);
           should.exist(ledgerAgent);
           should.exist(ledgerAgent.id);
@@ -71,15 +80,16 @@ describe('Ledger Agent API', () => {
     });
     it('should get existing ledger agent', done => {
       const options = {
-        configBlock: mockData.blocks.configBlock
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
       };
 
-      brLedgerAgent.add(actor, null, options, (err, firstLa) => {
+      brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
         should.not.exist(err);
 
         const options = {};
         const ledgerAgentId = firstLa.id;
-        brLedgerAgent.get(actor, ledgerAgentId, options, (err, ledgerAgent) => {
+        brLedgerAgent.get(regularActor, ledgerAgentId, options, (err, ledgerAgent) => {
           should.not.exist(err);
           should.exist(ledgerAgent);
           should.exist(ledgerAgent.id);
@@ -91,19 +101,22 @@ describe('Ledger Agent API', () => {
     });
     it('should iterate over their ledger agents', done => {
       const options = {
-        configBlock: mockData.blocks.configBlock
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
       }
       const testAgents = [];
       const iteratorAgents = [];
       async.auto({
-        create: callback => async.times(10, (i, callback) =>
-          brLedgerAgent.add(actor, null, options, (err, result) => {
+        create: callback => async.times(3, (i, callback) =>
+          brLedgerAgent.add(regularActor, null, options, (err, result) => {
             testAgents.push(result.id);
             callback();
           }), callback),
         getIterator: ['create', (results, callback) => {
-          const options = {};
-          brLedgerAgent.getAgentIterator(actor, options, (err, iterator) => {
+          const options = {
+            owner: regularActor.id
+          };
+          brLedgerAgent.getAgentIterator(regularActor, options, (err, iterator) => {
             should.not.exist(err);
             callback(null, iterator);
           });
@@ -122,28 +135,244 @@ describe('Ledger Agent API', () => {
         }]
       }, done);
     });
-    it.skip('should remove their ledger agent', done => {
-      done();
-    });
-    it.skip('should not get non-owned ledger', done => {
-      done();
-    });
-    it.skip('should not delete non-owned ledger', done => {
-      done();
-    });
-    it.skip('should not iterate over non-owned ledger agents', done => {
-      done();
-    });
-  });
-  describe.skip('admin as actor', () => {
-    const mockIdentity = mockData.identities.adminUser;
-    let actor;
-    before(done => {
-      brIdentity.get(null, mockIdentity.identity.id, (err, result) => {
-        actor = result;
-        done(err);
+    it('should delete their ledger agent', done => async.auto({
+      create: callback => {
+        const options = {
+          configBlock: mockData.blocks.configBlock,
+          owner: regularActor.id
+        };
+        brLedgerAgent.add(regularActor, null, options, callback);
+      },
+      delete: ['create', (results, callback) => {
+        const options = {
+          owner: regularActor.id
+        };
+        brLedgerAgent.remove(regularActor, results.create.id, options, err => {
+          should.not.exist(err);
+          callback();
+        });
+      }],
+      test: ['delete', (results, callback) =>
+        database.collections.ledgerAgent.findOne({
+          id: database.hash(results.create.id)
+        }, (err, result) => {
+          should.not.exist(err);
+          should.exist(result);
+          result.meta.deleted.should.be.a('number');
+          callback();
+        })]
+    }, done));
+    it('returns PermissionDenied for unauthorized get', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: adminActor.id
+      };
+
+      brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {};
+        const ledgerAgentId = firstLa.id;
+        brLedgerAgent.get(regularActor, ledgerAgentId, options, (err, ledgerAgent) => {
+          should.exist(err);
+          err.name.should.equal('PermissionDenied');
+          done();
+        });
       });
     });
+    it('returns PermissionDenied for unauthorized delete',
+      done => async.auto({
+      create: callback => {
+        const options = {
+          configBlock: mockData.blocks.configBlock,
+          owner: adminActor.id
+        };
+        brLedgerAgent.add(adminActor, null, options, (err, la) => {
+          callback(err, la);
+        });
+      },
+      delete: ['create', (results, callback) => {
+        const options = {
+          configBlock: mockData.blocks.configBlock,
+          owner: adminActor.id
+        };
+        brLedgerAgent.remove(regularActor, results.create.id, options, err => {
+          should.exist(err);
+          err.name.should.equal('PermissionDenied');
+          callback();
+        });
+      }]
+    }, err => done(err)));
+    it('returns PermissionDenied for unauthorized iterate', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: adminActor.id
+      }
+      const testAgents = [];
+      const iteratorAgents = [];
+      async.auto({
+        create: callback => async.times(3, (i, callback) =>
+          brLedgerAgent.add(adminActor, null, options, (err, result) => {
+            testAgents.push(result.id);
+            callback();
+          }), callback),
+        getIterator: ['create', (results, callback) => {
+          const options = {
+            owner: adminActor.id
+          };
+          brLedgerAgent.getAgentIterator(regularActor, options, (err, iterator) => {
+            should.not.exist(err);
+            callback(null, iterator);
+          });
+        }],
+        iterate: ['getIterator', (results, callback) => {
+          async.eachSeries(results.getIterator, (promise, callback) => {
+            promise.then(ledgerAgent => {
+              iteratorAgents.push(ledgerAgent.id);
+              callback();
+            }).catch(err => callback(err));
+          }, callback);
+        }],
+        test: ['iterate', (results, callback) => {
+          iteratorAgents.should.include.members(testAgents);
+          callback();
+        }]
+      }, err => {
+        should.exist(err);
+        err.name.should.equal('PermissionDenied');
+        done();
+      });
+    });
+  });
+  describe('unauthorizedUser as actor', () => {
+    let regularActor;
+    let adminActor;
+    let unauthorizedActor;
+    before(done => {
+      async.auto({
+        getRegularUser: callback => brIdentity.get(
+          null, mockData.identities.regularUser.identity.id, (err, result) => {
+          regularActor = result;
+          callback(err);
+        }),
+        getUnauthorizedUser: callback => brIdentity.get(
+          null, mockData.identities.unauthorizedUser.identity.id, (err, result) => {
+          unauthorizedActor = result;
+          callback(err);
+        }),
+        getAdminUser: callback => brIdentity.get(
+          null, mockData.identities.regularUser.identity.id, (err, result) => {
+          adminActor = result;
+          callback(err);
+    })}, err => done(err))});
+    it('returns PermissionDenied for unauthorized add', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: unauthorizedActor.id
+      };
+
+      brLedgerAgent.add(unauthorizedActor, null, options, (err, ledgerAgent) => {
+        should.exist(err);
+        err.name.should.equal('PermissionDenied');
+        done();
+      });
+    });
+    it('returns PermissionDenied for unauthorized add when node exists', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      };
+
+      brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {
+          owner: regularActor.id
+        };
+        const ledgerNodeId = firstLa.node.id;
+        brLedgerAgent.add(unauthorizedActor, ledgerNodeId, options, (err, ledgerAgent) => {
+          should.exist(err);
+          err.name.should.equal('PermissionDenied');
+          done();
+        });
+      });
+    });
+    it('returns PermissionDenied for unauthorized get', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      };
+
+      brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {};
+        const ledgerAgentId = firstLa.id;
+        brLedgerAgent.get(unauthorizedActor, ledgerAgentId, options, (err, ledgerAgent) => {
+          should.exist(err);
+          err.name.should.equal('PermissionDenied');
+          done();
+        });
+      });
+    });
+    it('returns PermissionDenied for unauthorized iterate', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      }
+      const testAgents = [];
+      const iteratorAgents = [];
+      async.auto({
+        create: callback => async.times(3, (i, callback) =>
+          brLedgerAgent.add(regularActor, null, options, (err, result) => {
+            testAgents.push(result.id);
+            callback();
+          }), callback),
+        getIterator: ['create', (results, callback) => {
+          const options = {
+            owner: regularActor.id
+          };
+          brLedgerAgent.getAgentIterator(unauthorizedActor, options, (err, iterator) => {
+            should.not.exist(err);
+            callback(null, iterator);
+          });
+        }],
+        iterate: ['getIterator', (results, callback) => {
+          async.eachSeries(results.getIterator, (promise, callback) => {
+            promise.then(ledgerAgent => {
+              iteratorAgents.push(ledgerAgent.id);
+              callback();
+            }).catch(err => { callback(err) });
+          }, callback);
+        }]
+      }, err => {
+        should.exist(err);
+        err.name.should.equal('PermissionDenied');
+        done();
+      });
+    });
+    it('returns PermissionDenied for unauthorized delete', done => async.auto({
+      create: callback => {
+        const options = {
+          configBlock: mockData.blocks.configBlock,
+          owner: regularActor.id
+        };
+        brLedgerAgent.add(regularActor, null, options, callback);
+      },
+      delete: ['create', (results, callback) => {
+        const options = {
+          owner: regularActor.id
+        };
+        brLedgerAgent.remove(unauthorizedActor, results.create.id, options, err => {
+          callback(err);
+        });
+      }]}, err => {
+        should.exist(err);
+        err.name.should.equal('PermissionDenied');
+        done();
+      }));
+  });
+  describe.skip('adminUser as actor', () => {
     it.skip('should create a ledger agent for any actor', done => {
       done();
     });

@@ -20,10 +20,19 @@ identities[userName].identity.sysResourceRole.push({
   generateResource: 'id'
 });
 
-// // identity with no permissions
+// identity with no permissions
 userName = 'unauthorizedUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
+
+// identity with admin permission
+userName = 'adminUser';
+identities[userName] = {};
+identities[userName].identity = helpers.createIdentity(userName);
+identities[userName].identity.sysResourceRole.push({
+  sysRole: 'bedrock-ledger-agent.test',
+  //generateResource: 'id' -- removing this restriction grants admin privileges
+});
 
 const blocks = mock.blocks = {
   configBlock: {
