@@ -246,7 +246,6 @@ describe('Ledger Agent API', () => {
   });
   describe('unauthorizedUser as actor', () => {
     let regularActor;
-    let adminActor;
     let unauthorizedActor;
     before(done => {
       async.auto({
@@ -259,12 +258,8 @@ describe('Ledger Agent API', () => {
           null, mockData.identities.unauthorizedUser.identity.id, (err, result) => {
           unauthorizedActor = result;
           callback(err);
-        }),
-        getAdminUser: callback => brIdentity.get(
-          null, mockData.identities.regularUser.identity.id, (err, result) => {
-          adminActor = result;
-          callback(err);
-    })}, err => done(err))});
+        })
+    }, err => done(err))});
     it('returns PermissionDenied for unauthorized add', done => {
       const options = {
         configBlock: mockData.blocks.configBlock,
