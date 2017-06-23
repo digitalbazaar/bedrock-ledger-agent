@@ -277,7 +277,7 @@ describe('Ledger Agent API', () => {
         done();
       });
     });
-    it('returns PermissionDenied for unauthorized add when node exists', done => {
+    it('returns PermissionDenied for unauth\'d add when node exists', done => {
       const options = {
         configBlock: mockData.blocks.configBlock,
         owner: regularActor.id
