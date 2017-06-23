@@ -367,18 +367,142 @@ describe('Ledger Agent API', () => {
         done();
       }));
   });
-  describe.skip('adminUser as actor', () => {
-    it.skip('should create a ledger agent for any actor', done => {
-      done();
+  describe('adminUser as actor', () => {
+    let regularActor;
+    let adminActor;
+    before(done => {
+      async.auto({
+        getRegularUser: callback => brIdentity.get(
+          null, mockData.identities.regularUser.identity.id, (err, result) => {
+          regularActor = result;
+          callback(err);
+        }),
+        getAdminUser: callback => brIdentity.get(
+          null, mockData.identities.adminUser.identity.id, (err, result) => {
+          adminActor = result;
+          callback(err);
+    })}, err => done(err))});
+    it('should add a ledger agent for a new ledger', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      };
+
+      brLedgerAgent.add(adminActor, null, options, (err, ledgerAgent) => {
+        should.not.exist(err);
+        should.exist(ledgerAgent);
+        should.exist(ledgerAgent.id);
+        should.exist(ledgerAgent.service.ledgerEventService);
+        done();
+      });
     });
-    it.skip('should get any ledger', done => {
-      done();
+    it('should add a ledger agent for an existing ledger node', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      };
+
+      brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {
+          owner: regularActor.id
+        };
+        const ledgerNodeId = firstLa.node.id;
+        brLedgerAgent.add(adminActor, ledgerNodeId, options, (err, ledgerAgent) => {
+          should.not.exist(err);
+          should.exist(ledgerAgent);
+          should.exist(ledgerAgent.id);
+          should.exist(ledgerAgent.service.ledgerEventService);
+          ledgerAgent.id.should.not.equal(firstLa.id);
+          ledgerAgent.node.id.should.equal(ledgerNodeId);
+          done();
+        });
+      });
     });
-    it.skip('should iterate over all ledger agents', done => {
-      done();
+    it('should get existing ledger agent', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      };
+
+      brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {};
+        const ledgerAgentId = firstLa.id;
+        brLedgerAgent.get(adminActor, ledgerAgentId, options, (err, ledgerAgent) => {
+          should.not.exist(err);
+          should.exist(ledgerAgent);
+          should.exist(ledgerAgent.id);
+          should.exist(ledgerAgent.service.ledgerEventService);
+          ledgerAgent.id.should.equal(firstLa.id);
+          done();
+        });
+      });
     });
-    it.skip('should delete any ledger', done => {
-      done();
+    it('should iterate over their ledger agents', done => {
+      const options = {
+        configBlock: mockData.blocks.configBlock,
+        owner: regularActor.id
+      }
+      const testAgents = [];
+      const iteratorAgents = [];
+      async.auto({
+        create: callback => async.times(3, (i, callback) =>
+          brLedgerAgent.add(adminActor, null, options, (err, result) => {
+            testAgents.push(result.id);
+            callback();
+          }), callback),
+        getIterator: ['create', (results, callback) => {
+          const options = {
+            owner: regularActor.id
+          };
+          brLedgerAgent.getAgentIterator(adminActor, options, (err, iterator) => {
+            should.not.exist(err);
+            callback(null, iterator);
+          });
+        }],
+        iterate: ['getIterator', (results, callback) => {
+          async.eachSeries(results.getIterator, (promise, callback) => {
+            promise.then(ledgerAgent => {
+              iteratorAgents.push(ledgerAgent.id);
+              callback();
+            }).catch(err => { throw err });
+          }, callback);
+        }],
+        test: ['iterate', (results, callback) => {
+          iteratorAgents.should.include.members(testAgents);
+          callback();
+        }]
+      }, done);
     });
+    it('should delete their ledger agent', done => async.auto({
+      create: callback => {
+        const options = {
+          configBlock: mockData.blocks.configBlock,
+          owner: regularActor.id
+        };
+        brLedgerAgent.add(adminActor, null, options, callback);
+      },
+      delete: ['create', (results, callback) => {
+        const options = {
+          owner: regularActor.id
+        };
+        brLedgerAgent.remove(adminActor, results.create.id, options, err => {
+          should.not.exist(err);
+          callback();
+        });
+      }],
+      test: ['delete', (results, callback) =>
+        database.collections.ledgerAgent.findOne({
+          id: database.hash(results.create.id)
+        }, (err, result) => {
+          should.not.exist(err);
+          should.exist(result);
+          result.meta.deleted.should.be.a('number');
+          callback();
+        })]
+    }, done));
   });
 });
