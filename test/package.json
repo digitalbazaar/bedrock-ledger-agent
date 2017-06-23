@@ -27,6 +27,7 @@
     "async": "^2.4.0",
     "bedrock": "^1.2.4",
     "bedrock-did-client": "^1.0.0",
+    "bedrock-docs": "^2.1.0",
     "bedrock-identity": "^4.6.0",
     "bedrock-key": "^4.0.0",
     "bedrock-ledger": "digitalbazaar/bedrock-ledger#cm3",
