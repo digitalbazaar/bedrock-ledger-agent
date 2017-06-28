@@ -42,6 +42,7 @@
     "bedrock-validation": "^2.2.1",
     "bedrock-views": "^5.0.2",
     "grunt": "^1.0.1",
-    "jsonld-signatures": "^1.1.5"
+    "jsonld-signatures": "^1.1.5",
+    "lodash": "^4.17.4"
   }
 }
