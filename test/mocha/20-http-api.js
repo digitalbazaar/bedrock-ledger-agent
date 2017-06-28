@@ -29,7 +29,7 @@ describe('Ledger Agent HTTP API', () => {
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
   });
-  describe.only('authenticated as regularUser', () => {
+  describe('authenticated as regularUser', () => {
     const regularActor = mockData.identities.regularUser;
 
     it('should add ledger agent for new ledger', done => {
@@ -44,7 +44,7 @@ describe('Ledger Agent HTTP API', () => {
         done(err);
       });
     });
-    it.only('should add a ledger agent for an existing ledger node', done => {
+    it('should add a ledger agent for an existing ledger node', done => {
       const configBlock = mockData.blocks.configBlock;
       const options = {
         owner: regularActor.id
@@ -61,6 +61,33 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             res.statusCode.should.equal(201);
             done(err);
+          });
+        }]
+      }, err => done(err));
+    });
+    it.only('should get an existing ledger node', done => {
+
+      async.auto({
+        add: callback => {
+          const configBlock = mockData.blocks.configBlock;
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: configBlock,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        get: ['add', (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: results.add,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback();
           });
         }]
       }, err => done(err));
