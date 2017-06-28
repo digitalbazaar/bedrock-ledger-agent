@@ -70,8 +70,8 @@ userName = 'adminUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
 identities[userName].identity.sysResourceRole.push({
-  sysRole: 'bedrock-ledger-agent.test',
-  //generateResource: 'id' -- removing this restriction grants admin privileges
+  sysRole: 'bedrock-ledger-agent.test'
+  // generateResource: 'id' -- removing this restriction grants admin privileges
 });
 
 const blocks = mock.blocks = {
