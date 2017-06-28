@@ -72,6 +72,7 @@ api.createHttpSignatureRequest = function(options) {
   if(options.body) {
     newRequest.body = options.body;
   }
+
   return newRequest;
 };
 
