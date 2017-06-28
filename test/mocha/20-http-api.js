@@ -65,8 +65,7 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.only('should get an existing ledger node', done => {
-
+    it('should get an existing ledger node', done => {
       async.auto({
         add: callback => {
           const configBlock = mockData.blocks.configBlock;
@@ -87,6 +86,61 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(201);
+            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get all existing ledger agents', done => {
+      async.auto({
+        add: callback => {
+          const configBlock = mockData.blocks.configBlock;
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: configBlock,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        getAll: ['add', (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            res.body.length.should.be.at.least(1);
+            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get all existing ledger agents for owner', done => {
+      async.auto({
+        add: callback => {
+          const configBlock = mockData.blocks.configBlock;
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: configBlock,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        getAll: ['add', (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            qs: {owner: regularActor.identity.id},
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            res.body.length.should.be.at.least(1);
             callback();
           });
         }]
