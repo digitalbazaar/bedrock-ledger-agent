@@ -21,6 +21,7 @@
   },
   "peerDependencies": {
     "bedrock": "^1.2.4",
+    "bedrock-express": "^2.0.6",
     "bedrock-permission": "^2.3.2",
     "bedrock-ledger": "digitalbazaar/bedrock-ledger#cm3",
     "bedrock-server": "^2.2.1"
