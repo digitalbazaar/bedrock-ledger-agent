@@ -6,7 +6,7 @@ require('bedrock-ledger-agent');
 // require storage plugin
 require('bedrock-ledger-storage-mongodb');
 // require consensus plugin
-require('./consensus');
+require('bedrock-ledger-consensus-uni');
 
 require('bedrock-test');
 bedrock.start();

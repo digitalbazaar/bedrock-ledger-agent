@@ -32,6 +32,7 @@
     "bedrock-identity": "^4.6.0",
     "bedrock-key": "^4.0.0",
     "bedrock-ledger": "digitalbazaar/bedrock-ledger#cm3",
+    "bedrock-ledger-consensus-uni": "digitalbazaar/bedrock-ledger-consensus-uni#implementation",
     "bedrock-ledger-storage-mongodb": "digitalbazaar/bedrock-ledger-storage-mongodb",
     "bedrock-mongodb": "^3.0.0",
     "bedrock-passport": "^3.2.1",
