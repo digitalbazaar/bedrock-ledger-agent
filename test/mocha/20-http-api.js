@@ -13,7 +13,7 @@ const helpers = require('./helpers');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
-//require('request-debug')(request);
+// require('request-debug')(request);
 const url = require('url');
 
 const urlObj = {
@@ -60,7 +60,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             res.statusCode.should.equal(201);
-            done(err);
+            callback(err);
           });
         }]
       }, err => done(err));
