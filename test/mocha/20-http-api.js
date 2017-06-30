@@ -210,7 +210,7 @@ describe('Ledger Agent HTTP API', () => {
         }
       }, err => done(err));
     });
-    it.skip('should get event', done => {
+    it('should get event', done => {
       async.auto({
         add: callback => {
           const event = {
@@ -244,7 +244,7 @@ describe('Ledger Agent HTTP API', () => {
             callback(null, res.headers.location);
           });
         },
-        get: (results, callback) => {
+        get: ['add', (results, callback) => {
           const eventUrl = results.add;
           request.get(helpers.createHttpSignatureRequest({
             url: eventUrl,
@@ -255,7 +255,7 @@ describe('Ledger Agent HTTP API', () => {
             res.body.event.startDate.should.equal('2017-07-14T21:30');
             callback(null, res.body);
           });
-        }
+        }]
       }, err => done(err));
     });
     it.skip('should get latest blocks', done => {
