@@ -15,6 +15,7 @@ let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
+const querystring = require('querystring');
 
 const urlObj = {
   protocol: 'https',
@@ -174,7 +175,7 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.skip('should add event', done => {
+    it('should add event', done => {
       async.auto({
         add: callback => {
           const event = {
