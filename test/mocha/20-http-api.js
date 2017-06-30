@@ -215,6 +215,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           const event = {
             '@context': 'https://schema.org/',
+            id: 'https://example.com/events/1234',
             type: 'Event',
             name: 'Big Band Concert in New York City',
             startDate: '2017-07-14T21:30',
@@ -252,6 +253,20 @@ describe('Ledger Agent HTTP API', () => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
             res.body.event.startDate.should.equal('2017-07-14T21:30');
+            callback(null, res.body);
+          });
+        }
+      }, err => done(err));
+    });
+    it.skip('should get latest blocks', done => {
+      async.auto({
+        get: (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: defaultLedgerAgent.service.ledgerBlockService,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
             callback(null, res.body);
           });
         }
