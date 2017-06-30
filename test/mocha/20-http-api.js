@@ -272,5 +272,32 @@ describe('Ledger Agent HTTP API', () => {
         }
       }, err => done(err));
     });
+    it.skip('should get specific block', done => {
+      async.auto({
+        getLatest: (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: defaultLedgerAgent.service.ledgerBlockService,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            callback(null, res.body);
+          });
+        },
+        getBlock: ['getLatest', (results, callback) => {
+          const blockUrl = defaultLedgerAgent.service.ledgerBlockService +
+            querystring.stringify({id: results.getLatest.latestEventBlock});
+
+          request.get(helpers.createHttpSignatureRequest({
+            url: blockUrl,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            callback(null, res.body);
+          });
+        }]
+      }, err => done(err));
+    });
   });
 });
