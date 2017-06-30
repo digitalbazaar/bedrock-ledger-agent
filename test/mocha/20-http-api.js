@@ -299,5 +299,21 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
+    it.skip('should query state machine successfully', done => {
+      async.auto({
+        query: (results, callback) => {
+          const queryUrl = defaultLedgerAgent.service.ledgerQueryService +
+            querystring.format({id: 'https://example.com/events/1234'});
+          request.get(helpers.createHttpSignatureRequest({
+            url: queryUrl,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            callback(null, res.body);
+          });
+        }
+      }, err => done(err));
+    });
   });
 });
