@@ -73,37 +73,75 @@ identities[userName].identity.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test'
   // generateResource: 'id' -- removing this restriction grants admin privileges
 });
+const events = mock.events = {};
 
-const blocks = mock.blocks = {
-  configBlock: {
-    id: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59/blocks/1',
-    type: 'WebLedgerConfigurationBlock',
+events.config = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfigurationEvent',
+  operation: 'Config',
+  input: [{
+    type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
     consensusMethod: {
       type: 'UnilateralConsensus2017'
     },
-    configurationAuthorizationMethod: {
-      type: 'ProofOfSignature2016',
+    eventGuard: [{
+      type: 'ProofOfSignature2017',
+      supportedEventType: 'WebLedgerEvent',
       approvedSigner: [
         'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
       ],
       minimumSignaturesRequired: 1
-    },
-    writeAuthorizationMethod: {
-      type: 'ProofOfSignature2016',
+    }, {
+      type: 'ProofOfSignature2017',
+      supportedEventType: 'WebLedgerConfigurationEvent',
       approvedSigner: [
         'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
       ],
       minimumSignaturesRequired: 1
-    },
-    signature: {
-      type: 'RsaSignature2017',
-      created: '2017-10-24T05:33:31Z',
-      creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
-      domain: 'example.com',
-      signatureValue: 'eyiOiJJ0eXAK...EjXkgFWFO'
-    }
+    }]
+  }],
+  signature: {
+    type: 'RsaSignature2017',
+    created: '2017-10-24T05:33:31Z',
+    creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
+    domain: 'example.com',
+    signatureValue: 'eyiOiJJ0eXAK...EjXkgFWFO'
   }
+};
+
+events.concert = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerEvent',
+  operation: 'Create',
+  input: [{
+    '@context': 'https://schema.org/',
+    id: 'https://example.com/events/123456',
+    type: 'Concert',
+    name: 'Big Band Concert in New York City',
+    startDate: '2017-07-14T21:30',
+    location: 'https://example.org/the-venue',
+    offers: {
+      type: 'Offer',
+      price: '13.00',
+      priceCurrency: 'USD',
+      url: 'https://www.ticketfly.com/purchase/309433'
+    }
+  }],
+  signature: {
+    type: 'RsaSignature2017',
+    created: '2017-05-10T19:47:15Z',
+    creator: 'https://www.ticketfly.com/keys/789',
+    signatureValue: 'JoS27wqa...BFMgXIMw=='
+  }
+};
+
+const blocks = mock.blocks = {};
+blocks.config = {
+  '@context': 'https://w3id.org/webledger/v1',
+  id: '',
+  type: 'WebLedgerEventBlock',
+  event: [events.config]
 };
 
 // constants
