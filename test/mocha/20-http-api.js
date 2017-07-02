@@ -222,15 +222,20 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.skip('should get latest block', done => {
+    it('should get latest block', done => {
       async.auto({
-        get: (results, callback) => {
+        get: callback => {
           request.get(helpers.createHttpSignatureRequest({
             url: defaultLedgerAgent.service.ledgerBlockService,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
+            should.exist(res.body.latest);
+            should.exist(res.body.latest.block);
+            should.exist(res.body.latest.meta);
+            res.body.latest.block.type.should.equal('WebLedgerEventBlock');
+            res.body.latest.meta.consensus.should.equal(true);
             callback(null, res.body);
           });
         }
