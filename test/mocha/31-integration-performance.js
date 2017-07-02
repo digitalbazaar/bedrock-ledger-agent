@@ -25,10 +25,11 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe('Integration Test - Simple', () => {
+describe.only('Integration Test - Single Node Performance', () => {
   const regularActor = mockData.identities.regularUser;
   const configEvent = mockData.events.config;
   let ledgerAgent;
+  let currentTest;
 
   before(done => helpers.prepareDatabase(mockData, done));
   before(done => {
@@ -60,8 +61,11 @@ describe('Integration Test - Simple', () => {
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
   });
-  it('should add 10 events and blocks', done => {
-    async.times(10, (n, callback) => {
+  const events = 100;
+  let eventsPerSecond = 0;
+  it('adds ' + events + ' events and blocks', done => {
+    const start = Date.now();
+    async.times(events, (n, callback) => {
       const concertEvent = _.cloneDeep(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       request.post(helpers.createHttpSignatureRequest({
@@ -73,56 +77,16 @@ describe('Integration Test - Simple', () => {
         res.statusCode.should.equal(201);
         callback(null, res.headers.location);
       });
-    }, err => done(err));
-  });
-  it('should crawl to genesis block from latest block', done => {
-    const maxAttempts = 20;
-    let attempts = 0;
-    let currentBlock;
-
-    async.auto({
-      getLatestBlock: callback => {
-        request.get(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerBlockService,
-          identity: regularActor
-        }), (err, res) => {
-          should.not.exist(err);
-          res.statusCode.should.equal(200);
-          currentBlock = res.body.latest.block.id;
-          callback(null, res.body);
-        });
-      },
-      crawlToGenesis: ['getLatestBlock', (results, callback) => {
-        let done = false;
-        async.until(() => done, callback => {
-          const blockUrl = ledgerAgent.service.ledgerBlockService + '?' +
-            querystring.stringify({id: currentBlock});
-
-          request.get(helpers.createHttpSignatureRequest({
-            url: blockUrl,
-            identity: regularActor
-          }), (err, res) => {
-            should.not.exist(err);
-            res.statusCode.should.equal(200);
-            if(!res.body.block.previousBlock || attempts > maxAttempts) {
-              done = true;
-              return callback(null, res.body);
-            }
-            currentBlock = res.body.block.previousBlock;
-            attempts++;
-            callback(null, currentBlock);
-          });
-        }, (err, finalBlock) => {
-          if(err) {
-            return callback(err);
-          }
-          should.exist(finalBlock);
-          should.exist(finalBlock.block);
-          should.not.exist(finalBlock.block.previousBlock);
-          should.not.exist(finalBlock.block.previousBlockHash);
-          callback();
-        });
-      }]
-    }, err => done(err));
-  });
+    }, err => {
+      const end = Date.now();
+      const totalTime = (end - start) / 1000;
+      eventsPerSecond = events / totalTime;
+      done(err);
+    })
+  }).timeout(30000);
+  it('should perform more than 5 transactions per second', done => {
+    console.log('        ' + Math.floor(eventsPerSecond) + ' events per second');
+    eventsPerSecond.should.be.at.least(5);
+    done();
+  })
 });
