@@ -241,9 +241,9 @@ describe('Ledger Agent HTTP API', () => {
         }
       }, err => done(err));
     });
-    it.skip('should get specific block', done => {
+    it('should get specific block', done => {
       async.auto({
-        getLatest: (results, callback) => {
+        getLatest: callback => {
           request.get(helpers.createHttpSignatureRequest({
             url: defaultLedgerAgent.service.ledgerBlockService,
             identity: regularActor
@@ -254,9 +254,8 @@ describe('Ledger Agent HTTP API', () => {
           });
         },
         getBlock: ['getLatest', (results, callback) => {
-          const blockUrl = defaultLedgerAgent.service.ledgerBlockService +
-            querystring.stringify({id: results.getLatest.latestEventBlock});
-
+          const blockUrl = defaultLedgerAgent.service.ledgerBlockService + '?' +
+            querystring.stringify({id: results.getLatest.latest.block.id});
           request.get(helpers.createHttpSignatureRequest({
             url: blockUrl,
             identity: regularActor
