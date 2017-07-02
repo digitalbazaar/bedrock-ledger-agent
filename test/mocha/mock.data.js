@@ -115,7 +115,7 @@ events.concert = {
   type: 'WebLedgerEvent',
   operation: 'Create',
   input: [{
-    '@context': 'https://schema.org/',
+    '@context': 'https://w3id.org/test/v1',
     id: 'https://example.com/events/123456',
     type: 'Concert',
     name: 'Big Band Concert in New York City',

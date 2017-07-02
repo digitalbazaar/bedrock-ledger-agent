@@ -4,6 +4,7 @@
 /* globals should */
 'use strict';
 
+const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const brLedger = require('bedrock-ledger');
@@ -15,6 +16,7 @@ let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
+const uuid = require('uuid/v4');
 const querystring = require('querystring');
 
 const urlObj = {
@@ -174,7 +176,9 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.skip('should add event', done => {
+    it('should add event', done => {
+      const concertEvent = _.cloneDeep(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
