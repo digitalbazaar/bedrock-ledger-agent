@@ -183,7 +183,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: defaultLedgerAgent.service.ledgerEventService,
-            body: mockData.events.concert,
+            body: concertEvent,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -193,12 +193,14 @@ describe('Ledger Agent HTTP API', () => {
         }
       }, err => done(err));
     });
-    it.skip('should get event', done => {
+    it('should get event', done => {
+      const concertEvent = _.cloneDeep(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: defaultLedgerAgent.service.ledgerEventService,
-            body: mockData.events.concert,
+            body: concertEvent,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -214,13 +216,13 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
-            res.body.event.startDate.should.equal('2017-07-14T21:30');
+            res.body.event.input[0].startDate.should.equal('2017-07-14T21:30');
             callback(null, res.body);
           });
         }]
       }, err => done(err));
     });
-    it.skip('should get latest blocks', done => {
+    it.skip('should get latest block', done => {
       async.auto({
         get: (results, callback) => {
           request.get(helpers.createHttpSignatureRequest({

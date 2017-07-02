@@ -25,7 +25,7 @@
   "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
   "dependencies": {
     "async": "^2.4.0",
-    "bedrock": "^1.2.4",
+    "bedrock": "digitalbazaar/bedrock#updateTestDeps",
     "bedrock-did-client": "^1.0.0",
     "bedrock-docs": "^2.1.0",
     "bedrock-express": "^2.0.6",
