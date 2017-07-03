@@ -11,6 +11,7 @@ const brLedger = require('bedrock-ledger');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
+const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
@@ -25,25 +26,34 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
+// use local JSON-LD processor for signatures
+jsigs.use('jsonld', bedrock.jsonld);
+
 describe('Integration - 1 Node - Unilateral - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
-  const configEvent = mockData.events.config;
   let ledgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));
   before(done => {
     async.auto({
-      add: callback => {
+      sign: callback => {
+        jsigs.sign(mockData.events.config, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem: mockData.groups.authorized.privateKey,
+          creator: mockData.authorizedSignerUrl
+        }, callback);
+      },
+      add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: mockData.events.config,
+          body: results.sign,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
           res.statusCode.should.equal(201);
           callback(null, res.headers.location);
         });
-      },
+      }],
       get: ['add', (results, callback) => {
         request.get(helpers.createHttpSignatureRequest({
           url: results.add,
@@ -62,17 +72,27 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
   });
   it('should add 10 events and blocks', done => {
     async.times(10, (n, callback) => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-      request.post(helpers.createHttpSignatureRequest({
-        url: ledgerAgent.service.ledgerEventService,
-        body: concertEvent,
-        identity: regularActor
-      }), (err, res) => {
-        should.not.exist(err);
-        res.statusCode.should.equal(201);
-        callback(null, res.headers.location);
-      });
+      async.auto({
+        sign: callback => {
+          const concertEvent = _.cloneDeep(mockData.events.concert);
+          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+          jsigs.sign(concertEvent, {
+            algorithm: 'LinkedDataSignature2015',
+            privateKeyPem: mockData.groups.authorized.privateKey,
+            creator: mockData.authorizedSignerUrl
+          }, callback);
+        },
+        add: ['sign', (results, callback) => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: ledgerAgent.service.ledgerEventService,
+            body: results.sign,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        }]}, err => callback(err));
     }, err => done(err));
   });
   it('should crawl to genesis block from latest block', done => {
