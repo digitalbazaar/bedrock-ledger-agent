@@ -9,6 +9,7 @@ const mock = {};
 module.exports = mock;
 
 const identities = mock.identities = {};
+mock.ldDocuments = {};
 let userName;
 
 // identity with permission to access its own ledgers
@@ -59,6 +60,24 @@ identities[userName].keys = helpers.createKeyPair({
     'sObYxm9gpkNkelXejA/trbLe4hg7RWNYzOztbfbZakdVjMNfXnyw+Q0=\n' +
     '-----END RSA PRIVATE KEY-----\n'
 });
+mock.ldDocuments[identities[userName].identity.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "id": identities[userName].identity.id,
+  "publicKey": [{
+    "id": mock.authorizedSignerUrl,
+    "type": "CryptographicKey",
+    "owner": identities[userName].identity.id,
+    "publicKeyPem": identities[userName].keys.publicKey.id
+  }]
+};
+mock.ldDocuments[identities[userName].keys.publicKey.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "type": "CryptographicKey",
+  "owner": identities[userName].identity.id,
+  "label": "Signing Key for " + identities[userName].identity.id,
+  "id": identities[userName].keys.publicKey.id,
+  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+};
 
 // identity with no permissions
 userName = 'unauthorizedUser';
@@ -75,7 +94,7 @@ identities[userName].identity.sysResourceRole.push({
 });
 
 // constants
-mock.authorizedSignerUrl = 'https://example.com/keys/authorized-key-1';
+mock.authorizedSignerUrl = identities.regularUser.keys.publicKey.id;
 
 // all mock keys for all groups
 mock.groups = {
@@ -209,27 +228,6 @@ blocks.config = {
   id: '',
   type: 'WebLedgerEventBlock',
   event: [events.config]
-};
-
-mock.ldDocuments = {
-  "https://example.com/i/alpha": {
-    "@context": "https://w3id.org/identity/v1",
-    "id": "https://example.com/i/alpha",
-    "publicKey": [{
-      "id": mock.authorizedSignerUrl,
-      "type": "CryptographicKey",
-      "owner": "https://example.com/i/alpha",
-      "publicKeyPem": mock.groups.authorized.publicKey
-    }]
-  }
-};
-mock.ldDocuments[mock.authorizedSignerUrl] = {
-  "@context": "https://w3id.org/identity/v1",
-  "type": "CryptographicKey",
-  "owner": "https://example.com/i/alpha",
-  "label": "Signing Key 2",
-  "id": mock.authorizedSignerUrl,
-  "publicKeyPem": mock.groups.authorized.publicKey
 };
 
 const bedrock = require('bedrock');

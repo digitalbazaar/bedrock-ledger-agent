@@ -39,8 +39,8 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
       sign: callback => {
         jsigs.sign(mockData.events.config, {
           algorithm: 'LinkedDataSignature2015',
-          privateKeyPem: mockData.groups.authorized.privateKey,
-          creator: mockData.authorizedSignerUrl
+          privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
+          creator: regularActor.keys.publicKey.id
         }, callback);
       },
       add: ['sign', (results, callback) => {
@@ -78,8 +78,8 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
           concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
           jsigs.sign(concertEvent, {
             algorithm: 'LinkedDataSignature2015',
-            privateKeyPem: mockData.groups.authorized.privateKey,
-            creator: mockData.authorizedSignerUrl
+            privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
+            creator: regularActor.keys.publicKey.id
           }, callback);
         },
         add: ['sign', (results, callback) => {
