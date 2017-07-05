@@ -41,7 +41,7 @@ describe('Ledger Agent API', () => {
             callback(err);
           })}, err => done(err));
     });
-    it.only('should add a ledger agent for a new ledger', done => {
+    it('should add a ledger agent for a new ledger', done => {
       const options = {
         configEvent: mockData.events.config,
         owner: regularActor.id

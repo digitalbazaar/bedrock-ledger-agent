@@ -11,6 +11,7 @@ const brLedger = require('bedrock-ledger');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
+const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
@@ -25,25 +26,44 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.skip('Integration - 1 Node - Unilateral - Multi-Signature', () => {
+// use local JSON-LD processor for signatures
+jsigs.use('jsonld', bedrock.jsonld);
+
+describe('Integration - 1 Node - Unilateral - Multisignature', () => {
   const regularActor = mockData.identities.regularUser;
-  const configEvent = mockData.events.config;
+  const alternateActor = mockData.identities.alternateUser;
   let ledgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));
   before(done => {
     async.auto({
-      add: callback => {
+      signA: callback => {
+        jsigs.sign(mockData.events.multisigConfig, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
+          creator: regularActor.keys.publicKey.id
+        }, callback);
+      },
+      signB: callback => {
+        jsigs.sign(mockData.events.multisigConfig, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
+          creator: alternateActor.keys.publicKey.id
+        }, callback);
+      },
+      add: ['signA', 'signB', (results, callback) => {
+        const multiSig = _.cloneDeep(results.signA);
+        multiSig.signature = [results.signA.signature, results.signB.signature];
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: mockData.events.config,
+          body: multiSig,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
           res.statusCode.should.equal(201);
           callback(null, res.headers.location);
         });
-      },
+      }],
       get: ['add', (results, callback) => {
         request.get(helpers.createHttpSignatureRequest({
           url: results.add,
@@ -62,17 +82,40 @@ describe.skip('Integration - 1 Node - Unilateral - Multi-Signature', () => {
   });
   it('should add 10 events and blocks', done => {
     async.times(10, (n, callback) => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-      request.post(helpers.createHttpSignatureRequest({
-        url: ledgerAgent.service.ledgerEventService,
-        body: concertEvent,
-        identity: regularActor
-      }), (err, res) => {
-        should.not.exist(err);
-        res.statusCode.should.equal(201);
-        callback(null, res.headers.location);
-      });
+      async.auto({
+        signA: callback => {
+          const concertEvent = _.cloneDeep(mockData.events.concert);
+          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+          jsigs.sign(concertEvent, {
+            algorithm: 'LinkedDataSignature2015',
+            privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
+            creator: regularActor.keys.publicKey.id
+          }, callback);
+        },
+        signB: callback => {
+          const concertEvent = _.cloneDeep(mockData.events.concert);
+          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+          jsigs.sign(concertEvent, {
+            algorithm: 'LinkedDataSignature2015',
+            privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
+            creator: alternateActor.keys.publicKey.id
+          }, callback);
+        },
+        add: ['signA', 'signB', (results, callback) => {
+          const multiSig = _.cloneDeep(results.signA);
+          multiSig.signature = [
+            results.signA.signature, results.signB.signature
+          ];
+          request.post(helpers.createHttpSignatureRequest({
+            url: ledgerAgent.service.ledgerEventService,
+            body: multiSig,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        }]}, err => callback(err));
     }, err => done(err));
   });
   it('should crawl to genesis block from latest block', done => {
