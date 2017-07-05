@@ -297,6 +297,38 @@ events.multisigConfig = {
   }]
 };
 
+events.equihashConfig = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfigurationEvent',
+  operation: 'Config',
+  input: [{
+    type: 'WebLedgerConfiguration',
+    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+    consensusMethod: {
+      type: 'UnilateralConsensus2017'
+    },
+    validationEventGuard: [{
+      type: 'SignatureGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerConfigurationEvent']
+      }],
+      approvedSigner: [
+        identities.regularUser.identity.id
+      ],
+      minimumSignaturesRequired: 1
+    }/*, {
+      type: 'EquihashProofOfWorkGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerEvent']
+      }],
+      equihashParameterN: 64,
+      equihashParameterK: 3
+    }*/]
+  }]
+};
+
 events.concert = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerEvent',
