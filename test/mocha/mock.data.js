@@ -117,7 +117,7 @@ mock.ldDocuments[identities[userName].identity.id] = {
   "@context": "https://w3id.org/identity/v1",
   "id": identities[userName].identity.id,
   "publicKey": [{
-    "id": mock.authorizedSignerUrl,
+    "id": identities[userName].keys.publicKey.id,
     "type": "CryptographicKey",
     "owner": identities[userName].identity.id,
     "publicKeyPem": identities[userName].keys.publicKey.id
