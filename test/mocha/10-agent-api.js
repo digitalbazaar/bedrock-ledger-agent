@@ -82,7 +82,7 @@ describe('Ledger Agent API', () => {
     });
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -107,7 +107,7 @@ describe('Ledger Agent API', () => {
     });
     it('should get existing ledger agent', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -129,7 +129,7 @@ describe('Ledger Agent API', () => {
     });
     it('should iterate over their ledger agents', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
       const testAgents = [];
@@ -167,7 +167,7 @@ describe('Ledger Agent API', () => {
     it('should delete their ledger agent', done => async.auto({
       create: callback => {
         const options = {
-          configEvent: mockData.events.config,
+          configEvent: signedConfigEvent,
           owner: regularActor.id
         };
         brLedgerAgent.add(regularActor, null, options, callback);
@@ -193,7 +193,7 @@ describe('Ledger Agent API', () => {
     }, done));
     it('returns PermissionDenied for unauthorized get', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: adminActor.id
       };
 
@@ -213,7 +213,7 @@ describe('Ledger Agent API', () => {
     it('returns PermissionDenied for unauthorized delete', done => async.auto({
       create: callback => {
         const options = {
-          configEvent: mockData.events.config,
+          configEvent: signedConfigEvent,
           owner: adminActor.id
         };
         brLedgerAgent.add(adminActor, null, options, (err, la) => {
@@ -234,7 +234,7 @@ describe('Ledger Agent API', () => {
     }, err => done(err)));
     it('returns PermissionDenied for unauthorized iterate', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: adminActor.id
       };
       const testAgents = [];
@@ -277,6 +277,7 @@ describe('Ledger Agent API', () => {
   describe('unauthorizedUser as actor', () => {
     let regularActor;
     let unauthorizedActor;
+    let signedConfigEvent;
     before(done => {
       async.auto({
         getRegularUser: callback => brIdentity.get(
@@ -289,12 +290,21 @@ describe('Ledger Agent API', () => {
           (err, result) => {
             unauthorizedActor = result;
             callback(err);
-          })
+          }),
+        signConfig: callback => jsigs.sign(mockData.events.config, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, (err, result) => {
+          signedConfigEvent = result;
+          callback(err);
+        })
       }, err => done(err));
     });
     it('returns PermissionDenied for unauthorized add', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: unauthorizedActor.id
       };
 
@@ -307,7 +317,7 @@ describe('Ledger Agent API', () => {
     });
     it('returns PermissionDenied for unauth\'d add when node exists', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -328,7 +338,7 @@ describe('Ledger Agent API', () => {
     });
     it('returns PermissionDenied for unauthorized get', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -347,7 +357,7 @@ describe('Ledger Agent API', () => {
     });
     it('returns PermissionDenied for unauthorized iterate', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
       const testAgents = [];
@@ -385,7 +395,7 @@ describe('Ledger Agent API', () => {
     it('returns PermissionDenied for unauthorized delete', done => async.auto({
       create: callback => {
         const options = {
-          configEvent: mockData.events.config,
+          configEvent: signedConfigEvent,
           owner: regularActor.id
         };
         brLedgerAgent.add(regularActor, null, options, callback);
@@ -408,6 +418,7 @@ describe('Ledger Agent API', () => {
   describe('adminUser as actor', () => {
     let regularActor;
     let adminActor;
+    let signedConfigEvent;
     before(done => {
       async.auto({
         getRegularUser: callback => brIdentity.get(
@@ -419,11 +430,21 @@ describe('Ledger Agent API', () => {
           null, mockData.identities.adminUser.identity.id, (err, result) => {
             adminActor = result;
             callback(err);
-          })}, err => done(err));
+          }),
+        signConfig: callback => jsigs.sign(mockData.events.config, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, (err, result) => {
+          signedConfigEvent = result;
+          callback(err);
+        })
+      }, err => done(err));
     });
     it('should add a ledger agent for a new ledger', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -437,7 +458,7 @@ describe('Ledger Agent API', () => {
     });
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -462,7 +483,7 @@ describe('Ledger Agent API', () => {
     });
     it('should get existing ledger agent', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
@@ -484,7 +505,7 @@ describe('Ledger Agent API', () => {
     });
     it('should iterate over their ledger agents', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
       const testAgents = [];
@@ -522,7 +543,7 @@ describe('Ledger Agent API', () => {
     it('should delete their ledger agent', done => async.auto({
       create: callback => {
         const options = {
-          configEvent: mockData.events.config,
+          configEvent: signedConfigEvent,
           owner: regularActor.id
         };
         brLedgerAgent.add(adminActor, null, options, callback);
