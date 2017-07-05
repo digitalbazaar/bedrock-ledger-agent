@@ -77,15 +77,15 @@ describe.only('Integration - 1 Node - Unilateral - Multisignature', () => {
       }]
     }, err => done(err));
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
-  });
+  // beforeEach(done => {
+  //   helpers.removeCollection('ledger_testLedger', done);
+  // });
   it('should add 10 events and blocks', done => {
     async.times(10, (n, callback) => {
+      const concertEvent = _.cloneDeep(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
         signA: callback => {
-          const concertEvent = _.cloneDeep(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
           jsigs.sign(concertEvent, {
             algorithm: 'LinkedDataSignature2015',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
@@ -93,8 +93,6 @@ describe.only('Integration - 1 Node - Unilateral - Multisignature', () => {
           }, callback);
         },
         signB: callback => {
-          const concertEvent = _.cloneDeep(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
           jsigs.sign(concertEvent, {
             algorithm: 'LinkedDataSignature2015',
             privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
