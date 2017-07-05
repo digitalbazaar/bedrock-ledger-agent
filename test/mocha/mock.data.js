@@ -79,6 +79,59 @@ mock.ldDocuments[identities[userName].keys.publicKey.id] = {
   "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
 };
 
+// identity with permission to access its own ledgers
+userName = 'alternateUser';
+identities[userName] = {};
+identities[userName].identity = helpers.createIdentity(userName);
+identities[userName].identity.sysResourceRole.push({
+  sysRole: 'bedrock-ledger-agent.test',
+  generateResource: 'id'
+});
+identities[userName].keys = helpers.createKeyPair({
+  userName: userName,
+  userId: identities[userName].identity.id,
+  publicKey: '-----BEGIN PUBLIC KEY-----\n' +
+    'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWn5TYzA1AksoTvwZOk2KxGB4f\n' +
+    'HHAn38sBIPkT0hqLB0gyP1HVcl/hFa3s0nPXcCUWxwOIxljSF6SMOqTfpOXAIzIX\n' +
+    'S02GS00aS3rzOmxpY01ptq1WRBVCCAK4nyJHD7JkkN0EZ8zM3GXHWzO/H8oYS8tE\n' +
+    'dGXOPEHfDCNLuBXctQIDAQAB\n' +
+    '-----END PUBLIC KEY-----\n',
+  privateKey: '-----BEGIN PRIVATE KEY-----\n' +
+    'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANaflNjMDUCSyhO/\n' +
+    'Bk6TYrEYHh8ccCffywEg+RPSGosHSDI/UdVyX+EVrezSc9dwJRbHA4jGWNIXpIw6\n' +
+    'pN+k5cAjMhdLTYZLTRpLevM6bGljTWm2rVZEFUIIArifIkcPsmSQ3QRnzMzcZcdb\n' +
+    'M78fyhhLy0R0Zc48Qd8MI0u4Fdy1AgMBAAECgYBd5knYJEZ0BwT0aLIYtLEMLDIZ\n' +
+    'iHala2tE3ik7e8PzKcdzfHKQQU8jijmjEFxwWHdRpNauA6GeoYtzcsDpvBpsDU26\n' +
+    '0w6lDSqfN1PUhcnCo6BOs/wFsUwOiMpDlxcCdLp5KfjS1b+9EVIhGB28lJ6UMtW4\n' +
+    'kUQ62q+y43fzleqNrQJBAPfDppld16ZeuEN2ewG5jZ8xJI830pxZDzMA7NBlUpFz\n' +
+    'qgNjRcjRE4ZPkfGXxuTPpfB/UNVqxSDUECLDUMTpYfsCQQDdwesV5twwYnSxG/82\n' +
+    'FIVYkex+cMtK7+LBgCU9IXSiRW0GSvrokJz/WNGVXkBU8v5Eh8R0AHQ2F7wUltEx\n' +
+    'kC0PAkEA9R8mBfmnzrtLRcNEMxKmoGZ4KxEpVvFtbiJuKEb2B10NSMjAU8s1q92x\n' +
+    'H/nvFpSxMVxkVqCJYs8rH5looUfcXQJBALaOrbmaFCrA4s/q/G7I9f20I7zznmhS\n' +
+    'k5o4pG9u21W7UcWcdHKAmr6bn+4XaV6FrE0+d7wHo6PkZjGM9yqWRoECQQCr88fX\n' +
+    'OKN20B8ci/1Kc2fiHb97DPHSwzm9fVySNcGQIbx640+tdXQVw/BhtlZLo5HZfZEz\n' +
+    'uOhRrGhuLsnnaamp\n' +
+    '-----END PRIVATE KEY-----\n'
+});
+mock.ldDocuments[identities[userName].identity.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "id": identities[userName].identity.id,
+  "publicKey": [{
+    "id": mock.authorizedSignerUrl,
+    "type": "CryptographicKey",
+    "owner": identities[userName].identity.id,
+    "publicKeyPem": identities[userName].keys.publicKey.id
+  }]
+};
+mock.ldDocuments[identities[userName].keys.publicKey.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "type": "CryptographicKey",
+  "owner": identities[userName].identity.id,
+  "label": "Signing Key for " + identities[userName].identity.id,
+  "id": identities[userName].keys.publicKey.id,
+  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+};
+
 // identity with no permissions
 userName = 'unauthorizedUser';
 identities[userName] = {};
