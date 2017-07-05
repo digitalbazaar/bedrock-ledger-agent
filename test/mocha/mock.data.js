@@ -241,14 +241,20 @@ events.config = {
     consensusMethod: {
       type: 'UnilateralConsensus2017'
     },
-    eventGuard: [{
-      type: 'ProofOfSignature2017',
-      supportedEventType: 'WebLedgerEvent',
+    validationEventGuard: [{
+      type: 'SignatureGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerEvent']
+      }],
       approvedSigner: [mock.authorizedSignerUrl],
       minimumSignaturesRequired: 1
     }, {
-      type: 'ProofOfSignature2017',
-      supportedEventType: 'WebLedgerConfigurationEvent',
+      type: 'SignatureGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerConfigurationEvent']
+      }],
       approvedSigner: [mock.authorizedSignerUrl],
       minimumSignaturesRequired: 1
     }]
