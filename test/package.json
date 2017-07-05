@@ -34,6 +34,7 @@
     "bedrock-ledger": "digitalbazaar/bedrock-ledger#cm3",
     "bedrock-ledger-consensus-uni": "digitalbazaar/bedrock-ledger-consensus-uni#implementation",
     "bedrock-ledger-context": "digitalbazaar/bedrock-ledger-context#master",
+    "bedrock-ledger-guard-signature": "digitalbazaar/bedrock-ledger-guard-signature#implementation",
     "bedrock-ledger-storage-mongodb": "digitalbazaar/bedrock-ledger-storage-mongodb",
     "bedrock-mongodb": "^3.0.0",
     "bedrock-passport": "^3.2.1",

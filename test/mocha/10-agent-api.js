@@ -20,7 +20,9 @@ jsigs.use('jsonld', bedrock.jsonld);
 
 describe('Ledger Agent API', () => {
   before(done => {
-    helpers.prepareDatabase(mockData, done);
+    async.series([
+      callback => helpers.prepareDatabase(mockData, callback)
+    ], done);
   });
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
@@ -28,6 +30,7 @@ describe('Ledger Agent API', () => {
   describe('regularUser as actor', () => {
     let regularActor;
     let adminActor;
+    let signedConfigEvent;
     before(done => {
       async.auto({
         getRegularUser: callback => brIdentity.get(
@@ -39,19 +42,42 @@ describe('Ledger Agent API', () => {
           null, mockData.identities.adminUser.identity.id, (err, result) => {
             adminActor = result;
             callback(err);
-          })}, err => done(err));
+          }),
+        signConfig: callback => jsigs.sign(mockData.events.config, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem: mockData.groups.authorized.privateKey,
+          creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+        }, (err, result) => {
+          signedConfigEvent = result;
+          callback(err);
+        })
+      }, err => done(err));
     });
     it('should add a ledger agent for a new ledger', done => {
       const options = {
-        configEvent: mockData.events.config,
+        configEvent: signedConfigEvent,
         owner: regularActor.id
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-        should.not.exist(err);
-        should.exist(ledgerAgent);
-        should.exist(ledgerAgent.id);
-        should.exist(ledgerAgent.service.ledgerEventService);
+        console.log('EEEEEEe', err);
+        // should.not.exist(err);
+        // should.exist(ledgerAgent);
+        // should.exist(ledgerAgent.id);
+        // should.exist(ledgerAgent.service.ledgerEventService);
+        done();
+      });
+    });
+    it('returns GuardRejection if config event is not signed', done => {
+      const options = {
+        configEvent: mockData.events.config,
+        owner: regularActor.id
+      };
+      brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
+        should.exist(err);
+        should.not.exist(ledgerAgent);
+        err.name.should.equal('GuardRejection');
+        err.cause.cause.toString().should.contain('No signature found.');
         done();
       });
     });
