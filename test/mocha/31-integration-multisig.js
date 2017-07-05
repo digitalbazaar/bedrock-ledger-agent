@@ -29,7 +29,7 @@ const urlObj = {
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
 
-describe('Integration - 1 Node - Unilateral - Multisignature', () => {
+describe.only('Integration - 1 Node - Unilateral - Multisignature', () => {
   const regularActor = mockData.identities.regularUser;
   const alternateActor = mockData.identities.alternateUser;
   let ledgerAgent;

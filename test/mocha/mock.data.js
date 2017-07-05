@@ -278,8 +278,8 @@ events.multisigConfig = {
         eventType: ['WebLedgerConfigurationEvent']
       }],
       approvedSigner: [
-        identities.regularUser.keys.publicKey.id,
-        identities.alternateUser.keys.publicKey.id
+        identities.regularUser.identity.id,
+        identities.alternateUser.identity.id
       ],
       minimumSignaturesRequired: 2
     }, {
@@ -289,8 +289,8 @@ events.multisigConfig = {
         eventType: ['WebLedgerEvent']
       }],
       approvedSigner: [
-        identities.regularUser.keys.publicKey.id,
-        identities.alternateUser.keys.publicKey.id
+        identities.regularUser.identity.id,
+        identities.alternateUser.identity.id
       ],
       minimumSignaturesRequired: 2
     }]
