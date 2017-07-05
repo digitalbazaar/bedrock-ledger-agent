@@ -45,8 +45,9 @@ describe('Ledger Agent API', () => {
           }),
         signConfig: callback => jsigs.sign(mockData.events.config, {
           algorithm: 'LinkedDataSignature2015',
-          privateKeyPem: mockData.groups.authorized.privateKey,
-          creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, (err, result) => {
           signedConfigEvent = result;
           callback(err);
@@ -58,13 +59,11 @@ describe('Ledger Agent API', () => {
         configEvent: signedConfigEvent,
         owner: regularActor.id
       };
-
       brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-        console.log('EEEEEEe', err);
-        // should.not.exist(err);
-        // should.exist(ledgerAgent);
-        // should.exist(ledgerAgent.id);
-        // should.exist(ledgerAgent.service.ledgerEventService);
+        should.not.exist(err);
+        should.exist(ledgerAgent);
+        should.exist(ledgerAgent.id);
+        should.exist(ledgerAgent.service.ledgerEventService);
         done();
       });
     });

@@ -15,7 +15,7 @@ let userName;
 // identity with permission to access its own ledgers
 userName = 'regularUser';
 identities[userName] = {};
-identities[userName].identity = helpers.createIdentity(userName);
+identities[userName].identity = helpers.createIdentity();
 identities[userName].identity.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
@@ -64,7 +64,7 @@ mock.ldDocuments[identities[userName].identity.id] = {
   "@context": "https://w3id.org/identity/v1",
   "id": identities[userName].identity.id,
   "publicKey": [{
-    "id": mock.authorizedSignerUrl,
+    "id": identities[userName].keys.publicKey.id,
     "type": "CryptographicKey",
     "owner": identities[userName].identity.id,
     "publicKeyPem": identities[userName].keys.publicKey.id
@@ -247,7 +247,7 @@ events.config = {
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
       }],
-      approvedSigner: [mock.authorizedSignerUrl],
+      approvedSigner: [identities.regularUser.identity.id],
       minimumSignaturesRequired: 1
     }, {
       type: 'SignatureGuard2017',
@@ -255,7 +255,7 @@ events.config = {
         type: 'EventTypeFilter',
         eventType: ['WebLedgerConfigurationEvent']
       }],
-      approvedSigner: [mock.authorizedSignerUrl],
+      approvedSigner: [identities.regularUser.identity.id],
       minimumSignaturesRequired: 1
     }]
   }]
@@ -323,28 +323,4 @@ blocks.config = {
   id: '',
   type: 'WebLedgerEventBlock',
   event: [events.config]
-};
-
-const bedrock = require('bedrock');
-const jsonld = bedrock.jsonld;
-const oldLoader = jsonld.documentLoader;
-jsonld.documentLoader = function(url, callback) {
-  if(Object.keys(mock.ldDocuments).includes(url)) {
-    return callback(null, {
-      contextUrl: null,
-      document: mock.ldDocuments[url],
-      documentUrl: url
-    });
-  }
-  // const regex = new RegExp(
-  //   'http://authorization.dev/dids' + '/(.*?)$');
-  // const didMatch = url.match(regex);
-  // if(didMatch && didMatch.length === 2 && didMatch[1] in mock.didDocuments) {
-  //   return callback(null, {
-  //     contextUrl: null,
-  //     document: mock.didDocuments[didMatch[1]],
-  //     documentUrl: url
-  //   });
-  // }
-  oldLoader(url, callback);
 };
