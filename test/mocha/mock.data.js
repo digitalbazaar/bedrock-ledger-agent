@@ -436,15 +436,15 @@ events.equihashConfig = {
         identities.regularUser.identity.id
       ],
       minimumSignaturesRequired: 1
-    }/*, {
-      type: 'EquihashProofOfWorkGuard2017',
+    }, {
+      type: 'EquihashGuard2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
       }],
       equihashParameterN: 64,
       equihashParameterK: 3
-    }*/]
+    }]
   }]
 };
 
