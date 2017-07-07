@@ -4,18 +4,22 @@
 /* jshint node: true */
 'use strict';
 
-var async = require('async');
-var brIdentity = require('bedrock-identity');
-var brKey = require('bedrock-key');
-var database = require('bedrock-mongodb');
-var uuid = require('uuid').v4;
+const _ = require('lodash');
+const async = require('async');
+const bedrock = require('bedrock');
+const brIdentity = require('bedrock-identity');
+const brKey = require('bedrock-key');
+const database = require('bedrock-mongodb');
+const jsigs = require('jsonld-signatures');
+
+jsigs.use('jsonld', bedrock.jsonld);
 
 var api = {};
 module.exports = api;
 
 api.createIdentity = function(userName) {
   var newIdentity = {
-    id: 'did:v1:' + uuid(),
+    id: userName,
     type: 'Identity',
     sysSlug: userName,
     label: userName,
@@ -114,6 +118,24 @@ api.prepareDatabase = function(mockData, callback) {
 
 api.getEventNumber = function(eventId) {
   return Number(eventId.substring(eventId.lastIndexOf('/') + 1));
+};
+
+api.multiSign = function(doc, signers, callback) {
+  if(!Array.isArray(signers)) {
+    throw new TypeError('Signers must be an array.');
+  }
+  async.map(signers, (s, callback) => jsigs.sign(doc, {
+    algorithm: 'LinkedDataSignature2015',
+    privateKeyPem: s.privateKeyPem,
+    creator: s.creator
+  }, callback), (err, results) => {
+    if(err) {
+      return callback(err);
+    }
+    const d = _.cloneDeep(results[0]);
+    d.signature = results.map(d => d.signature);
+    callback(null, d);
+  });
 };
 
 // Insert identities and public keys used for testing into database

@@ -15,7 +15,8 @@ let userName;
 // identity with permission to access its own ledgers
 userName = 'regularUser';
 identities[userName] = {};
-identities[userName].identity = helpers.createIdentity();
+identities[userName].identity = helpers.createIdentity(
+  'did:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
 identities[userName].identity.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
@@ -82,7 +83,8 @@ mock.ldDocuments[identities[userName].keys.publicKey.id] = {
 // identity with permission to access its own ledgers
 userName = 'alternateUser';
 identities[userName] = {};
-identities[userName].identity = helpers.createIdentity(userName);
+identities[userName].identity = helpers.createIdentity(
+  'did:v1:09af68f7-fc2b-43ad-b885-28e153db5866');
 identities[userName].identity.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
@@ -91,27 +93,108 @@ identities[userName].keys = helpers.createKeyPair({
   userName: userName,
   userId: identities[userName].identity.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
-    'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWn5TYzA1AksoTvwZOk2KxGB4f\n' +
-    'HHAn38sBIPkT0hqLB0gyP1HVcl/hFa3s0nPXcCUWxwOIxljSF6SMOqTfpOXAIzIX\n' +
-    'S02GS00aS3rzOmxpY01ptq1WRBVCCAK4nyJHD7JkkN0EZ8zM3GXHWzO/H8oYS8tE\n' +
-    'dGXOPEHfDCNLuBXctQIDAQAB\n' +
+    'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3QS5rF47pcj7+HZsp8Kq\n' +
+    '7z7nx3fulu9mHbAuWUNORNOG2cHLSjNT7pzKV+dQkmcPO0govt4uxfUsrE9xtteu\n' +
+    'RKesJS5eXmV5FEcgt6NezdCmdad6TZ9x7o5lHKe8rX7z2/rki7GNll5mzonv5Sr2\n' +
+    'dzU/3oKCNdP5Jlb0+rfhrNw8A4HSmyO7jlMBuVgJJ4SiobdfC6rflfY1ci4QQ/Vj\n' +
+    'RHmQdAz9H0g35U5IiFbasc/75tSXPY090rB7t/N02HVjbXFfy+U9C+Qhr+8wxXL3\n' +
+    'XEO9dkwP8YF60I0st4BpqA34p+790crBwY80Kh/2PGfxxvdvUxu4V6xhMQgXFuIq\n' +
+    'rQIDAQAB\n' +
     '-----END PUBLIC KEY-----\n',
-  privateKey: '-----BEGIN PRIVATE KEY-----\n' +
-    'MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANaflNjMDUCSyhO/\n' +
-    'Bk6TYrEYHh8ccCffywEg+RPSGosHSDI/UdVyX+EVrezSc9dwJRbHA4jGWNIXpIw6\n' +
-    'pN+k5cAjMhdLTYZLTRpLevM6bGljTWm2rVZEFUIIArifIkcPsmSQ3QRnzMzcZcdb\n' +
-    'M78fyhhLy0R0Zc48Qd8MI0u4Fdy1AgMBAAECgYBd5knYJEZ0BwT0aLIYtLEMLDIZ\n' +
-    'iHala2tE3ik7e8PzKcdzfHKQQU8jijmjEFxwWHdRpNauA6GeoYtzcsDpvBpsDU26\n' +
-    '0w6lDSqfN1PUhcnCo6BOs/wFsUwOiMpDlxcCdLp5KfjS1b+9EVIhGB28lJ6UMtW4\n' +
-    'kUQ62q+y43fzleqNrQJBAPfDppld16ZeuEN2ewG5jZ8xJI830pxZDzMA7NBlUpFz\n' +
-    'qgNjRcjRE4ZPkfGXxuTPpfB/UNVqxSDUECLDUMTpYfsCQQDdwesV5twwYnSxG/82\n' +
-    'FIVYkex+cMtK7+LBgCU9IXSiRW0GSvrokJz/WNGVXkBU8v5Eh8R0AHQ2F7wUltEx\n' +
-    'kC0PAkEA9R8mBfmnzrtLRcNEMxKmoGZ4KxEpVvFtbiJuKEb2B10NSMjAU8s1q92x\n' +
-    'H/nvFpSxMVxkVqCJYs8rH5looUfcXQJBALaOrbmaFCrA4s/q/G7I9f20I7zznmhS\n' +
-    'k5o4pG9u21W7UcWcdHKAmr6bn+4XaV6FrE0+d7wHo6PkZjGM9yqWRoECQQCr88fX\n' +
-    'OKN20B8ci/1Kc2fiHb97DPHSwzm9fVySNcGQIbx640+tdXQVw/BhtlZLo5HZfZEz\n' +
-    'uOhRrGhuLsnnaamp\n' +
-    '-----END PRIVATE KEY-----\n'
+  privateKey: '-----BEGIN RSA PRIVATE KEY-----\n' +
+    'MIIEowIBAAKCAQEA3QS5rF47pcj7+HZsp8Kq7z7nx3fulu9mHbAuWUNORNOG2cHL\n' +
+    'SjNT7pzKV+dQkmcPO0govt4uxfUsrE9xtteuRKesJS5eXmV5FEcgt6NezdCmdad6\n' +
+    'TZ9x7o5lHKe8rX7z2/rki7GNll5mzonv5Sr2dzU/3oKCNdP5Jlb0+rfhrNw8A4HS\n' +
+    'myO7jlMBuVgJJ4SiobdfC6rflfY1ci4QQ/VjRHmQdAz9H0g35U5IiFbasc/75tSX\n' +
+    'PY090rB7t/N02HVjbXFfy+U9C+Qhr+8wxXL3XEO9dkwP8YF60I0st4BpqA34p+79\n' +
+    '0crBwY80Kh/2PGfxxvdvUxu4V6xhMQgXFuIqrQIDAQABAoIBAEMRPwKGKdV58rQH\n' +
+    'w5r4oIQu84h85UKZ7MPPhZECsoqCIaaMfxLKFosOuvwHrlRuv5l+oRaiN1FMv7yd\n' +
+    '8uTH+BLPSpaRxoMgiahUmSIAijEsQobrRlqtqpX4UchrQf7nyjoTnSyiuVNK3CmK\n' +
+    'g+hnrBiqaPItajPJWg5/TqGSEQIx1gtAUIIDXY+LKB3l7H6j68uscInjOgAlmNOn\n' +
+    'h7YQzCNL2BfWR4hyTz4+MoOZZjpVmvN8itHyKl/HTWv5PbSnnDPWgx18bcvVItQY\n' +
+    'AFAdLX1a6plUd8ysRX++d0F+hO/fxfkiv4cEQi5lAlCPl0qmkdeB2LMTQhFYNQo9\n' +
+    's86f1WUCgYEA7sMXR3fY/4ubucgU/w2+tC3hJufbZtaU+1sPfmYgt+FJhJq68QFa\n' +
+    '1OyT9Cgu74PM7EwAEmnRd2Ikg3xcjt2H8jEfJUHCPvq/PQ1MRLMpDGckLv2LGov3\n' +
+    '7N+KGb+O8FwyIIyqglRPAEvujX1Cpa8pNEvFFb2ob3rI202on5mxF18CgYEA7Pmw\n' +
+    'VGYXFOXieTFazCZbezH9YBsCLcWg1NfR0V93KMraHaSj9vHdr5U94RB2Q6uZuD/Q\n' +
+    'R5+zvQsTPyHZK9rOVK2a23LhrC4fGtBMVb4BMSVJrTv+XB6EfkZvl1oqQ0OwNSOP\n' +
+    'po1vfEXknCag/rQsi25ajH8XSAf++b/2niRCNXMCgYEAoZA8IW1U1l9nCgj9RDXN\n' +
+    '1Oiy0XvVODp957SPwG1lOGhnMibt1wWerDRGTdIfKI4cTc2DwvH9/vXXVW4Cx93a\n' +
+    'DyX0OGbOBYXxgGOON3KwlSb6Eh4ZUeZi5tPBBHleRQFuHh5xhu174+x9yRp4zdrA\n' +
+    'XBXlkDedUYpZfiSHtS/v6KsCgYBlFvqudkKAarSayIAYOICr5B5XQg5C4lyCj3J1\n' +
+    'I4lcgHRdUt+TN4g/H6Ye/XvF0E0p+Sbrduggy7mxI8pV1+hO3SQDW1WDssUYFiWK\n' +
+    'KhyuD18HpGEUgPw6Nefio9cFjLl9YaclAI6/b71fE2d4X/nknPXJm2meE7MkbUxS\n' +
+    'F9uamwKBgEvespz68OHW80psrdIssdIe1JZZmzxScYHt+JKemroZ2M65g73bhCtj\n' +
+    'RIMkJvPd/WQ/cg85DNQ4w23QFwjzBZaXA8we9Dx6PQQGt3SNx0RdJw9qNregDNsx\n' +
+    '0vMjVanUjnBSpnEmSI4I7o2E8ejxfCZjT053kf47BupJ6nLde+gZ\n' +
+    '-----END RSA PRIVATE KEY-----\n'
+});
+mock.ldDocuments[identities[userName].identity.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "id": identities[userName].identity.id,
+  "publicKey": [{
+    "id": identities[userName].keys.publicKey.id,
+    "type": "CryptographicKey",
+    "owner": identities[userName].identity.id,
+    "publicKeyPem": identities[userName].keys.publicKey.id
+  }]
+};
+mock.ldDocuments[identities[userName].keys.publicKey.id] = {
+  "@context": "https://w3id.org/identity/v1",
+  "type": "CryptographicKey",
+  "owner": identities[userName].identity.id,
+  "label": "Signing Key for " + identities[userName].identity.id,
+  "id": identities[userName].keys.publicKey.id,
+  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+};
+// identity with permission to access its own ledgers
+userName = 'gamma';
+identities[userName] = {};
+identities[userName].identity = helpers.createIdentity(
+  'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484');
+identities[userName].identity.sysResourceRole.push({
+  sysRole: 'bedrock-ledger-agent.test',
+  generateResource: 'id'
+});
+identities[userName].keys = helpers.createKeyPair({
+  userName: userName,
+  userId: identities[userName].identity.id,
+  publicKey: '-----BEGIN PUBLIC KEY-----\n' +
+    'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqv8gApfU3FhZx1gyKmBU\n' +
+    'czZ1Ba3DQbqcGRJiwWz6wrr9E/K0PcpRws/+GPc1znG4cKLdxkdyA2zROUt/lbaM\n' +
+    'TU+/kZzRh3ICZZOuo8kJpGqxPDIm7L1lIcBLOWu/UEV2VaWNOENwiQbh61VJlR+k\n' +
+    'HK9LhQxYYZT554MYaXzcSRTC/RzHDTAocf+B1go8tawPEixgs93+HHXoLPGypmqn\n' +
+    'lBKAjmGMwizbWFccDQqv0yZfAFpdVY2MNKlDSUNMnZyUgBZNpGOGPm9zi9aMFT2d\n' +
+    'DrN9fpWMdu0QeZrJrDHzk6TKwtKrBB9xNMuHGYdPxy8Ix0uNmUt0mqt6H5Vhl4O0\n' +
+    '0QIDAQAB\n' +
+    '-----END PUBLIC KEY-----\n',
+  privateKey: '-----BEGIN RSA PRIVATE KEY-----\n' +
+    'MIIEpQIBAAKCAQEAqv8gApfU3FhZx1gyKmBUczZ1Ba3DQbqcGRJiwWz6wrr9E/K0\n' +
+    'PcpRws/+GPc1znG4cKLdxkdyA2zROUt/lbaMTU+/kZzRh3ICZZOuo8kJpGqxPDIm\n' +
+    '7L1lIcBLOWu/UEV2VaWNOENwiQbh61VJlR+kHK9LhQxYYZT554MYaXzcSRTC/RzH\n' +
+    'DTAocf+B1go8tawPEixgs93+HHXoLPGypmqnlBKAjmGMwizbWFccDQqv0yZfAFpd\n' +
+    'VY2MNKlDSUNMnZyUgBZNpGOGPm9zi9aMFT2dDrN9fpWMdu0QeZrJrDHzk6TKwtKr\n' +
+    'BB9xNMuHGYdPxy8Ix0uNmUt0mqt6H5Vhl4O00QIDAQABAoIBAQCpA3yXM42AsY8j\n' +
+    'mwgSnJ48NqJaF5L8P7+UhHi6KMZ+fSYydl0zCevge4bzFD3JrNuZ8VD1b57AxejT\n' +
+    'Ec2so/9vVxjJi1AK6WR3FA608rumGJLQJd4Vd2ojfxabTeWOKOo642R/LSFpPzVE\n' +
+    'T0toqxqiA53IhxhAc2jDLO+PLIvrao0Y8bWWq36tbxsAplrv8Gms6ZRwfKoX5P32\n' +
+    'azBpJOqneNdSMRPHky6t2uiYyuPeG9pbuaClkD7Ss9lpH0V1DLQmAAlP9I0Aa06B\n' +
+    'a9zPFPb3Ae8F0HO/tsf8gIvrlT38JvLe5VuCS7/LQNCZguyPZuZOXLDmdETfm1FD\n' +
+    'q56rCV7VAoGBANmQ7EqDfxmUygTXlqaCQqNzY5pYKItM6RFHc9I+ADBWsLbuKtfP\n' +
+    'XUMHQx6PvwCMBpjZkM7doGdzOHb0l3rW8zQONayqQxN9Pjd7K+dkSY6k0SScw46w\n' +
+    '0AexDQSM/0ahVAHfXXi1GbKwlonM0nn/7JHz7n/fL9HwV8T3hAGClbPDAoGBAMk0\n' +
+    'K5d+Ov55sKW0ZatZ0vTnfBCSrVEfG6FkcyK7uiSsMdWo2/De0VtJF7od2DM5UyP6\n' +
+    'Y/DSVk4oPepbug5oGdu8t1Q3jbS61A7i/dssirQC4hEFAtoTGsVfaH8wu4AKyWd7\n' +
+    '0rUmSrnyqNr4mfQBjdaXByvWO9rdEfZcZqaSQ4/bAoGAKy/CR7Q8eYZ4Z2eoBtta\n' +
+    'gPl5rvyK58PXi8+EJRqbjPzYTSePp5EI8TIy15EvF9uzv4mIXhfOLFrJvYsluoOK\n' +
+    'eS3M575QXEEDJZ40g9T7aO48eakIhH2CfdReQiX+0jVZ6Jk/A6PnOvokl6vpp7/u\n' +
+    'ZLZoBEf4RRMRSQ7czDPwpWMCgYEAlNWZtWuz+hBMgpcqahF9AprF5ICL4qkvSDjF\n' +
+    'Dpltfbk+9/z8DXbVyUANZCi1iFbMUJ3lFfyRySjtfBI0VHnfPvOfbZXWpi1ZtlVl\n' +
+    'UZ7mT3ief9aEIIrnT79ezk9fM71G9NzcphHYTyrYi3pAcAZCRM3diSjlh+XmZqY9\n' +
+    'bNRfU+cCgYEAoBYwp0PJ1QEp3lSmb+gJiTxfNwIrP+VLkWYzPREpSbghDYjE2DfC\n' +
+    'M8pNbVWpnOfT7OlhN3jw8pxHWap6PxNyVT2W/1AHNGKTK/BfFVn3nVGhOgPgH1AO\n' +
+    'sObYxm9gpkNkelXejA/trbLe4hg7RWNYzOztbfbZakdVjMNfXnyw+Q0=\n' +
+    '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
   "@context": "https://w3id.org/identity/v1",
@@ -261,13 +344,49 @@ events.config = {
   }]
 };
 
-events.multisigConfig = {
+events.multisigConfigAlpha = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
   operation: 'Config',
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+    consensusMethod: {
+      type: 'UnilateralConsensus2017'
+    },
+    validationEventGuard: [{
+      type: 'SignatureGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerConfigurationEvent']
+      }],
+      approvedSigner: [
+        identities.regularUser.identity.id,
+        identities.alternateUser.identity.id
+      ],
+      minimumSignaturesRequired: 2
+    }, {
+      type: 'SignatureGuard2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerEvent']
+      }],
+      approvedSigner: [
+        identities.regularUser.identity.id,
+        identities.alternateUser.identity.id
+      ],
+      minimumSignaturesRequired: 2
+    }]
+  }]
+};
+
+events.multisigConfigBeta = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfigurationEvent',
+  operation: 'Config',
+  input: [{
+    type: 'WebLedgerConfiguration',
+    ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
     consensusMethod: {
       type: 'UnilateralConsensus2017'
     },
