@@ -10,6 +10,8 @@ const bedrock = require('bedrock');
 const brLedger = require('bedrock-ledger');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
+const crypto = require('crypto');
+const equihash = require('equihash')('khovratovich');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -26,7 +28,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
+describe('Integration - 1 Node - Unilateral - Equihash', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
 
@@ -69,17 +71,38 @@ describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
   });
   it('should add 10 events and blocks', done => {
     async.times(10, (n, callback) => {
+      const concertEvent = _.cloneDeep(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+
       async.auto({
-        powHash: callback => {
-          const concertEvent = _.cloneDeep(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-          // FIXME: Implement equihash proof of work on event
-          callback(null, concertEvent);
-        },
-        add: ['powHash', (results, callback) => {
+        normalize: callback => bedrock.jsonld.normalize(concertEvent, {
+          algorithm: 'URDNA2015',
+          format: 'application/nquads'
+        }, callback),
+        proof: ['normalize', (results, callback) => {
+          const hash =
+            crypto.createHash('sha256').update(results.normalize, 'utf8').digest();
+          const equihashOptions = {
+            n: 90,
+            k: 5
+          };
+          equihash.solve(hash, equihashOptions, callback);
+        }],
+        sign: ['proof', (results, callback) => {
+          const signed = _.cloneDeep(concertEvent);
+          signed.signature = {
+            type: 'EquihashSignature2017',
+            equihashParameterN: results.proof.n,
+            equihashParameterK: results.proof.k,
+            nonce: results.proof.nonce,
+            signatureValue: Buffer.from(results.proof.value).toString('base64')
+          };
+          callback(null, signed);
+        }],
+        add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
             url: ledgerAgent.service.ledgerEventService,
-            body: results.powHash,
+            body: results.sign,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);

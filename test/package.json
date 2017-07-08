@@ -45,6 +45,7 @@
     "bedrock-test": "^1.2.0",
     "bedrock-validation": "^2.2.1",
     "bedrock-views": "^5.0.2",
+    "equihash": "digitalbazaar/equihash#implementation",
     "grunt": "^1.0.1",
     "jsonld-signatures": "digitalbazaar/jsonld-signatures#multiSignature",
     "lodash": "^4.17.4",
