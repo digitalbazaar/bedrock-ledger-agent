@@ -1,5 +1,7 @@
 # Bedrock Ledger Agent
 
+[![Build Status](https://ci.digitalbazaar.com/buildStatus/icon?job=bedrock-ledger-agent)](https://ci.digitalbazaar.com/job/bedrock-ledger-agent)
+
 A [bedrock][] module for the creation and management of
 [Web Ledger Agents](https://w3c.github.io/web-ledger/).
 The Web Ledger ecosystem consists of Ledger Agents,
