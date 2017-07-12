@@ -18,7 +18,8 @@
   "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
   "dependencies": {
     "async": "^2.4.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "uuid": "^3.1.0"
   },
   "peerDependencies": {
     "bedrock": "^1.2.4",
