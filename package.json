@@ -18,6 +18,7 @@
   "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
   "dependencies": {
     "async": "^2.4.0",
+    "cors": "^2.8.3",
     "lodash": "^4.17.4",
     "uuid": "^3.1.0"
   },
