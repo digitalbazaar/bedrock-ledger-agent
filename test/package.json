@@ -1,28 +1,11 @@
 {
   "name": "bedrock-ledger-agent-test",
   "version": "0.0.1-0",
-  "description": "Bedrock ledger agent test",
-  "main": "./test",
+  "private": true,
   "scripts": {
     "test": "node --preserve-symlinks test test",
     "watch": "grunt watch"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/digitalbazaar/bedrock-ledger-agent"
-  },
-  "keywords": [
-    "bedrock"
-  ],
-  "author": {
-    "name": "Digital Bazaar, Inc.",
-    "email": "support@digitalbazaar.com",
-    "url": "http://digitalbazaar.com"
-  },
-  "bugs": {
-    "url": "https://github.com/digitalbazaar/bedrock-ledger-agent/issues"
-  },
-  "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
   "dependencies": {
     "async": "^2.4.0",
     "bedrock": "digitalbazaar/bedrock#updateTestDeps",
@@ -45,6 +28,7 @@
     "bedrock-test": "^1.2.0",
     "bedrock-validation": "^2.2.1",
     "bedrock-views": "^5.0.2",
+    "cors": "^2.8.3",
     "equihash": "digitalbazaar/equihash#implementation",
     "grunt": "^1.0.1",
     "jsonld-signatures": "digitalbazaar/jsonld-signatures#multiSignature",
