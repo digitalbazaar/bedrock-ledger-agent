@@ -321,11 +321,9 @@ events.config = {
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: {
-      type: 'UnilateralConsensus2017'
-    },
-    validationEventGuard: [{
-      type: 'SignatureGuard2017',
+    consensusMethod: 'UnilateralConsensus2017',
+    eventValidator: [{
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
@@ -333,14 +331,15 @@ events.config = {
       approvedSigner: [identities.regularUser.identity.id],
       minimumSignaturesRequired: 1
     }, {
-      type: 'SignatureGuard2017',
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerConfigurationEvent']
       }],
       approvedSigner: [identities.regularUser.identity.id],
       minimumSignaturesRequired: 1
-    }]
+    }],
+    requireEventValidation: true
   }]
 };
 
@@ -351,11 +350,9 @@ events.multisigConfigAlpha = {
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: {
-      type: 'UnilateralConsensus2017'
-    },
-    validationEventGuard: [{
-      type: 'SignatureGuard2017',
+    consensusMethod: 'UnilateralConsensus2017',
+    eventValidator: [{
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerConfigurationEvent']
@@ -366,7 +363,7 @@ events.multisigConfigAlpha = {
       ],
       minimumSignaturesRequired: 2
     }, {
-      type: 'SignatureGuard2017',
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
@@ -376,7 +373,8 @@ events.multisigConfigAlpha = {
         identities.alternateUser.identity.id
       ],
       minimumSignaturesRequired: 2
-    }]
+    }],
+    requireEventValidation: true
   }]
 };
 
@@ -387,11 +385,9 @@ events.multisigConfigBeta = {
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
-    consensusMethod: {
-      type: 'UnilateralConsensus2017'
-    },
-    validationEventGuard: [{
-      type: 'SignatureGuard2017',
+    consensusMethod: 'UnilateralConsensus2017',
+    eventValidator: [{
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerConfigurationEvent']
@@ -402,7 +398,7 @@ events.multisigConfigBeta = {
       ],
       minimumSignaturesRequired: 2
     }, {
-      type: 'SignatureGuard2017',
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
@@ -412,7 +408,8 @@ events.multisigConfigBeta = {
         identities.alternateUser.identity.id
       ],
       minimumSignaturesRequired: 2
-    }]
+    }],
+    requireEventValidation: true
   }]
 };
 
@@ -423,11 +420,9 @@ events.equihashConfig = {
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: {
-      type: 'UnilateralConsensus2017'
-    },
-    validationEventGuard: [{
-      type: 'SignatureGuard2017',
+    consensusMethod: 'UnilateralConsensus2017',
+    eventValidator: [{
+      type: 'SignatureValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerConfigurationEvent']
@@ -437,14 +432,15 @@ events.equihashConfig = {
       ],
       minimumSignaturesRequired: 1
     }, {
-      type: 'EquihashGuard2017',
+      type: 'EquihashValidator2017',
       eventFilter: [{
         type: 'EventTypeFilter',
         eventType: ['WebLedgerEvent']
       }],
       equihashParameterN: 64,
       equihashParameterK: 3
-    }]
+    }],
+    requireEventValidation: true
   }]
 };
 

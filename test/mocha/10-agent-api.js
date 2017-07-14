@@ -67,7 +67,7 @@ describe('Ledger Agent API', () => {
         done();
       });
     });
-    it('returns GuardRejection if config event is not signed', done => {
+    it('returns ValidationError if config event is not signed', done => {
       const options = {
         configEvent: mockData.events.config,
         owner: regularActor.id
@@ -75,8 +75,9 @@ describe('Ledger Agent API', () => {
       brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
         should.exist(err);
         should.not.exist(ledgerAgent);
-        err.name.should.equal('GuardRejection');
-        err.cause.cause.toString().should.contain('No signature found.');
+        err.name.should.equal('ValidationError');
+        err.details.validatorReports.some(r => r.error && r.error.cause &&
+          r.error.cause.includes('No signature found.')).should.be.true;
         done();
       });
     });

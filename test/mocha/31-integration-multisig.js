@@ -213,7 +213,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       signConfigAlpha: ['addEventAlpha', (results, callback) => {
         const newConfig = _.cloneDeep(mockData.events.multisigConfigBeta);
         // change approvedSigners for WebLedgerEvent
-        newConfig.input[0].validationEventGuard[1].approvedSigner = [
+        newConfig.input[0].eventValidator[1].approvedSigner = [
           mockData.identities.regularUser.identity.id,
           mockData.identities.gamma.identity.id
         ];
@@ -244,8 +244,8 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         }), (err, res) => {
           should.not.exist(err);
           // this event should fail
-          res.statusCode.should.equal(403);
-          res.body.type.should.equal('GuardRejection');
+          res.statusCode.should.equal(400);
+          res.body.type.should.equal('ValidationError');
           callback();
         })],
       signEventGamma: ['addEventBeta', (results, callback) => {
