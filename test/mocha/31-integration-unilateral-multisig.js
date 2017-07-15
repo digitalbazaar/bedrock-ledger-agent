@@ -4,7 +4,6 @@
 /* globals should */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const config = bedrock.config;
@@ -73,7 +72,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     // });
     it('should add 10 events and blocks', done =>
       async.times(10, (n, callback) => {
-        const concertEvent = _.cloneDeep(mockData.events.concert);
+        const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
         async.auto({
           signEvent: callback => helpers.multiSign(
@@ -194,7 +193,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     }, err => done(err)));
     it('changes the ledger configuration', done => async.auto({
       signEventAlpha: callback => {
-        const concertEvent = _.cloneDeep(mockData.events.concert);
+        const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
         helpers.multiSign(concertEvent, originalSigners, callback);
       },
@@ -209,7 +208,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           callback(null, res.headers.location);
         })],
       signConfigAlpha: ['addEventAlpha', (results, callback) => {
-        const newConfig = _.cloneDeep(mockData.events.multisigConfigBeta);
+        const newConfig = bedrock.util.clone(mockData.events.multisigConfigBeta);
         // change approvedSigners for WebLedgerEvent
         newConfig.input[0].eventValidator[1].approvedSigner = [
           mockData.identities.regularUser.identity.id,
@@ -230,7 +229,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         })],
       signEventBeta: ['addConfigAlpha', (results, callback) => {
         // sign a new event with original signers
-        const concertEvent = _.cloneDeep(mockData.events.concert);
+        const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
         helpers.multiSign(concertEvent, originalSigners, callback);
       }],
@@ -248,7 +247,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         })],
       signEventGamma: ['addEventBeta', (results, callback) => {
         // sign a new event with the new signers
-        const concertEvent = _.cloneDeep(mockData.events.concert);
+        const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
         helpers.multiSign(concertEvent, newSigners, callback);
       }],

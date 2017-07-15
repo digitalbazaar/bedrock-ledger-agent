@@ -4,7 +4,6 @@
 /* globals should */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const config = bedrock.config;
@@ -72,7 +71,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
     async.times(10, (n, callback) => {
       async.auto({
         sign: callback => {
-          const concertEvent = _.cloneDeep(mockData.events.concert);
+          const concertEvent = bedrock.util.clone(mockData.events.concert);
           concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
           jsigs.sign(concertEvent, {
             algorithm: 'LinkedDataSignature2015',

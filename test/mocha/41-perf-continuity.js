@@ -4,7 +4,6 @@
 /* globals should */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const config = bedrock.config;
@@ -61,7 +60,7 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
   it('adds ' + events + ' events and blocks', done => {
     const start = Date.now();
     async.times(events, (n, callback) => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       request.post(helpers.createHttpSignatureRequest({
         url: ledgerAgent.service.ledgerEventService,

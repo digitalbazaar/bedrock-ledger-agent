@@ -4,7 +4,6 @@
 /* globals should */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const brLedger = require('bedrock-ledger');
@@ -182,7 +181,7 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should add event', done => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
         signEvent: callback => jsigs.sign(concertEvent, {
@@ -205,7 +204,7 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should get event', done => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
         signEvent: callback => jsigs.sign(concertEvent, {

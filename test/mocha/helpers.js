@@ -4,7 +4,6 @@
 /* jshint node: true */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
@@ -132,7 +131,7 @@ api.multiSign = function(doc, signers, callback) {
     if(err) {
       return callback(err);
     }
-    const d = _.cloneDeep(results[0]);
+    const d = bedrock.util.clone(results[0]);
     d.signature = results.map(d => d.signature);
     callback(null, d);
   });
