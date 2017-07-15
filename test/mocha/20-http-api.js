@@ -8,7 +8,6 @@ const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -75,8 +74,6 @@ describe('Ledger Agent HTTP API', () => {
   describe('authenticated as regularUser', () => {
 
     it('should add ledger agent for new ledger', done => {
-      const configEvent = mockData.events.config;
-
       request.post(helpers.createHttpSignatureRequest({
         url: url.format(urlObj),
         body: signedConfigEvent,

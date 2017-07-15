@@ -7,8 +7,6 @@
 const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
-const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -198,7 +196,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       signEventAlpha: callback => {
         const concertEvent = _.cloneDeep(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-        helpers.multiSign(concertEvent, originalSigners, callback)
+        helpers.multiSign(concertEvent, originalSigners, callback);
       },
       addEventAlpha: ['signEventAlpha', (results, callback) => request.post(
         helpers.createHttpSignatureRequest({

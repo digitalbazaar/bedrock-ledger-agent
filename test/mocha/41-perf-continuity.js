@@ -7,8 +7,6 @@
 const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
-const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const mockData = require('./mock.data');
@@ -17,7 +15,6 @@ request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const uuid = require('uuid/v4');
-const querystring = require('querystring');
 
 const urlObj = {
   protocol: 'https',
@@ -27,9 +24,7 @@ const urlObj = {
 
 describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
-  const configEvent = mockData.events.config;
   let ledgerAgent;
-  let currentTest;
 
   before(done => helpers.prepareDatabase(mockData, done));
   before(done => {
@@ -82,11 +77,11 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
       const totalTime = (end - start) / 1000;
       eventsPerSecond = events / totalTime;
       done(err);
-    })
+    });
   }).timeout(30000);
   it('should perform more than 5 transactions per second', done => {
-    console.log('        ' + Math.floor(eventsPerSecond) + ' events per second');
+    console.log('       ' + Math.floor(eventsPerSecond) + ' events per second');
     eventsPerSecond.should.be.at.least(5);
     done();
-  })
+  });
 });

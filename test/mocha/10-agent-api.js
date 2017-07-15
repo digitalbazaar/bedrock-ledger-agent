@@ -9,11 +9,9 @@ const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const database = require('bedrock-mongodb');
-const expect = global.chai.expect;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
-const uuid = require('uuid/v4');
 
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
@@ -206,6 +204,7 @@ describe('Ledger Agent API', () => {
         brLedgerAgent.get(
           regularActor, ledgerAgentId, options, (err, ledgerAgent) => {
             should.exist(err);
+            should.not.exist(ledgerAgent);
             err.name.should.equal('PermissionDenied');
             done();
           });
@@ -312,6 +311,7 @@ describe('Ledger Agent API', () => {
       brLedgerAgent.add(
         unauthorizedActor, null, options, (err, ledgerAgent) => {
           should.exist(err);
+          should.not.exist(ledgerAgent);
           err.name.should.equal('PermissionDenied');
           done();
         });
@@ -332,6 +332,7 @@ describe('Ledger Agent API', () => {
         brLedgerAgent.add(
           unauthorizedActor, ledgerNodeId, options, (err, ledgerAgent) => {
             should.exist(err);
+            should.not.exist(ledgerAgent);
             err.name.should.equal('PermissionDenied');
             done();
           });
@@ -351,6 +352,7 @@ describe('Ledger Agent API', () => {
         brLedgerAgent.get(
           unauthorizedActor, ledgerAgentId, options, (err, ledgerAgent) => {
             should.exist(err);
+            should.not.exist(ledgerAgent);
             err.name.should.equal('PermissionDenied');
             done();
           });

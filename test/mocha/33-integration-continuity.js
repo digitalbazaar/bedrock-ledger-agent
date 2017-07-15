@@ -7,8 +7,6 @@
 const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
-const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const mockData = require('./mock.data');
@@ -27,7 +25,6 @@ const urlObj = {
 
 describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
-  const configEvent = mockData.events.config;
   let ledgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));

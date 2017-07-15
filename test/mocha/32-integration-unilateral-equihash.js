@@ -4,20 +4,15 @@
 /* globals should */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
-const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
-const crypto = require('crypto');
-const equihash = require('equihash')('khovratovich');
+const equihashSigs = require('equihash-signature');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
-// require('request-debug')(request);
 const url = require('url');
 const uuid = require('uuid/v4');
 const querystring = require('querystring');
@@ -70,35 +65,18 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   it('should add 10 events and blocks', done => {
+    const testConfig =
+      mockData.events.equihashConfig.input[0].eventValidator[1];
     async.times(10, (n, callback) => {
-      const concertEvent = _.cloneDeep(mockData.events.concert);
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
 
       async.auto({
-        normalize: callback => bedrock.jsonld.normalize(concertEvent, {
-          algorithm: 'URDNA2015',
-          format: 'application/nquads'
+        sign: callback => equihashSigs.sign({
+          n: testConfig.equihashParameterN,
+          k: testConfig.equihashParameterK,
+          doc: concertEvent
         }, callback),
-        proof: ['normalize', (results, callback) => {
-          const hash =
-            crypto.createHash('sha256').update(results.normalize, 'utf8').digest();
-          const equihashOptions = {
-            n: 90,
-            k: 5
-          };
-          equihash.solve(hash, equihashOptions, callback);
-        }],
-        sign: ['proof', (results, callback) => {
-          const signed = _.cloneDeep(concertEvent);
-          signed.signature = {
-            type: 'EquihashSignature2017',
-            equihashParameterN: results.proof.n,
-            equihashParameterK: results.proof.k,
-            nonce: results.proof.nonce,
-            signatureValue: Buffer.from(results.proof.value).toString('base64')
-          };
-          callback(null, signed);
-        }],
         add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
             url: ledgerAgent.service.ledgerEventService,

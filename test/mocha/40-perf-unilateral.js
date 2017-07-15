@@ -7,8 +7,6 @@
 const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
-const brLedger = require('bedrock-ledger');
-const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -18,7 +16,6 @@ request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const uuid = require('uuid/v4');
-const querystring = require('querystring');
 
 jsigs.use('jsonld', bedrock.jsonld);
 
