@@ -23,6 +23,9 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
+// use local JSON-LD processor for signatures
+jsigs.use('jsonld', bedrock.jsonld);
+
 describe('Integration - 1 Node - Unilateral - Equihash', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
