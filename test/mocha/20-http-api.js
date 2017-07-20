@@ -238,6 +238,27 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
+    it('should get genesis block', done => {
+      async.auto({
+        get: callback => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: defaultLedgerAgent.service.ledgerBlockService,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            should.exist(res.body.genesis);
+            should.exist(res.body.genesis.block);
+            should.exist(res.body.genesis.meta);
+            res.body.genesis.block.type.should.equal('WebLedgerEventBlock');
+            should.not.exist(res.body.genesis.block.previousBlock);
+            should.not.exist(res.body.genesis.block.previousBlockHash);
+            res.body.genesis.meta.consensus.should.equal(true);
+            callback(null, res.body);
+          });
+        }
+      }, err => done(err));
+    });
     it('should get latest block', done => {
       async.auto({
         get: callback => {
