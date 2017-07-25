@@ -26,7 +26,8 @@ const urlObj = {
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
 
-describe('Integration - 1 Node - Unilateral - Equihash', () => {
+// FIXME: re-enable after equihash issue is resolved see: https://github.com/digitalbazaar/equihash/issues/1
+describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
 
@@ -87,6 +88,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
+            console.log('BBBBBBB', JSON.stringify(res.body, null, 2));
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
