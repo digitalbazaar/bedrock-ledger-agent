@@ -84,12 +84,12 @@ describe('Ledger Agent HTTP API', () => {
     });
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
-        owner: regularActor.id
+        owner: regularActor.id,
+        configEvent: signedConfigEvent
       };
-
       async.auto({
         createNode: callback =>
-          brLedger.add(regularActor, signedConfigEvent, options, callback),
+          brLedger.add(regularActor, options, callback),
         createAgent: ['createNode', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
