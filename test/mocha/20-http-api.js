@@ -305,19 +305,42 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it.skip('should query state machine successfully', done => {
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
       async.auto({
-        query: (results, callback) => {
-          const queryUrl = defaultLedgerAgent.service.ledgerQueryService +
-            querystring.stringify({id: 'https://example.com/events/1234'});
-          request.get(helpers.createHttpSignatureRequest({
-            url: queryUrl,
+        signEvent: callback => jsigs.sign(concertEvent, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, callback),
+        add: ['signEvent', (results, callback) => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: defaultLedgerAgent.service.ledgerEventService,
+            body: results.signEvent,
             identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        }],
+        query: ['add', (results, callback) => {
+          const queryUrl = defaultLedgerAgent.service.ledgerQueryService;
+          request.post(helpers.createHttpSignatureRequest({
+            url: queryUrl,
+            identity: regularActor,
+            headers: [{
+              name: 'accept',
+              value: 'application/ld+json'
+            }],
+            qs: {id: concertEvent.input[0].id}
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
             callback(null, res.body);
           });
-        }
+        }]
       }, err => done(err));
     });
   });
