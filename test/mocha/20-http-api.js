@@ -11,12 +11,12 @@ const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
+const querystring = require('querystring');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const uuid = require('uuid/v4');
-const querystring = require('querystring');
 
 jsigs.use('jsonld', bedrock.jsonld);
 
@@ -308,7 +308,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         query: (results, callback) => {
           const queryUrl = defaultLedgerAgent.service.ledgerQueryService +
-            querystring.format({id: 'https://example.com/events/1234'});
+            querystring.stringify({id: 'https://example.com/events/1234'});
           request.get(helpers.createHttpSignatureRequest({
             url: queryUrl,
             identity: regularActor
