@@ -87,19 +87,23 @@ const configEvent = {
   input: [{
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: {
-      type: 'UnilateralConsensus2017'
-    },
-    eventGuard: [{
-      type: 'ProofOfSignature2017',
-      supportedEventType: 'WebLedgerEvent',
+    consensusMethod: 'UnilateralConsensus2017'
+    eventValidator: [{
+      type: 'SignatureValidator2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerEvent']
+      }],
       approvedSigner: [
         'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
       ],
       minimumSignaturesRequired: 1
     }, {
-      type: 'ProofOfSignature2017',
-      supportedEventType: 'WebLedgerConfigurationEvent',
+      type: 'SignatureValidator2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerConfigurationEvent']
+      }],
       approvedSigner: [
         'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
       ],
@@ -107,7 +111,7 @@ const configEvent = {
     }]
   }],
   signature: {
-    type: 'RsaSignature2017',
+    type: 'LinkedDataSignature2015',
     created: '2017-10-24T05:33:31Z',
     creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
     domain: 'example.com',
