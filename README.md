@@ -108,7 +108,9 @@ const configEvent = {
         'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
       ],
       minimumSignaturesRequired: 1
-    }]
+    }],
+    // events that are not validated by at least 1 validator will be rejected
+    requireEventValidation: true
   }],
   signature: {
     type: 'LinkedDataSignature2015',
