@@ -304,9 +304,9 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.skip('should query state machine successfully', done => {
+    it('should query state machine successfully', done => {
       const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+      concertEvent.input[0].id = 'https://example.com/eventszzz/' + uuid(),
       async.auto({
         signEvent: callback => jsigs.sign(concertEvent, {
           algorithm: 'LinkedDataSignature2015',
@@ -338,6 +338,10 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
+            should.exist(res.body);
+            should.exist(res.body.object);
+            should.exist(res.body.meta);
+            res.body.object.should.deep.equal(concertEvent.input[0]);
             callback(null, res.body);
           });
         }]
