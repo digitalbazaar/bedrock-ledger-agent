@@ -32,7 +32,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
       add: callback => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: mockData.events.config,
+          body: {configEvent: mockData.events.config},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);

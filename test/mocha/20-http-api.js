@@ -6,7 +6,9 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const brIdentity = require('bedrock-identity');
 const brLedger = require('bedrock-ledger-node');
+const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -27,13 +29,19 @@ const urlObj = {
 };
 
 describe('Ledger Agent HTTP API', () => {
-  const regularActor = mockData.identities.regularUser;
   let signedConfigEvent;
   let defaultLedgerAgent;
 
+  before(done => helpers.prepareDatabase(mockData, done));
+
   before(done => {
+    let regularActor;
     async.auto({
-      prepare: callback => helpers.prepareDatabase(mockData, callback),
+      getRegularUser: callback => brIdentity.get(
+        null, mockData.identities.regularUser.identity.id, (err, result) => {
+          regularActor = result;
+          callback(err);
+        }),
       signConfig: callback => jsigs.sign(mockData.events.config, {
         algorithm: 'LinkedDataSignature2015',
         privateKeyPem:
@@ -43,26 +51,14 @@ describe('Ledger Agent HTTP API', () => {
         signedConfigEvent = result;
         callback(err);
       }),
-      add: ['prepare', 'signConfig', (results, callback) => {
-        request.post(helpers.createHttpSignatureRequest({
-          url: url.format(urlObj),
-          body: signedConfigEvent,
-          identity: regularActor
-        }), (err, res) => {
-          should.not.exist(err);
-          res.statusCode.should.equal(201);
-          callback(null, res.headers.location);
-        });
-      }],
-      get: ['add', (results, callback) => {
-        request.get(helpers.createHttpSignatureRequest({
-          url: results.add,
-          identity: regularActor
-        }), (err, res) => {
-          should.not.exist(err);
-          res.statusCode.should.equal(200);
-          defaultLedgerAgent = res.body;
-          callback();
+      add: ['getRegularUser', 'signConfig', (results, callback) => {
+        const options = {
+          configEvent: signedConfigEvent,
+          owner: regularActor.id
+        };
+        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
+          defaultLedgerAgent = ledgerAgent;
+          callback(err);
         });
       }]
     }, err => done(err));
@@ -71,43 +67,94 @@ describe('Ledger Agent HTTP API', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   describe('authenticated as regularUser', () => {
+    const regularActor = mockData.identities.regularUser;
 
     it('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
         url: url.format(urlObj),
-        body: signedConfigEvent,
+        body: {configEvent: signedConfigEvent},
         identity: regularActor
       }), (err, res) => {
         res.statusCode.should.equal(201);
+        should.exist(res.headers.location);
         done(err);
       });
     });
-    it('should add a ledger agent for an existing ledger node', done => {
+    it('should add ledger agent specifying with name and description', done => {
       const options = {
-        owner: regularActor.id,
+        name: uuid(),
+        description: uuid(),
         configEvent: signedConfigEvent
       };
       async.auto({
-        createNode: callback =>
-          brLedger.add(regularActor, options, callback),
-        createAgent: ['createNode', (results, callback) => {
+        createAgent: callback =>
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            qs: {ledgerNodeId: results.createNode.id},
+            body: options,
             identity: regularActor
           }), (err, res) => {
             res.statusCode.should.equal(201);
-            callback(err);
+            callback(err, res.headers.location);
+          }),
+        getAgent: ['createAgent', (results, callback) => {
+          const agentId = results.createAgent.substring(
+            results.createAgent.lastIndexOf('/') + 1);
+          const agentUrn = `urn:uuid:${agentId}`;
+          brLedgerAgent.get(null, agentUrn, (err, result) => {
+            should.not.exist(err);
+            result.name.should.equal(options.name);
+            result.description.should.equal(options.description);
+            callback();
+          });
+        }]
+      }, done);
+    });
+    it('should add a ledger agent for an existing ledger node', done => {
+      const options = {
+        owner: regularActor.identity.id,
+        configEvent: signedConfigEvent
+      };
+      async.auto({
+        getRegularUser: callback => brIdentity.get(
+          null, mockData.identities.regularUser.identity.id,
+          (err, identity) => callback(err, identity)),
+        createNode: ['getRegularUser', (results, callback) => {
+          brLedger.add(results.getRegularUser, options, callback);
+        }],
+        createAgent: ['createNode', (results, callback) => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: {ledgerNodeId: results.createNode.id},
+            identity: regularActor
+          }), (err, res) => {
+            res.statusCode.should.equal(201);
+            should.exist(res.headers.location);
+            callback(err, res.headers.location);
+          });
+        }],
+        getAgent: ['createAgent', (results, callback) => {
+          const agentId = results.createAgent.substring(
+            results.createAgent.lastIndexOf('/') + 1);
+          const agentUrn = `urn:uuid:${agentId}`;
+          brLedgerAgent.get(null, agentUrn, (err, result) => {
+            should.not.exist(err);
+            result.node.id.should.equal(results.createNode.id);
+            callback();
           });
         }]
       }, err => done(err));
     });
     it('should get an existing ledger agent', done => {
+      const options = {
+        configEvent: signedConfigEvent,
+        description: uuid(),
+        name: uuid()
+      };
       async.auto({
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: signedConfigEvent,
+            body: options,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -122,6 +169,13 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
+            const result = res.body;
+            should.exist(result.id);
+            should.exist(result.service);
+            result.service.should.be.an('object');
+            result.owner.should.equal(regularActor.identity.id);
+            result.name.should.equal(options.name);
+            result.description.should.equal(options.description);
             callback();
           });
         }]
@@ -132,7 +186,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: signedConfigEvent,
+            body: {configEvent: signedConfigEvent},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -158,7 +212,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: signedConfigEvent,
+            body: {configEvent: signedConfigEvent},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);

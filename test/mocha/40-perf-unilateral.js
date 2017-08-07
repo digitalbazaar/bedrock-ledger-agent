@@ -55,7 +55,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
       add: ['signConfig', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: results.signConfig,
+          body: {configEvent: results.signConfig},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);

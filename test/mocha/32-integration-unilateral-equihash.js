@@ -44,7 +44,7 @@ describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
       add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: results.sign,
+          body: {configEvent: results.sign},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
