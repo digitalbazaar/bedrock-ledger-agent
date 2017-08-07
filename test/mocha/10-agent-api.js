@@ -12,6 +12,7 @@ const database = require('bedrock-mongodb');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
+const uuid = require('uuid/v4');
 
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
@@ -62,6 +63,25 @@ describe('Ledger Agent API', () => {
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
         should.exist(ledgerAgent.service.ledgerEventService);
+        should.not.exist(ledgerAgent.name);
+        should.not.exist(ledgerAgent.description);
+        done();
+      });
+    });
+    it('should add a ledger agent with a name and description', done => {
+      const options = {
+        configEvent: signedConfigEvent,
+        owner: regularActor.id,
+        name: uuid(),
+        description: uuid()
+      };
+      brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
+        should.not.exist(err);
+        should.exist(ledgerAgent);
+        should.exist(ledgerAgent.id);
+        should.exist(ledgerAgent.service.ledgerEventService);
+        ledgerAgent.name.should.equal(options.name);
+        ledgerAgent.description.should.equal(options.description);
         done();
       });
     });
