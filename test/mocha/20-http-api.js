@@ -144,7 +144,7 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it.only('should get an existing ledger agent', done => {
+    it('should get an existing ledger agent', done => {
       const options = {
         configEvent: signedConfigEvent,
         description: uuid(),
