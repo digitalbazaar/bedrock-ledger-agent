@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2016 Digital Bazaar, Inc. All rights reserved.
  */
-/* jshint node: true */
 'use strict';
 
 const async = require('async');
@@ -13,11 +12,11 @@ const jsigs = require('jsonld-signatures');
 
 jsigs.use('jsonld', bedrock.jsonld);
 
-var api = {};
+const api = {};
 module.exports = api;
 
-api.createIdentity = function(userName) {
-  var newIdentity = {
+api.createIdentity = userName => {
+  const newIdentity = {
     id: userName,
     type: 'Identity',
     sysSlug: userName,
@@ -33,7 +32,7 @@ api.createIdentity = function(userName) {
   return newIdentity;
 };
 
-api.createKeyPair = function(options) {
+api.createKeyPair = options => {
   const userName = options.userName;
   const publicKey = options.publicKey;
   const privateKey = options.privateKey;
@@ -63,7 +62,7 @@ api.createKeyPair = function(options) {
   return newKeyPair;
 };
 
-api.createHttpSignatureRequest = function(options) {
+api.createHttpSignatureRequest = options => {
   const newRequest = {
     url: options.url,
     httpSignature: {
@@ -82,29 +81,29 @@ api.createHttpSignatureRequest = function(options) {
   return newRequest;
 };
 
-api.removeCollection = function(collection, callback) {
-  var collectionNames = [collection];
-  database.openCollections(collectionNames, () => {
-    async.each(collectionNames, function(collectionName, callback) {
-      database.collections[collectionName].remove({}, callback);
-    }, function(err) {
-      callback(err);
-    });
-  });
-};
-
-api.removeCollections = function(callback) {
-  var collectionNames = ['identity', 'eventLog'];
+api.removeCollection = (collection, callback) => {
+  const collectionNames = [collection];
   database.openCollections(collectionNames, () => {
     async.each(collectionNames, (collectionName, callback) => {
       database.collections[collectionName].remove({}, callback);
-    }, function(err) {
+    }, err => {
       callback(err);
     });
   });
 };
 
-api.prepareDatabase = function(mockData, callback) {
+api.removeCollections = callback => {
+  const collectionNames = ['identity', 'eventLog'];
+  database.openCollections(collectionNames, () => {
+    async.each(collectionNames, (collectionName, callback) => {
+      database.collections[collectionName].remove({}, callback);
+    }, err => {
+      callback(err);
+    });
+  });
+};
+
+api.prepareDatabase = (mockData, callback) => {
   async.series([
     callback => {
       api.removeCollections(callback);
@@ -115,11 +114,10 @@ api.prepareDatabase = function(mockData, callback) {
   ], callback);
 };
 
-api.getEventNumber = function(eventId) {
-  return Number(eventId.substring(eventId.lastIndexOf('/') + 1));
-};
+api.getEventNumber = eventId =>
+  Number(eventId.substring(eventId.lastIndexOf('/') + 1));
 
-api.multiSign = function(doc, signers, callback) {
+api.multiSign = (doc, signers, callback) => {
   if(!Array.isArray(signers)) {
     throw new TypeError('Signers must be an array.');
   }
@@ -141,10 +139,8 @@ api.multiSign = function(doc, signers, callback) {
 function insertTestData(mockData, callback) {
   async.forEachOf(mockData.identities, (identity, key, callback) => {
     async.parallel([
-      function(callback) {
-        brIdentity.insert(null, identity.identity, callback);
-      },
-      function(callback) {
+      callback => brIdentity.insert(null, identity.identity, callback),
+      callback => {
         if(identity.keys) {
           brKey.addPublicKey(null, identity.keys.publicKey, callback);
         } else {
