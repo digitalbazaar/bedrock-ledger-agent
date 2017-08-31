@@ -16,6 +16,7 @@
     "bedrock-jobs": "^2.0.3",
     "bedrock-key": "^4.0.0",
     "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#cm4",
+    "bedrock-ledger-consensus-continuity": "digitalbazaar/bedrock-ledger-consensus-continuity#master",
     "bedrock-ledger-consensus-uni": "digitalbazaar/bedrock-ledger-consensus-uni#implementation",
     "bedrock-ledger-context": "digitalbazaar/bedrock-ledger-context#master",
     "bedrock-ledger-validator-equihash": "digitalbazaar/bedrock-ledger-validator-equihash#implementation",

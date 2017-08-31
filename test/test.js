@@ -11,6 +11,7 @@ require('bedrock-ledger-validator-equihash');
 require('bedrock-ledger-validator-signature');
 require('bedrock-ledger-storage-mongodb');
 require('bedrock-ledger-consensus-uni');
+require('bedrock-ledger-consensus-continuity');
 
 bedrock.events.on('bedrock.init', () => {
   const jsonld = bedrock.jsonld;
