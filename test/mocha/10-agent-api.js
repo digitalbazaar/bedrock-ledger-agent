@@ -146,7 +146,8 @@ describe('Ledger Agent API', () => {
           });
       });
     });
-    it('should iterate over their ledger agents', done => {
+    it('should iterate over their ledger agents', function(done) {
+      this.timeout(60000);
       const options = {
         configEvent: signedConfigEvent,
         owner: regularActor.id
@@ -526,7 +527,8 @@ describe('Ledger Agent API', () => {
           });
       });
     });
-    it('should iterate over their ledger agents', done => {
+    it('should iterate over their ledger agents', function(done) {
+      this.timeout(60000);
       const options = {
         configEvent: signedConfigEvent,
         owner: regularActor.id

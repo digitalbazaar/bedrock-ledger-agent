@@ -343,6 +343,35 @@ events.config = {
   }]
 };
 
+events.configContinuity = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfigurationEvent',
+  operation: 'Config',
+  input: [{
+    type: 'WebLedgerConfiguration',
+    ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
+    consensusMethod: 'Continuity2017',
+    eventValidator: [{
+      type: 'SignatureValidator2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerEvent']
+      }],
+      approvedSigner: [identities.regularUser.identity.id],
+      minimumSignaturesRequired: 1
+    }, {
+      type: 'SignatureValidator2017',
+      eventFilter: [{
+        type: 'EventTypeFilter',
+        eventType: ['WebLedgerConfigurationEvent']
+      }],
+      approvedSigner: [identities.regularUser.identity.id],
+      minimumSignaturesRequired: 1
+    }],
+    requireEventValidation: true
+  }]
+};
+
 events.multisigConfigAlpha = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
