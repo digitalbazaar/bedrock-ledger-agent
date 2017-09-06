@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
-/* globals should, assertNoError */
 'use strict';
 
 const _ = require('lodash');
@@ -15,7 +14,6 @@ const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
-// require('request-debug')(request);
 const url = require('url');
 const uuid = require('uuid/v4');
 const querystring = require('querystring');
@@ -40,6 +38,7 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
   before(done => helpers.prepareDatabase(mockData, done));
   before(function(done) {
     this.timeout(60000);
+    const configEvent = bedrock.util.clone(mockData.events.configContinuity);
     async.auto({
       consensusApi: callback =>
         brLedgerNode.use('Continuity2017', (err, result) => {
@@ -47,7 +46,7 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
           callback(err);
         }),
       sign: callback => {
-        jsigs.sign(mockData.events.configContinuity, {
+        jsigs.sign(configEvent, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id

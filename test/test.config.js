@@ -30,3 +30,6 @@ roles['bedrock-ledger-agent.test'] = {
     permissions.LEDGER_AGENT_REMOVE.id
   ]
 };
+
+// reduce processing interval for testing
+config['ledger-consensus-continuity'].worker.election.gossipInterval = 0;

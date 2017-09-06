@@ -3,6 +3,8 @@
  */
 'use strict';
 
+const bedrock = require('bedrock');
+const config = bedrock.config;
 const helpers = require('./helpers');
 
 const mock = {};
@@ -348,6 +350,7 @@ events.configContinuity = {
   type: 'WebLedgerConfigurationEvent',
   operation: 'Config',
   input: [{
+    '@context': config.constants.WEB_LEDGER_CONTEXT_V1_URL,
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
     consensusMethod: 'Continuity2017',
