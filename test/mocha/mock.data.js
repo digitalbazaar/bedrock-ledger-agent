@@ -319,8 +319,7 @@ const events = mock.events = {};
 events.config = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
+  ledgerConfiguration: {
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
     consensusMethod: 'UnilateralConsensus2017',
@@ -342,14 +341,13 @@ events.config = {
       minimumSignaturesRequired: 1
     }],
     requireEventValidation: true
-  }]
+  }
 };
 
 events.configContinuity = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
+  ledgerConfiguration: {
     '@context': config.constants.WEB_LEDGER_CONTEXT_V1_URL,
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
@@ -372,14 +370,13 @@ events.configContinuity = {
       minimumSignaturesRequired: 1
     }],
     requireEventValidation: true
-  }]
+  }
 };
 
 events.multisigConfigAlpha = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
+  ledgerConfiguration: {
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
     consensusMethod: 'UnilateralConsensus2017',
@@ -407,14 +404,13 @@ events.multisigConfigAlpha = {
       minimumSignaturesRequired: 2
     }],
     requireEventValidation: true
-  }]
+  }
 };
 
 events.multisigConfigBeta = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
+  ledgerConfiguration: {
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
     consensusMethod: 'UnilateralConsensus2017',
@@ -442,14 +438,13 @@ events.multisigConfigBeta = {
       minimumSignaturesRequired: 2
     }],
     requireEventValidation: true
-  }]
+  }
 };
 
 events.equihashConfig = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
+  ledgerConfiguration: {
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
     consensusMethod: 'UnilateralConsensus2017',
@@ -473,7 +468,7 @@ events.equihashConfig = {
       equihashParameterK: 3
     }],
     requireEventValidation: true
-  }]
+  }
 };
 
 events.concert = {

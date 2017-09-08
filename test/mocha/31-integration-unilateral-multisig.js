@@ -210,7 +210,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         const newConfig = bedrock.util.clone(
           mockData.events.multisigConfigBeta);
         // change approvedSigners for WebLedgerEvent
-        newConfig.input[0].eventValidator[1].approvedSigner = [
+        newConfig.ledgerConfiguration.eventValidator[1].approvedSigner = [
           mockData.identities.regularUser.identity.id,
           mockData.identities.gamma.identity.id
         ];

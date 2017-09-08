@@ -69,7 +69,7 @@ describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
   });
   it('should add 10 events and blocks', done => {
     const testConfig =
-      mockData.events.equihashConfig.input[0].eventValidator[1];
+      mockData.events.equihashConfig.ledgerConfiguration.eventValidator[1];
     async.times(10, (n, callback) => {
       const concertEvent = bedrock.util.clone(mockData.events.concert);
       concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
