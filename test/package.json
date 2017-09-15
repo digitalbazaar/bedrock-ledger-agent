@@ -31,7 +31,7 @@
     "bedrock-validation": "^2.2.1",
     "bedrock-views": "^5.0.2",
     "cors": "^2.8.3",
-    "equihash-signature": "digitalbazaar/equihash-signature#implementation",
+    "equihash-signature": "digitalbazaar/equihash-signature#wip",
     "grunt": "^1.0.1",
     "jsonld-signatures": "digitalbazaar/jsonld-signatures#multiSignature",
     "lodash": "^4.17.4",

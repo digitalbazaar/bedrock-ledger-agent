@@ -348,7 +348,6 @@ events.configContinuity = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: {
-    '@context': config.constants.WEB_LEDGER_CONTEXT_V1_URL,
     type: 'WebLedgerConfiguration',
     ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
     consensusMethod: 'Continuity2017',

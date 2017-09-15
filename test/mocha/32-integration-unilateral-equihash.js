@@ -26,7 +26,7 @@ const urlObj = {
 jsigs.use('jsonld', bedrock.jsonld);
 
 // FIXME: re-enable after equihash issue is resolved see: https://github.com/digitalbazaar/equihash/issues/1
-describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
+describe('Integration - 1 Node - Unilateral - Equihash', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
 
@@ -71,15 +71,16 @@ describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
     const testConfig =
       mockData.events.equihashConfig.ledgerConfiguration.eventValidator[1];
     async.times(10, (n, callback) => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-
       async.auto({
-        sign: callback => equihashSigs.sign({
-          n: testConfig.equihashParameterN,
-          k: testConfig.equihashParameterK,
-          doc: concertEvent
-        }, callback),
+        sign: callback => {
+          const concertEvent = bedrock.util.clone(mockData.events.concert);
+          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+          equihashSigs.sign({
+            n: testConfig.equihashParameterN,
+            k: testConfig.equihashParameterK,
+            doc: concertEvent
+          }, callback);
+        },
         add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
             url: ledgerAgent.service.ledgerEventService,
@@ -87,7 +88,6 @@ describe.skip('Integration - 1 Node - Unilateral - Equihash', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            console.log('BBBBBBB', JSON.stringify(res.body, null, 2));
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
