@@ -24,7 +24,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.only('Performance - 3 Nodes - Continuity - One Signature', () => {
+describe('Performance - 3 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
 
