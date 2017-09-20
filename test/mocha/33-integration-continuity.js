@@ -169,9 +169,9 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
             const blockId = res.body.latest.block.id;
             const currentBlockNumber =
               parseInt(blockId.substring(blockId.lastIndexOf('/') + 1));
-            const electionResults = res.body.latest.block.electionResults;
-            const voteCount = electionResults.length;
-            const voters = electionResults.map(v => v.voter);
+            const electionResult = res.body.latest.block.electionResult;
+            const voteCount = electionResult.length;
+            const voters = electionResult.map(v => v.voter);
             voters.should.have.same.members(
               _.uniq(voters));
             if(currentBlockNumber === 1) {
