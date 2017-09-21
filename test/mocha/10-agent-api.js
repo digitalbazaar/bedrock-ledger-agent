@@ -262,6 +262,7 @@ describe('Ledger Agent API', () => {
       async.auto({
         create: callback => async.times(3, (i, callback) =>
           brLedgerAgent.add(adminActor, null, options, (err, result) => {
+            should.not.exist(err);
             testAgents.push(result.id);
             callback();
           }), callback),
