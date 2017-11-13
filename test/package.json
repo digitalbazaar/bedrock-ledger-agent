@@ -22,7 +22,7 @@
     "bedrock-ledger-storage-mongodb": "digitalbazaar/bedrock-ledger-storage-mongodb#cm4",
     "bedrock-ledger-validator-equihash": "digitalbazaar/bedrock-ledger-validator-equihash#implementation",
     "bedrock-ledger-validator-signature": "digitalbazaar/bedrock-ledger-validator-signature#implementation",
-    "bedrock-mongodb": "^3.0.0",
+    "bedrock-mongodb": "^4.0.0",
     "bedrock-passport": "^3.2.1",
     "bedrock-permission": "^2.3.2",
     "bedrock-rest": "^2.0.2",
