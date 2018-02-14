@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
+/* global should */
 'use strict';
 
 const async = require('async');
@@ -438,6 +439,68 @@ describe('Ledger Agent API', () => {
       err.name.should.equal('PermissionDenied');
       done();
     }));
+    it('should get public ledger agent', done => {
+      const options = {
+        configEvent: signedConfigEvent,
+        owner: regularActor.id,
+        public: true
+      };
+
+      brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
+        should.not.exist(err);
+
+        const options = {public: true};
+        const ledgerAgentId = firstLa.id;
+        brLedgerAgent.get(
+          unauthorizedActor, ledgerAgentId, options, (err, ledgerAgent) => {
+            should.not.exist(err);
+            should.exist(ledgerAgent);
+            should.exist(ledgerAgent.id);
+            should.exist(ledgerAgent.service.ledgerEventService);
+            ledgerAgent.id.should.equal(firstLa.id);
+            done();
+          });
+      });
+    });
+    it('should iterate over public ledger agents', function(done) {
+      this.timeout(60000);
+      const options = {
+        configEvent: signedConfigEvent,
+        owner: regularActor.id,
+        public: true
+      };
+      const testAgents = [];
+      const iteratorAgents = [];
+      async.auto({
+        create: callback => async.times(3, (i, callback) =>
+          brLedgerAgent.add(regularActor, null, options, (err, result) => {
+            testAgents.push(result.id);
+            callback();
+          }), callback),
+        getIterator: ['create', (results, callback) => {
+          const options = {
+            public: true
+          };
+          brLedgerAgent.getAgentIterator(
+            unauthorizedActor, options, (err, iterator) => {
+              should.not.exist(err);
+              callback(null, iterator);
+            });
+        }],
+        iterate: ['getIterator', (results, callback) => {
+          async.eachSeries(results.getIterator, (promise, callback) => {
+            promise.then(ledgerAgent => {
+              iteratorAgents.push(ledgerAgent.id);
+              callback();
+            }).catch(err => {throw err;});
+          }, callback);
+        }],
+        test: ['iterate', (results, callback) => {
+          iteratorAgents.should.include.members(testAgents);
+          callback();
+        }]
+      }, done);
+    });
   });
   describe('adminUser as actor', () => {
     let regularActor;

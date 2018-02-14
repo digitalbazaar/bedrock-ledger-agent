@@ -73,8 +73,8 @@ any specified ledgerNodeId.
   * configEvent - the configuration event for the agent.
   * genesis - if true, create an entirely new genesis ledger (default: false).
   * storage - the storage subsystem for the ledger (default: 'mongodb').
-  * private - if true, only the actor should be able to access the
-      created ledger (default: true).
+  * public - if false, only the actor should be able to access the
+      created ledger, if true, anyone can access (default: false).
 * callback(err, ledger) - the callback to call when finished.
   * err - An Error if an error occurred, null otherwise
   * ledgerAgent - the ledger agent associated with the agent.
