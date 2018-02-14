@@ -26,7 +26,7 @@
     "bedrock": "^1.2.4",
     "bedrock-docs": "^2.1.0",
     "bedrock-express": "^2.0.6",
-    "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#cm4",
+    "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#master",
     "bedrock-mongodb": "^4.0.0",
     "bedrock-passport": "^3.3.0",
     "bedrock-permission": "^2.3.2",
