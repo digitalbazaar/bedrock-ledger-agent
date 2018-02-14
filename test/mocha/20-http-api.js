@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
+/* global should */
 'use strict';
 
 const async = require('async');
@@ -30,6 +31,7 @@ const urlObj = {
 describe('Ledger Agent HTTP API', () => {
   let signedConfigEvent;
   let defaultLedgerAgent;
+  let publicLedgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));
 
@@ -50,13 +52,24 @@ describe('Ledger Agent HTTP API', () => {
         signedConfigEvent = result;
         callback(err);
       }),
-      add: ['getRegularUser', 'signConfig', (results, callback) => {
+      addDefault: ['getRegularUser', 'signConfig', (results, callback) => {
         const options = {
           configEvent: signedConfigEvent,
-          owner: regularActor.id
+          owner: regularActor.id,
         };
         brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
           defaultLedgerAgent = ledgerAgent;
+          callback(err);
+        });
+      }],
+      addPublic: ['getRegularUser', 'signConfig', (results, callback) => {
+        const options = {
+          configEvent: signedConfigEvent,
+          owner: regularActor.id,
+          public: true
+        };
+        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
+          publicLedgerAgent = ledgerAgent;
           callback(err);
         });
       }]
@@ -200,7 +213,7 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
-            res.body.length.should.be.at.least(1);
+            res.body.ledgerAgent.length.should.be.at.least(1);
             callback();
           });
         }]
@@ -227,7 +240,7 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
-            res.body.length.should.be.at.least(1);
+            res.body.ledgerAgent.length.should.be.at.least(1);
             callback();
           });
         }]
@@ -396,6 +409,235 @@ describe('Ledger Agent HTTP API', () => {
             should.exist(res.body.meta);
             res.body.object.should.deep.equal(concertEvent.input[0]);
             callback(null, res.body);
+          });
+        }]
+      }, err => done(err));
+    });
+  });
+
+  describe('unauthenticated clients', () => {
+    const regularActor = mockData.identities.regularUser;
+
+    it('should not add ledger agent for new ledger', done => {
+      request.post({
+        url: url.format(urlObj),
+        body: {configEvent: signedConfigEvent},
+        identity: regularActor
+      }, (err, res) => {
+        res.statusCode.should.equal(400);
+        done(err);
+      });
+    });
+    it('should get an existing public ledger agent', done => {
+      const options = {
+        configEvent: signedConfigEvent,
+        description: uuid(),
+        name: uuid(),
+        public: true
+      };
+      async.auto({
+        add: callback => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: options,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        get: ['add', (results, callback) => {
+          request.get({url: results.add}, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            const result = res.body;
+            should.exist(result.id);
+            should.exist(result.service);
+            result.service.should.be.an('object');
+            result.owner.should.equal(regularActor.identity.id);
+            result.name.should.equal(options.name);
+            result.description.should.equal(options.description);            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get all existing public ledger agents', done => {
+      async.auto({
+        add: callback => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: {configEvent: signedConfigEvent},
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        getAll: ['add', (results, callback) => {
+          request.get({url: url.format(urlObj)}, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            res.body.ledgerAgent.length.should.be.at.least(1);
+            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should not be able to add events to public ledgers', done => {
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+      async.auto({
+        signEvent: callback => jsigs.sign(concertEvent, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, callback),
+        add: ['signEvent', (results, callback) => {
+          request.post({
+            url: publicLedgerAgent.service.ledgerEventService,
+            body: results.signEvent
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(400);
+            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get event from public ledger', done => {
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+      async.auto({
+        signEvent: callback => jsigs.sign(concertEvent, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, callback),
+        add: ['signEvent', (results, callback) => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: publicLedgerAgent.service.ledgerEventService,
+            body: results.signEvent,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        }],
+        get: ['add', (results, callback) => {
+          const eventUrl = results.add;
+          request.get({
+            url: eventUrl
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            res.body.event.input[0].startDate.should.equal('2017-07-14T21:30');
+            callback(null, res.body);
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get genesis block from public ledger', done => {
+      async.auto({
+        get: callback => {
+          request.get({
+            url: publicLedgerAgent.service.ledgerBlockService
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            should.exist(res.body.genesis);
+            should.exist(res.body.genesis.block);
+            should.exist(res.body.genesis.meta);
+            res.body.genesis.block.type.should.equal('WebLedgerEventBlock');
+            should.not.exist(res.body.genesis.block.previousBlock);
+            should.not.exist(res.body.genesis.block.previousBlockHash);
+            res.body.genesis.meta.consensus.should.equal(true);
+            callback(null, res.body);
+          });
+        }
+      }, err => done(err));
+    });
+    it('should get latest block from public ledger', done => {
+      async.auto({
+        get: callback => {
+          request.get({
+            url: publicLedgerAgent.service.ledgerBlockService
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            should.exist(res.body.latest);
+            should.exist(res.body.latest.block);
+            should.exist(res.body.latest.meta);
+            res.body.latest.block.type.should.equal('WebLedgerEventBlock');
+            res.body.latest.meta.consensus.should.equal(true);
+            callback(null, res.body);
+          });
+        }
+      }, err => done(err));
+    });
+    it('should get specific block from public ledger', done => {
+      async.auto({
+        getLatest: callback => {
+          request.get({
+            url: publicLedgerAgent.service.ledgerBlockService
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            callback(null, res.body);
+          });
+        },
+        getBlock: ['getLatest', (results, callback) => {
+          const blockUrl = publicLedgerAgent.service.ledgerBlockService + '?' +
+            querystring.stringify({id: results.getLatest.latest.block.id});
+          request.get({
+            url: blockUrl,
+            identity: regularActor
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(200);
+            callback(null, res.body);
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should be prevented from querying state machine', done => {
+      const concertEvent = bedrock.util.clone(mockData.events.concert);
+      concertEvent.input[0].id = 'https://example.com/eventszzz/' + uuid(),
+      async.auto({
+        signEvent: callback => jsigs.sign(concertEvent, {
+          algorithm: 'LinkedDataSignature2015',
+          privateKeyPem:
+            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        }, callback),
+        add: ['signEvent', (results, callback) => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: publicLedgerAgent.service.ledgerEventService,
+            body: results.signEvent,
+            identity: regularActor
+          }), (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        }],
+        query: ['add', (results, callback) => {
+          const queryUrl = publicLedgerAgent.service.ledgerQueryService;
+          request.post({
+            url: queryUrl,
+            headers: [{
+              name: 'accept',
+              value: 'application/ld+json'
+            }],
+            qs: {id: concertEvent.input[0].id}
+          }, (err, res) => {
+            should.not.exist(err);
+            res.statusCode.should.equal(400);
+            callback();
           });
         }]
       }, err => done(err));
