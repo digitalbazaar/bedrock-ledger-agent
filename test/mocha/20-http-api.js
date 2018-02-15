@@ -489,11 +489,10 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should not be able to submit operations to public ledgers', done => {
+    it('should process operation on public ledger', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id =
-        'https://example.com/concerts/' + uuid(),
+      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
@@ -507,8 +506,8 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation
           }, (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(400);
-            callback();
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
           });
         }]
       }, err => done(err));
@@ -613,11 +612,12 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should be prevented from querying state machine', done => {
+    it('should query state machine on public ledger successfully',
+      done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id =
-        'https://example.com/eventszzz/' + uuid();
+        'https://example.com/eventszzz/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
@@ -647,8 +647,12 @@ describe('Ledger Agent HTTP API', () => {
             qs: {id: createConcertRecordOp.record.id}
           }, (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(400);
-            callback();
+            res.statusCode.should.equal(200);
+            should.exist(res.body);
+            should.exist(res.body.object);
+            should.exist(res.body.meta);
+            res.body.object.should.deep.equal(createConcertRecordOp.record);
+            callback(null, res.body);
           });
         }]
       }, err => done(err));
