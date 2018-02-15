@@ -315,6 +315,7 @@ mock.groups = {
 };
 
 const events = mock.events = {};
+const ops = mock.ops = {};
 
 events.config = {
   '@context': 'https://w3id.org/webledger/v1',
@@ -470,11 +471,10 @@ events.equihashConfig = {
   }
 };
 
-events.concert = {
+ops.createConcertRecord = {
   '@context': 'https://w3id.org/webledger/v1',
-  type: 'WebLedgerEvent',
-  operation: 'Create',
-  input: [{
+  type: 'CreateWebLedgerRecord',
+  record: {
     '@context': 'https://w3id.org/test/v1',
     id: 'https://example.com/events/123456',
     type: 'Concert',
@@ -487,7 +487,7 @@ events.concert = {
       priceCurrency: 'USD',
       url: 'https://www.ticketfly.com/purchase/309433'
     }
-  }]
+  }
 };
 
 const blocks = mock.blocks = {};

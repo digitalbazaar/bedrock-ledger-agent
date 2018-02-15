@@ -72,17 +72,19 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
     async.times(10, (n, callback) => {
       async.auto({
         sign: callback => {
-          const concertEvent = bedrock.util.clone(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+          const createConcertRecordOp =
+            bedrock.util.clone(mockData.ops.createConcertRecord);
+          createConcertRecordOp.record.id =
+            'https://example.com/eventszzz/' + uuid();
           equihashSigs.sign({
             n: testConfig.equihashParameterN,
             k: testConfig.equihashParameterK,
-            doc: concertEvent
+            doc: createConcertRecordOp
           }, callback);
         },
         add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerEventService,
+            url: ledgerAgent.service.ledgerOperationService,
             body: results.sign,
             identity: regularActor
           }), (err, res) => {

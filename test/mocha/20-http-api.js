@@ -246,20 +246,21 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should add event', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+    it('should process operation', done => {
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerEventService,
-            body: results.signEvent,
+            url: defaultLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -270,19 +271,20 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should get event', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerEventService,
-            body: results.signEvent,
+            url: defaultLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -298,7 +300,7 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
-            res.body.event.input[0].startDate.should.equal('2017-07-14T21:30');
+            res.body.event.operation[0].record.startDate.should.equal('2017-07-14T21:30');
             callback(null, res.body);
           });
         }]
@@ -371,19 +373,21 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should query state machine successfully', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/eventszzz/' + uuid(),
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id =
+        'https://example.com/eventszzz/' + uuid(),
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerEventService,
-            body: results.signEvent,
+            url: defaultLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -400,14 +404,14 @@ describe('Ledger Agent HTTP API', () => {
               name: 'accept',
               value: 'application/ld+json'
             }],
-            qs: {id: concertEvent.input[0].id}
+            qs: {id: createConcertRecordOp.record.id}
           }), (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
             should.exist(res.body);
             should.exist(res.body.object);
             should.exist(res.body.meta);
-            res.body.object.should.deep.equal(concertEvent.input[0]);
+            res.body.object.should.deep.equal(createConcertRecordOp.record);
             callback(null, res.body);
           });
         }]
@@ -485,20 +489,22 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should not be able to add events to public ledgers', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+    it('should not be able to submit operations to public ledgers', done => {
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id =
+        'https://example.com/concerts/' + uuid(),
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post({
-            url: publicLedgerAgent.service.ledgerEventService,
-            body: results.signEvent
+            url: publicLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation
           }, (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(400);
@@ -508,19 +514,21 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should get event from public ledger', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id =
+        'https://example.com/concerts/' + uuid(),
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: publicLedgerAgent.service.ledgerEventService,
-            body: results.signEvent,
+            url: publicLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -535,7 +543,8 @@ describe('Ledger Agent HTTP API', () => {
           }, (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(200);
-            res.body.event.input[0].startDate.should.equal('2017-07-14T21:30');
+            res.body.event.operation[0].record.startDate.should.equal(
+              '2017-07-14T21:30');
             callback(null, res.body);
           });
         }]
@@ -605,19 +614,21 @@ describe('Ledger Agent HTTP API', () => {
       }, err => done(err));
     });
     it('should be prevented from querying state machine', done => {
-      const concertEvent = bedrock.util.clone(mockData.events.concert);
-      concertEvent.input[0].id = 'https://example.com/eventszzz/' + uuid(),
+      const createConcertRecordOp =
+        bedrock.util.clone(mockData.ops.createConcertRecord);
+      createConcertRecordOp.record.id =
+        'https://example.com/eventszzz/' + uuid();
       async.auto({
-        signEvent: callback => jsigs.sign(concertEvent, {
+        signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'LinkedDataSignature2015',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signEvent', (results, callback) => {
+        add: ['signOperation', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: publicLedgerAgent.service.ledgerEventService,
-            body: results.signEvent,
+            url: publicLedgerAgent.service.ledgerOperationService,
+            body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -633,7 +644,7 @@ describe('Ledger Agent HTTP API', () => {
               name: 'accept',
               value: 'application/ld+json'
             }],
-            qs: {id: concertEvent.input[0].id}
+            qs: {id: createConcertRecordOp.record.id}
           }, (err, res) => {
             should.not.exist(err);
             res.statusCode.should.equal(400);

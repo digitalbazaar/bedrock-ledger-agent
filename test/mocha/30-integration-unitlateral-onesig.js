@@ -69,9 +69,11 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
     async.times(10, (n, callback) => {
       async.auto({
         sign: callback => {
-          const concertEvent = bedrock.util.clone(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-          jsigs.sign(concertEvent, {
+          const createConcertRecordOp =
+            bedrock.util.clone(mockData.ops.createConcertRecord);
+          createConcertRecordOp.record.id =
+            'https://example.com/eventszzz/' + uuid();
+          jsigs.sign(createConcertRecordOp, {
             algorithm: 'LinkedDataSignature2015',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
@@ -79,7 +81,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
         },
         add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerEventService,
+            url: ledgerAgent.service.ledgerOperationService,
             body: results.sign,
             identity: regularActor
           }), (err, res) => {

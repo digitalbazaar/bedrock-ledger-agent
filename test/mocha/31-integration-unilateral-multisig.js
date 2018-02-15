@@ -71,11 +71,13 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     // });
     it('should add 10 events and blocks', done =>
       async.times(10, (n, callback) => {
-        const concertEvent = bedrock.util.clone(mockData.events.concert);
-        concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
+        const createConcertRecordOp =
+          bedrock.util.clone(mockData.ops.createConcertRecord);
+        createConcertRecordOp.record.id =
+          'https://example.com/eventszzz/' + uuid();
         async.auto({
           signEvent: callback => helpers.multiSign(
-            concertEvent, [{
+            createConcertRecordOp, [{
               privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
               creator: regularActor.keys.publicKey.id
             }, {
@@ -84,7 +86,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
             }], callback),
           add: ['signEvent', (results, callback) =>
             request.post(helpers.createHttpSignatureRequest({
-              url: ledgerAgent.service.ledgerEventService,
+              url: ledgerAgent.service.ledgerOperationService,
               body: results.signEvent,
               identity: regularActor
             }), (err, res) => {
@@ -192,13 +194,15 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     }, err => done(err)));
     it('changes the ledger configuration', done => async.auto({
       signEventAlpha: callback => {
-        const concertEvent = bedrock.util.clone(mockData.events.concert);
-        concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-        helpers.multiSign(concertEvent, originalSigners, callback);
+        const createConcertRecordOp =
+          bedrock.util.clone(mockData.ops.createConcertRecord);
+        createConcertRecordOp.record.id =
+          'https://example.com/eventszzz/' + uuid();
+        helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       },
       addEventAlpha: ['signEventAlpha', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerEventService,
+          url: ledgerAgent.service.ledgerOperationService,
           body: results.signEventAlpha,
           identity: regularActor
         }), (err, res) => {
@@ -219,7 +223,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       }],
       addConfigAlpha: ['signConfigAlpha', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerEventService,
+          url: ledgerAgent.service.ledgerOperationService,
           body: results.signConfigAlpha,
           identity: regularActor
         }), (err, res) => {
@@ -229,13 +233,15 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         })],
       signEventBeta: ['addConfigAlpha', (results, callback) => {
         // sign a new event with original signers
-        const concertEvent = bedrock.util.clone(mockData.events.concert);
-        concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-        helpers.multiSign(concertEvent, originalSigners, callback);
+        const createConcertRecordOp =
+          bedrock.util.clone(mockData.ops.createConcertRecord);
+        createConcertRecordOp.record.id =
+          'https://example.com/eventszzz/' + uuid();
+        helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       }],
       addEventBeta: ['signEventBeta', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerEventService,
+          url: ledgerAgent.service.ledgerOperationService,
           body: results.signEventBeta,
           identity: regularActor
         }), (err, res) => {
@@ -247,13 +253,15 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         })],
       signEventGamma: ['addEventBeta', (results, callback) => {
         // sign a new event with the new signers
-        const concertEvent = bedrock.util.clone(mockData.events.concert);
-        concertEvent.input[0].id = 'https://example.com/events/' + uuid(),
-        helpers.multiSign(concertEvent, newSigners, callback);
+        const createConcertRecordOp =
+          bedrock.util.clone(mockData.ops.createConcertRecord);
+        createConcertRecordOp.record.id =
+          'https://example.com/eventszzz/' + uuid();
+        helpers.multiSign(createConcertRecordOp, newSigners, callback);
       }],
       addEventGamma: ['signEventGamma', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerEventService,
+          url: ledgerAgent.service.ledgerOperationService,
           body: results.signEventGamma,
           identity: regularActor
         }), (err, res) => {

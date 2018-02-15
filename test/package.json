@@ -19,7 +19,7 @@
     "bedrock-ledger-consensus-uni": "digitalbazaar/bedrock-ledger-consensus-uni#master",
     "bedrock-ledger-context": "github:digitalbazaar/bedrock-ledger-context#continuityUpdate",
     "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#master",
-    "bedrock-ledger-storage-mongodb": "digitalbazaar/bedrock-ledger-storage-mongodb#master",
+    "bedrock-ledger-storage-mongodb": "github:digitalbazaar/bedrock-ledger-storage-mongodb#master",
     "bedrock-ledger-validator-equihash": "digitalbazaar/bedrock-ledger-validator-equihash#implementation",
     "bedrock-ledger-validator-signature": "digitalbazaar/bedrock-ledger-validator-signature#master",
     "bedrock-mongodb": "^4.0.0",
