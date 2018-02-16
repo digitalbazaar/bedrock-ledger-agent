@@ -36,7 +36,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid();
         jsigs.sign(concertEvent, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -46,7 +46,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         });
       }, callback),
       signConfig: callback => jsigs.sign(mockData.events.config, {
-        algorithm: 'LinkedDataSignature2015',
+        algorithm: 'RsaSignature2018',
         privateKeyPem:
           mockData.identities.regularUser.keys.privateKey.privateKeyPem,
         creator: mockData.identities.regularUser.keys.privateKey.publicKey

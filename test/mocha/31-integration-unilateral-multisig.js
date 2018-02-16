@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -35,7 +35,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     before(done => {
       async.auto({
         signConfig: callback => helpers.multiSign(
-          mockData.events.multisigConfigBeta, [{
+          mockData.ledgerConfigurations.multisigBeta, [{
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, {
@@ -45,7 +45,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         add: ['signConfig', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: {configEvent: results.signConfig},
+            body: {ledgerConfiguration: results.signConfig},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -91,8 +91,8 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
               identity: regularActor
             }), (err, res) => {
               should.not.exist(err);
-              res.statusCode.should.equal(202);
-              callback(null, res.headers.location);
+              res.statusCode.should.equal(204);
+              callback();
             })]
         }, err => callback(err));
       }, err => done(err)));
@@ -169,11 +169,11 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
     before(done => helpers.prepareDatabase(mockData, done));
     before(done => async.auto({
       signConfig: callback => helpers.multiSign(
-        mockData.events.multisigConfigBeta, originalSigners, callback),
+        mockData.ledgerConfigurations.multisigBeta, originalSigners, callback),
       add: ['signConfig', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: {configEvent: results.signConfig},
+          body: {ledgerConfiguration: results.signConfig},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
@@ -193,28 +193,28 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       }]
     }, err => done(err)));
     it('changes the ledger configuration', done => async.auto({
-      signEventAlpha: callback => {
+      signOpAlpha: callback => {
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
         createConcertRecordOp.record.id =
           'https://example.com/eventszzz/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       },
-      addEventAlpha: ['signEventAlpha', (results, callback) =>
+      addOpAlpha: ['signOpAlpha', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
           url: ledgerAgent.service.ledgerOperationService,
-          body: results.signEventAlpha,
+          body: results.signOpAlpha,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
-          res.statusCode.should.equal(202);
-          callback(null, res.headers.location);
+          res.statusCode.should.equal(204);
+          callback();
         })],
-      signConfigAlpha: ['addEventAlpha', (results, callback) => {
+      signConfigAlpha: ['addOpAlpha', (results, callback) => {
         const newConfig = bedrock.util.clone(
-          mockData.events.multisigConfigBeta);
-        // change approvedSigners for WebLedgerEvent
-        newConfig.ledgerConfiguration.eventValidator[1].approvedSigner = [
+          mockData.ledgerConfigurations.multisigBeta);
+        // change approvedSigners for CreateWebLedgerRecord
+        newConfig.operationValidator[0].approvedSigner = [
           mockData.identities.regularUser.identity.id,
           mockData.identities.gamma.identity.id
         ];
@@ -223,15 +223,15 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       }],
       addConfigAlpha: ['signConfigAlpha', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerOperationService,
+          url: ledgerAgent.service.ledgerConfigService,
           body: results.signConfigAlpha,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
-          res.statusCode.should.equal(202);
-          callback(null, res.headers.location);
+          res.statusCode.should.equal(204);
+          callback();
         })],
-      signEventBeta: ['addConfigAlpha', (results, callback) => {
+      signOpBeta: ['addConfigAlpha', (results, callback) => {
         // sign a new event with original signers
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
@@ -239,10 +239,10 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           'https://example.com/eventszzz/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       }],
-      addEventBeta: ['signEventBeta', (results, callback) =>
+      addOpBeta: ['signOpBeta', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
           url: ledgerAgent.service.ledgerOperationService,
-          body: results.signEventBeta,
+          body: results.signOpBeta,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
@@ -251,7 +251,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           res.body.type.should.equal('ValidationError');
           callback();
         })],
-      signEventGamma: ['addEventBeta', (results, callback) => {
+      signOpGamma: ['addOpBeta', (results, callback) => {
         // sign a new event with the new signers
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
@@ -259,14 +259,14 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           'https://example.com/eventszzz/' + uuid();
         helpers.multiSign(createConcertRecordOp, newSigners, callback);
       }],
-      addEventGamma: ['signEventGamma', (results, callback) =>
+      addOpGamma: ['signOpGamma', (results, callback) =>
         request.post(helpers.createHttpSignatureRequest({
           url: ledgerAgent.service.ledgerOperationService,
-          body: results.signEventGamma,
+          body: results.signOpGamma,
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
-          res.statusCode.should.equal(202);
+          res.statusCode.should.equal(204);
           callback();
         })]
     }, done));

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -24,6 +24,7 @@ const urlObj = {
 
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
+equihashSigs.install(jsigs);
 
 describe('Integration - 1 Node - Unilateral - Equihash', () => {
   const regularActor = mockData.identities.regularUser;
@@ -33,8 +34,8 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
   before(done => {
     async.auto({
       sign: callback => {
-        jsigs.sign(mockData.events.equihashConfig, {
-          algorithm: 'LinkedDataSignature2015',
+        jsigs.sign(mockData.ledgerConfigurations.equihash, {
+          algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback);
@@ -42,7 +43,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
       add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: {configEvent: results.sign},
+          body: {ledgerConfiguration: results.sign},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
@@ -68,7 +69,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
   });
   it('should add 10 events and blocks', done => {
     const testConfig =
-      mockData.events.equihashConfig.ledgerConfiguration.eventValidator[1];
+      mockData.ledgerConfigurations.equihash.operationValidator[0];
     async.times(10, (n, callback) => {
       async.auto({
         sign: callback => {
@@ -76,10 +77,12 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             bedrock.util.clone(mockData.ops.createConcertRecord);
           createConcertRecordOp.record.id =
             'https://example.com/eventszzz/' + uuid();
-          equihashSigs.sign({
-            n: testConfig.equihashParameterN,
-            k: testConfig.equihashParameterK,
-            doc: createConcertRecordOp
+          jsigs.sign(createConcertRecordOp, {
+            algorithm: 'EquihashProof2018',
+            parameters: {
+              n: testConfig.equihashParameterN,
+              k: testConfig.equihashParameterK
+            }
           }, callback);
         },
         add: ['sign', (results, callback) => {
@@ -89,8 +92,8 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }]}, err => callback(err));
     }, err => done(err));

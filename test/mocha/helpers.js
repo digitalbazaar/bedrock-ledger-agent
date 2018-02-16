@@ -130,7 +130,7 @@ api.multiSign = (doc, signers, callback) => {
       return callback(err);
     }
     const d = bedrock.util.clone(results[0]);
-    d.signature = results.map(d => d.signature);
+    d.proof = results.map(d => d.proof);
     callback(null, d);
   });
 };

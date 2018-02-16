@@ -47,7 +47,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
         }),
       sign: callback => {
         jsigs.sign(configEvent, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback);
@@ -140,7 +140,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
           const concertEvent = bedrock.util.clone(mockData.events.concert);
           concertEvent.input[0].id = 'https://example.com/events/' + uuid();
           jsigs.sign(concertEvent, {
-            algorithm: 'LinkedDataSignature2015',
+            algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, callback);

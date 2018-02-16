@@ -443,7 +443,7 @@ ledgerConfigurations.equihash = {
       identities.regularUser.identity.id,
       identities.alternateUser.identity.id
     ],
-    minimumSignaturesRequired: 2
+    minimumSignaturesRequired: 1
   }],
   operationValidator: [{
     type: 'EquihashValidator2018',

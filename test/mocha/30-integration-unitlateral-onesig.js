@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -32,8 +32,8 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
   before(done => {
     async.auto({
       sign: callback => {
-        jsigs.sign(mockData.events.config, {
-          algorithm: 'LinkedDataSignature2015',
+        jsigs.sign(mockData.ledgerConfigurations.uni, {
+          algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback);
@@ -41,7 +41,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
       add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: {configEvent: results.sign},
+          body: {ledgerConfiguration: results.sign},
           identity: regularActor
         }), (err, res) => {
           should.not.exist(err);
@@ -74,7 +74,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
           createConcertRecordOp.record.id =
             'https://example.com/eventszzz/' + uuid();
           jsigs.sign(createConcertRecordOp, {
-            algorithm: 'LinkedDataSignature2015',
+            algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, callback);
@@ -86,8 +86,8 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }]}, err => callback(err));
     }, err => done(err));

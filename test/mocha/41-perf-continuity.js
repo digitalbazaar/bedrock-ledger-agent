@@ -34,7 +34,7 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
     async.auto({
       sign: callback => {
         jsigs.sign(configEvent, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback);
@@ -76,7 +76,7 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
       concertEvent.input[0].id = 'https://example.com/events/' + uuid();
       async.auto({
         sign: callback => jsigs.sign(concertEvent, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback),
