@@ -264,7 +264,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }]
@@ -288,7 +288,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }],
@@ -391,7 +391,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }],
@@ -506,7 +506,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation
           }, (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }]
@@ -531,7 +531,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }],
@@ -632,7 +632,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }],

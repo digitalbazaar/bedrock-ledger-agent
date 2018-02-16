@@ -89,7 +89,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(201);
+            res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
         }]}, err => callback(err));
