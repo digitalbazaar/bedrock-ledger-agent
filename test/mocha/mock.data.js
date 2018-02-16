@@ -1,10 +1,8 @@
-/*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
-const bedrock = require('bedrock');
-const config = bedrock.config;
 const helpers = require('./helpers');
 
 const mock = {};
@@ -236,7 +234,7 @@ mock.authorizedSignerUrl = identities.regularUser.keys.publicKey.id;
 
 // all mock keys for all groups
 mock.groups = {
-  'authorized': {
+  authorized: {
     publicKey: '-----BEGIN PUBLIC KEY-----\n' +
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAskcRISeoOvgQM8KxMEzP\n' +
       'DMSfcw9NKJRvXNoFnxS0j7DcTPvi0zMXKAY5smANZ1iz9jQ43X/EUDNyjaWkiDUr\n' +
@@ -274,7 +272,7 @@ mock.groups = {
       '42EADs/ajTEckTxULdirbEk2rINRwQC5kWMde3fcwAnn6xt3wvOyuwg=\n' +
       '-----END RSA PRIVATE KEY-----'
   },
-  'unauthorized': { // unauthorized group
+  unauthorized: { // unauthorized group
     publicKey: '-----BEGIN PUBLIC KEY-----\n' +
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlretzNDRSy2Dmr8xywmP\n' +
       '5BCE8LnFhfl7QB+7gsZSVANeoASk7l++JXM0nv/PJMuq9R8arekQ2tEGA53w1TU8\n' +
@@ -314,161 +312,181 @@ mock.groups = {
   }
 };
 
+
+
+const ledgerConfigurations = mock.ledgerConfigurations = {};
+
+ledgerConfigurations.uni = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+  consensusMethod: 'UnilateralConsensus2017',
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
+    }],
+    approvedSigner: [identities.regularUser.identity.id],
+    minimumSignaturesRequired: 1
+  }],
+  operationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    approvedSigner: [identities.regularUser.identity.id],
+    minimumSignaturesRequired: 1
+  }]
+};
+
+ledgerConfigurations.continuity = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
+  consensusMethod: 'Continuity2017',
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
+    }],
+    approvedSigner: [identities.regularUser.identity.id],
+    minimumSignaturesRequired: 1
+  }],
+  operationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    approvedSigner: [identities.regularUser.identity.id],
+    minimumSignaturesRequired: 1
+  }]
+};
+
+ledgerConfigurations.multisigAlpha = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+  consensusMethod: 'UnilateralConsensus2017',
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
+    }],
+    approvedSigner: [
+      identities.regularUser.identity.id,
+      identities.alternateUser.identity.id
+    ],
+    minimumSignaturesRequired: 2
+  }],
+  operationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    approvedSigner: [
+      identities.regularUser.identity.id,
+      identities.alternateUser.identity.id
+    ],
+    minimumSignaturesRequired: 2
+  }]
+};
+
+ledgerConfigurations.multisigBeta = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
+  consensusMethod: 'UnilateralConsensus2017',
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
+    }],
+    approvedSigner: [
+      identities.regularUser.identity.id,
+      identities.alternateUser.identity.id
+    ],
+    minimumSignaturesRequired: 2
+  }],
+  operationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    approvedSigner: [
+      identities.regularUser.identity.id,
+      identities.alternateUser.identity.id
+    ],
+    minimumSignaturesRequired: 2
+  }]
+};
+
+ledgerConfigurations.equihash = {
+  '@context': 'https://w3id.org/webledger/v1',
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+  consensusMethod: 'UnilateralConsensus2017',
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
+    }],
+    approvedSigner: [
+      identities.regularUser.identity.id,
+      identities.alternateUser.identity.id
+    ],
+    minimumSignaturesRequired: 2
+  }],
+  operationValidator: [{
+    type: 'EquihashValidator2018',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    equihashParameterN: 64,
+    equihashParameterK: 3
+  }]
+};
+
 const events = mock.events = {};
 const ops = mock.ops = {};
 
 events.config = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  ledgerConfiguration: {
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: 'UnilateralConsensus2017',
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      approvedSigner: [identities.regularUser.identity.id],
-      minimumSignaturesRequired: 1
-    }, {
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [identities.regularUser.identity.id],
-      minimumSignaturesRequired: 1
-    }],
-    requireEventValidation: true
-  }
+  ledgerConfiguration: ledgerConfigurations.uni
 };
 
 events.configContinuity = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  ledgerConfiguration: {
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
-    consensusMethod: 'Continuity2017',
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      approvedSigner: [identities.regularUser.identity.id],
-      minimumSignaturesRequired: 1
-    }, {
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [identities.regularUser.identity.id],
-      minimumSignaturesRequired: 1
-    }],
-    requireEventValidation: true
-  }
+  ledgerConfiguration: ledgerConfigurations.continuity
 };
 
 events.multisigConfigAlpha = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  ledgerConfiguration: {
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: 'UnilateralConsensus2017',
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [
-        identities.regularUser.identity.id,
-        identities.alternateUser.identity.id
-      ],
-      minimumSignaturesRequired: 2
-    }, {
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      approvedSigner: [
-        identities.regularUser.identity.id,
-        identities.alternateUser.identity.id
-      ],
-      minimumSignaturesRequired: 2
-    }],
-    requireEventValidation: true
-  }
+  ledgerConfiguration: ledgerConfigurations.multisigAlpha
 };
 
 events.multisigConfigBeta = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  ledgerConfiguration: {
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
-    consensusMethod: 'UnilateralConsensus2017',
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [
-        identities.regularUser.identity.id,
-        identities.alternateUser.identity.id
-      ],
-      minimumSignaturesRequired: 2
-    }, {
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      approvedSigner: [
-        identities.regularUser.identity.id,
-        identities.alternateUser.identity.id
-      ],
-      minimumSignaturesRequired: 2
-    }],
-    requireEventValidation: true
-  }
+  ledgerConfiguration: ledgerConfigurations.multisigBeta
 };
 
 events.equihashConfig = {
   '@context': 'https://w3id.org/webledger/v1',
   type: 'WebLedgerConfigurationEvent',
-  ledgerConfiguration: {
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: 'UnilateralConsensus2017',
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [
-        identities.regularUser.identity.id
-      ],
-      minimumSignaturesRequired: 1
-    }, {
-      type: 'EquihashValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      equihashParameterN: 64,
-      equihashParameterK: 3
-    }],
-    requireEventValidation: true
-  }
+  ledgerConfiguration: ledgerConfigurations.equihash
 };
 
 ops.createConcertRecord = {

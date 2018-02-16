@@ -17,8 +17,10 @@ Ledger Nodes, Ledgers, Blocks, and Events.
   * Create a new ledger agent
 * GET /ledger-agent/{AGENT_ID}
   * Get status information on a particular ledger agent
-* POST /ledger-agent/{AGENT_ID}/events
-  * Add a new event
+* POST /ledger-agent/{AGENT_ID}/config
+  * Add a new configuration
+* POST /ledger-agent/{AGENT_ID}/operations
+  * Add a new operation
 * GET /ledger-agent/{AGENT_ID}/events?id=EVENT_ID
   * Get an existing event
 * GET /ledger-agent/{AGENT_ID}/blocks?id=BLOCK_ID
@@ -63,14 +65,14 @@ For documentation on configuration, see [config.js](./lib/config.js).
 
 Create a new ledger agent given a set of options. If a ledgerNodeId is
 provided, a new ledger agent will be created to connect to an
-existing ledger. If a config block is specified in the options,
+existing ledger. If a `ledgerConfiguration` is specified in the options,
 a new ledger and corresponding ledger node will be created, ignoring
 any specified ledgerNodeId.
 
 * actor - the actor performing the action.
 * ledgerNodeId - the ID for the ledger node to connect to.
 * options - a set of options used when creating the agent.
-  * configEvent - the configuration event for the agent.
+  * ledgerConfiguration - the configuration for the ledger.
   * genesis - if true, create an entirely new genesis ledger (default: false).
   * storage - the storage subsystem for the ledger (default: 'mongodb').
   * public - if false, only the actor should be able to access the
@@ -80,48 +82,43 @@ any specified ledgerNodeId.
   * ledgerAgent - the ledger agent associated with the agent.
 
 ```javascript
-const configEvent = {
+const ledgerConfiguration = {
   '@context': 'https://w3id.org/webledger/v1',
-  type: 'WebLedgerConfigurationEvent',
-  operation: 'Config',
-  input: [{
-    type: 'WebLedgerConfiguration',
-    ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
-    consensusMethod: 'UnilateralConsensus2017'
-    eventValidator: [{
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerEvent']
-      }],
-      approvedSigner: [
-        'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
-      ],
-      minimumSignaturesRequired: 1
-    }, {
-      type: 'SignatureValidator2017',
-      eventFilter: [{
-        type: 'EventTypeFilter',
-        eventType: ['WebLedgerConfigurationEvent']
-      }],
-      approvedSigner: [
-        'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
-      ],
-      minimumSignaturesRequired: 1
+  type: 'WebLedgerConfiguration',
+  ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
+  consensusMethod: 'UnilateralConsensus2017'
+  ledgerConfigurationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['WebLedgerConfiguration']
     }],
-    // events that are not validated by at least 1 validator will be rejected
-    requireEventValidation: true
+    approvedSigner: [
+      'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+    ],
+    minimumSignaturesRequired: 1
   }],
-  signature: {
-    type: 'LinkedDataSignature2015',
+  operationValidator: [{
+    type: 'SignatureValidator2017',
+    validatorFilter: [{
+      type: 'ValidatorFilterByType',
+      validatorFilterByType: ['CreateWebLedgerRecord']
+    }],
+    approvedSigner: [
+      'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144'
+    ],
+    minimumSignaturesRequired: 1
+  }],
+  proof: {
+    type: 'RsaSignature2018',
     created: '2017-10-24T05:33:31Z',
     creator: 'did:v1:53ebca61-5687-4558-b90a-03167e4c2838/keys/144',
     domain: 'example.com',
-    signatureValue: 'eyiOiJJ0eXAK...EjXkgFWFO'
+    jws: 'eyiOiJJ0eXAK...EjXkgFWFO'
   }
 };
 const options = {
-  configEvent: configEvent,
+  ledgerConfiguration,
   genesis: true
 };
 
@@ -204,7 +201,7 @@ bedrockagent.getagentIterator(actor, options, (err, iterator) => {
     throw new Error('Failed to fetch iterator for ledger agents:', err);
   }
 
-  for(let ledgerAgent of iterator) {
+  for(const ledgerAgent of iterator) {
     console.log('Ledger agent:',  ledgerAgent.id);
   }
 });
