@@ -122,7 +122,7 @@ api.multiSign = (doc, signers, callback) => {
     throw new TypeError('Signers must be an array.');
   }
   async.map(signers, (s, callback) => jsigs.sign(doc, {
-    algorithm: 'LinkedDataSignature2015',
+    algorithm: 'RsaSignature2018',
     privateKeyPem: s.privateKeyPem,
     creator: s.creator
   }, callback), (err, results) => {

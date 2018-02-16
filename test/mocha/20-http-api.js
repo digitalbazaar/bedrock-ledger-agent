@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+/*!
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 /* global should */
 'use strict';
@@ -29,7 +29,7 @@ const urlObj = {
 };
 
 describe('Ledger Agent HTTP API', () => {
-  let signedConfigEvent;
+  let signedConfig;
   let defaultLedgerAgent;
   let publicLedgerAgent;
 
@@ -43,18 +43,18 @@ describe('Ledger Agent HTTP API', () => {
           regularActor = result;
           callback(err);
         }),
-      signConfig: callback => jsigs.sign(mockData.events.config, {
-        algorithm: 'LinkedDataSignature2015',
+      signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+        algorithm: 'RsaSignature2018',
         privateKeyPem:
           mockData.identities.regularUser.keys.privateKey.privateKeyPem,
         creator: mockData.identities.regularUser.keys.privateKey.publicKey
       }, (err, result) => {
-        signedConfigEvent = result;
+        signedConfig = result;
         callback(err);
       }),
       addDefault: ['getRegularUser', 'signConfig', (results, callback) => {
         const options = {
-          configEvent: signedConfigEvent,
+          ledgerConfiguration: signedConfig,
           owner: regularActor.id,
         };
         brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
@@ -64,7 +64,7 @@ describe('Ledger Agent HTTP API', () => {
       }],
       addPublic: ['getRegularUser', 'signConfig', (results, callback) => {
         const options = {
-          configEvent: signedConfigEvent,
+          ledgerConfiguration: signedConfig,
           owner: regularActor.id,
           public: true
         };
@@ -84,7 +84,7 @@ describe('Ledger Agent HTTP API', () => {
     it('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
         url: url.format(urlObj),
-        body: {configEvent: signedConfigEvent},
+        body: {ledgerConfiguration: signedConfig},
         identity: regularActor
       }), (err, res) => {
         res.statusCode.should.equal(201);
@@ -96,7 +96,7 @@ describe('Ledger Agent HTTP API', () => {
       const options = {
         name: uuid(),
         description: uuid(),
-        configEvent: signedConfigEvent
+        ledgerConfiguration: signedConfig
       };
       async.auto({
         createAgent: callback =>
@@ -124,7 +124,7 @@ describe('Ledger Agent HTTP API', () => {
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
         owner: regularActor.identity.id,
-        configEvent: signedConfigEvent
+        ledgerConfiguration: signedConfig
       };
       async.auto({
         getRegularUser: callback => brIdentity.get(
@@ -158,7 +158,7 @@ describe('Ledger Agent HTTP API', () => {
     });
     it('should get an existing ledger agent', done => {
       const options = {
-        configEvent: signedConfigEvent,
+        ledgerConfiguration: signedConfig,
         description: uuid(),
         name: uuid()
       };
@@ -198,7 +198,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: {configEvent: signedConfigEvent},
+            body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -224,7 +224,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: {configEvent: signedConfigEvent},
+            body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -252,7 +252,7 @@ describe('Ledger Agent HTTP API', () => {
       createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -264,19 +264,22 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }]
       }, err => done(err));
     });
-    it('should get event', done => {
+    // FIXME: it is unknown when operations will make their way into events
+    // so this test needs some tweaking if it is to figure out a URL from which
+    // to fetch an event
+    it.skip('should get event', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -288,7 +291,7 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
+            res.statusCode.should.equal(204);
             callback(null, res.headers.location);
           });
         }],
@@ -379,7 +382,7 @@ describe('Ledger Agent HTTP API', () => {
         'https://example.com/eventszzz/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -391,8 +394,8 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }],
         query: ['add', (results, callback) => {
@@ -425,7 +428,7 @@ describe('Ledger Agent HTTP API', () => {
     it('should not add ledger agent for new ledger', done => {
       request.post({
         url: url.format(urlObj),
-        body: {configEvent: signedConfigEvent},
+        body: {ledgerConfiguration: signedConfig},
         identity: regularActor
       }, (err, res) => {
         res.statusCode.should.equal(400);
@@ -434,7 +437,7 @@ describe('Ledger Agent HTTP API', () => {
     });
     it('should get an existing public ledger agent', done => {
       const options = {
-        configEvent: signedConfigEvent,
+        ledgerConfiguration: signedConfig,
         description: uuid(),
         name: uuid(),
         public: true
@@ -461,7 +464,8 @@ describe('Ledger Agent HTTP API', () => {
             result.service.should.be.an('object');
             result.owner.should.equal(regularActor.identity.id);
             result.name.should.equal(options.name);
-            result.description.should.equal(options.description);            callback();
+            result.description.should.equal(options.description);
+            callback();
           });
         }]
       }, err => done(err));
@@ -471,7 +475,7 @@ describe('Ledger Agent HTTP API', () => {
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            body: {configEvent: signedConfigEvent},
+            body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
@@ -495,7 +499,7 @@ describe('Ledger Agent HTTP API', () => {
       createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -506,20 +510,22 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation
           }, (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }]
       }, err => done(err));
     });
-    it('should get event from public ledger', done => {
+    // FIXME: unknown when events will occur, need another way to test
+    // getting an event from the event endpoint
+    it.skip('should get event from public ledger', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id =
         'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -620,7 +626,7 @@ describe('Ledger Agent HTTP API', () => {
         'https://example.com/eventszzz/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          algorithm: 'LinkedDataSignature2015',
+          algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
@@ -632,8 +638,8 @@ describe('Ledger Agent HTTP API', () => {
             identity: regularActor
           }), (err, res) => {
             should.not.exist(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }],
         query: ['add', (results, callback) => {

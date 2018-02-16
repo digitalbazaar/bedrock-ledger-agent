@@ -17,7 +17,7 @@ const uuid = require('uuid/v4');
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);
 
-describe.only('Ledger Agent API', () => {
+describe('Ledger Agent API', () => {
   before(done => {
     async.series([
       callback => helpers.prepareDatabase(mockData, callback)
