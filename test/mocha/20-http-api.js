@@ -1,7 +1,6 @@
 /*!
  * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
-/* global should */
 'use strict';
 
 const async = require('async');
@@ -113,7 +112,7 @@ describe('Ledger Agent HTTP API', () => {
             results.createAgent.lastIndexOf('/') + 1);
           const agentUrn = `urn:uuid:${agentId}`;
           brLedgerAgent.get(null, agentUrn, (err, result) => {
-            should.not.exist(err);
+            assertNoError(err);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
             callback();
@@ -149,7 +148,7 @@ describe('Ledger Agent HTTP API', () => {
             results.createAgent.lastIndexOf('/') + 1);
           const agentUrn = `urn:uuid:${agentId}`;
           brLedgerAgent.get(null, agentUrn, (err, result) => {
-            should.not.exist(err);
+            assertNoError(err);
             result.node.id.should.equal(results.createNode.id);
             callback();
           });
@@ -169,7 +168,7 @@ describe('Ledger Agent HTTP API', () => {
             body: options,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
@@ -179,7 +178,7 @@ describe('Ledger Agent HTTP API', () => {
             url: results.add,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             const result = res.body;
             should.exist(result.id);
@@ -201,7 +200,7 @@ describe('Ledger Agent HTTP API', () => {
             body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
@@ -211,7 +210,7 @@ describe('Ledger Agent HTTP API', () => {
             url: url.format(urlObj),
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             res.body.ledgerAgent.length.should.be.at.least(1);
             callback();
@@ -227,7 +226,7 @@ describe('Ledger Agent HTTP API', () => {
             body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
@@ -238,7 +237,7 @@ describe('Ledger Agent HTTP API', () => {
             qs: {owner: regularActor.identity.id},
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             res.body.ledgerAgent.length.should.be.at.least(1);
             callback();
@@ -249,7 +248,8 @@ describe('Ledger Agent HTTP API', () => {
     it('should process operation', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
+      createConcertRecordOp.record.id =
+        `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'RsaSignature2018',
@@ -263,7 +263,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback();
           });
@@ -276,7 +276,8 @@ describe('Ledger Agent HTTP API', () => {
     it.skip('should get event', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
+      createConcertRecordOp.record.id =
+        `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'RsaSignature2018',
@@ -290,7 +291,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback(null, res.headers.location);
           });
@@ -301,9 +302,10 @@ describe('Ledger Agent HTTP API', () => {
             url: eventUrl,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
-            res.body.event.operation[0].record.startDate.should.equal('2017-07-14T21:30');
+            res.body.event.operation[0].record.startDate
+              .should.equal('2017-07-14T21:30');
             callback(null, res.body);
           });
         }]
@@ -316,7 +318,7 @@ describe('Ledger Agent HTTP API', () => {
             url: defaultLedgerAgent.service.ledgerBlockService,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body.genesis);
             should.exist(res.body.genesis.block);
@@ -337,7 +339,7 @@ describe('Ledger Agent HTTP API', () => {
             url: defaultLedgerAgent.service.ledgerBlockService,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body.latest);
             should.exist(res.body.latest.block);
@@ -356,7 +358,7 @@ describe('Ledger Agent HTTP API', () => {
             url: defaultLedgerAgent.service.ledgerBlockService,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             callback(null, res.body);
           });
@@ -368,7 +370,7 @@ describe('Ledger Agent HTTP API', () => {
             url: blockUrl,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             callback(null, res.body);
           });
@@ -393,7 +395,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback();
           });
@@ -409,7 +411,7 @@ describe('Ledger Agent HTTP API', () => {
             }],
             qs: {id: createConcertRecordOp.record.id}
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body);
             should.exist(res.body.object);
@@ -449,14 +451,14 @@ describe('Ledger Agent HTTP API', () => {
             body: options,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
         },
         get: ['add', (results, callback) => {
           request.get({url: results.add}, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             const result = res.body;
             should.exist(result.id);
@@ -478,14 +480,14 @@ describe('Ledger Agent HTTP API', () => {
             body: {ledgerConfiguration: signedConfig},
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
         },
         getAll: ['add', (results, callback) => {
           request.get({url: url.format(urlObj)}, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             res.body.ledgerAgent.length.should.be.at.least(1);
             callback();
@@ -496,7 +498,8 @@ describe('Ledger Agent HTTP API', () => {
     it('should process operation on public ledger', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id = 'https://example.com/concerts/' + uuid(),
+      createConcertRecordOp.record.id =
+        `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'RsaSignature2018',
@@ -509,7 +512,7 @@ describe('Ledger Agent HTTP API', () => {
             url: publicLedgerAgent.service.ledgerOperationService,
             body: results.signOperation
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback();
           });
@@ -536,7 +539,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(202);
             callback(null, res.headers.location);
           });
@@ -546,7 +549,7 @@ describe('Ledger Agent HTTP API', () => {
           request.get({
             url: eventUrl
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             res.body.event.operation[0].record.startDate.should.equal(
               '2017-07-14T21:30');
@@ -561,7 +564,7 @@ describe('Ledger Agent HTTP API', () => {
           request.get({
             url: publicLedgerAgent.service.ledgerBlockService
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body.genesis);
             should.exist(res.body.genesis.block);
@@ -581,7 +584,7 @@ describe('Ledger Agent HTTP API', () => {
           request.get({
             url: publicLedgerAgent.service.ledgerBlockService
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body.latest);
             should.exist(res.body.latest.block);
@@ -599,7 +602,7 @@ describe('Ledger Agent HTTP API', () => {
           request.get({
             url: publicLedgerAgent.service.ledgerBlockService
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             callback(null, res.body);
           });
@@ -611,15 +614,14 @@ describe('Ledger Agent HTTP API', () => {
             url: blockUrl,
             identity: regularActor
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             callback(null, res.body);
           });
         }]
       }, err => done(err));
     });
-    it('should query state machine on public ledger successfully',
-      done => {
+    it('should query state machine on public ledger successfully', done => {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id =
@@ -637,7 +639,7 @@ describe('Ledger Agent HTTP API', () => {
             body: results.signOperation,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback();
           });
@@ -652,7 +654,7 @@ describe('Ledger Agent HTTP API', () => {
             }],
             qs: {id: createConcertRecordOp.record.id}
           }, (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body);
             should.exist(res.body.object);

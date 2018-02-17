@@ -46,7 +46,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
           body: {ledgerConfiguration: results.sign},
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(201);
           callback(null, res.headers.location);
         });
@@ -56,7 +56,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
           url: results.add,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(200);
           ledgerAgent = res.body;
           callback();
@@ -91,7 +91,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             body: results.sign,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(204);
             callback();
           });
@@ -109,7 +109,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
           url: ledgerAgent.service.ledgerBlockService,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(200);
           currentBlock = res.body.latest.block.id;
           callback(null, res.body);
@@ -125,7 +125,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             url: blockUrl,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             if(!res.body.block.previousBlock || attempts > maxAttempts) {
               done = true;

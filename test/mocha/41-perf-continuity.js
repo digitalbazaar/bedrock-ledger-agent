@@ -55,7 +55,7 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
           url: results.add,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(200);
           ledgerAgent = res.body;
           callback();
@@ -86,7 +86,7 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
             body: results.sign,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           })]

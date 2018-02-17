@@ -57,7 +57,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
           body: {configEvent: results.signConfig},
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(201);
           callback(null, res.headers.location);
         });
@@ -67,7 +67,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
           url: results.add,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(200);
           ledgerAgent = res.body;
           callback();
@@ -87,7 +87,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         body: signedEvents[n],
         identity: regularActor
       }), (err, res) => {
-        should.not.exist(err);
+        assertNoError(err);
         res.statusCode.should.equal(201);
         callback(null, res.headers.location);
       });

@@ -1,7 +1,6 @@
 /*!
  * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
-/* global should */
 'use strict';
 
 const async = require('async');
@@ -59,7 +58,7 @@ describe('Ledger Agent API', () => {
         owner: regularActor.id
       };
       brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-        should.not.exist(err);
+        assertNoError(err);
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
         should.exist(ledgerAgent.service.ledgerEventService);
@@ -76,7 +75,7 @@ describe('Ledger Agent API', () => {
         description: uuid()
       };
       brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-        should.not.exist(err);
+        assertNoError(err);
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
         should.exist(ledgerAgent.service.ledgerEventService);
@@ -106,7 +105,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {
           owner: regularActor.id
@@ -114,7 +113,7 @@ describe('Ledger Agent API', () => {
         const ledgerNodeId = firstLa.node.id;
         brLedgerAgent.add(
           regularActor, ledgerNodeId, options, (err, ledgerAgent) => {
-            should.not.exist(err);
+            assertNoError(err);
             should.exist(ledgerAgent);
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
@@ -131,13 +130,13 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {};
         const ledgerAgentId = firstLa.id;
         brLedgerAgent.get(
           regularActor, ledgerAgentId, options, (err, ledgerAgent) => {
-            should.not.exist(err);
+            assertNoError(err);
             should.exist(ledgerAgent);
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
@@ -166,7 +165,7 @@ describe('Ledger Agent API', () => {
           };
           brLedgerAgent.getAgentIterator(
             regularActor, options, (err, iterator) => {
-              should.not.exist(err);
+              assertNoError(err);
               callback(null, iterator);
             });
         }],
@@ -197,7 +196,7 @@ describe('Ledger Agent API', () => {
           owner: regularActor.id
         };
         brLedgerAgent.remove(regularActor, results.create.id, options, err => {
-          should.not.exist(err);
+          assertNoError(err);
           callback();
         });
       }],
@@ -205,7 +204,7 @@ describe('Ledger Agent API', () => {
         database.collections.ledgerAgent.findOne({
           id: database.hash(results.create.id)
         }, (err, result) => {
-          should.not.exist(err);
+          assertNoError(err);
           should.exist(result);
           result.meta.deleted.should.be.a('number');
           callback();
@@ -218,7 +217,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {};
         const ledgerAgentId = firstLa.id;
@@ -263,7 +262,7 @@ describe('Ledger Agent API', () => {
       async.auto({
         create: callback => async.times(3, (i, callback) =>
           brLedgerAgent.add(adminActor, null, options, (err, result) => {
-            should.not.exist(err);
+            assertNoError(err);
             testAgents.push(result.id);
             callback();
           }), callback),
@@ -273,7 +272,7 @@ describe('Ledger Agent API', () => {
           };
           brLedgerAgent.getAgentIterator(
             regularActor, options, (err, iterator) => {
-              should.not.exist(err);
+              assertNoError(err);
               callback(null, iterator);
             });
         }],
@@ -345,7 +344,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {
           owner: regularActor.id
@@ -367,7 +366,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {};
         const ledgerAgentId = firstLa.id;
@@ -399,7 +398,7 @@ describe('Ledger Agent API', () => {
           };
           brLedgerAgent.getAgentIterator(
             unauthorizedActor, options, (err, iterator) => {
-              should.not.exist(err);
+              assertNoError(err);
               callback(null, iterator);
             });
         }],
@@ -447,13 +446,13 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(regularActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {public: true};
         const ledgerAgentId = firstLa.id;
         brLedgerAgent.get(
           unauthorizedActor, ledgerAgentId, options, (err, ledgerAgent) => {
-            should.not.exist(err);
+            assertNoError(err);
             should.exist(ledgerAgent);
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
@@ -483,7 +482,7 @@ describe('Ledger Agent API', () => {
           };
           brLedgerAgent.getAgentIterator(
             unauthorizedActor, options, (err, iterator) => {
-              should.not.exist(err);
+              assertNoError(err);
               callback(null, iterator);
             });
         }],
@@ -536,7 +535,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(adminActor, null, options, (err, ledgerAgent) => {
-        should.not.exist(err);
+        assertNoError(err);
         should.exist(ledgerAgent);
         should.exist(ledgerAgent.id);
         should.exist(ledgerAgent.service.ledgerEventService);
@@ -550,7 +549,7 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {
           owner: regularActor.id
@@ -558,7 +557,7 @@ describe('Ledger Agent API', () => {
         const ledgerNodeId = firstLa.node.id;
         brLedgerAgent.add(
           adminActor, ledgerNodeId, options, (err, ledgerAgent) => {
-            should.not.exist(err);
+            assertNoError(err);
             should.exist(ledgerAgent);
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
@@ -575,13 +574,13 @@ describe('Ledger Agent API', () => {
       };
 
       brLedgerAgent.add(adminActor, null, options, (err, firstLa) => {
-        should.not.exist(err);
+        assertNoError(err);
 
         const options = {};
         const ledgerAgentId = firstLa.id;
         brLedgerAgent.get(
           adminActor, ledgerAgentId, options, (err, ledgerAgent) => {
-            should.not.exist(err);
+            assertNoError(err);
             should.exist(ledgerAgent);
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
@@ -610,7 +609,7 @@ describe('Ledger Agent API', () => {
           };
           brLedgerAgent.getAgentIterator(
             adminActor, options, (err, iterator) => {
-              should.not.exist(err);
+              assertNoError(err);
               callback(null, iterator);
             });
         }],
@@ -641,7 +640,7 @@ describe('Ledger Agent API', () => {
           owner: regularActor.id
         };
         brLedgerAgent.remove(adminActor, results.create.id, options, err => {
-          should.not.exist(err);
+          assertNoError(err);
           callback();
         });
       }],
@@ -649,7 +648,7 @@ describe('Ledger Agent API', () => {
         database.collections.ledgerAgent.findOne({
           id: database.hash(results.create.id)
         }, (err, result) => {
-          should.not.exist(err);
+          assertNoError(err);
           should.exist(result);
           result.meta.deleted.should.be.a('number');
           callback();

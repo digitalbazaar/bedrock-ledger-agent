@@ -48,7 +48,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
             body: {ledgerConfiguration: results.signConfig},
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(201);
             callback(null, res.headers.location);
           });
@@ -58,7 +58,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
             url: results.add,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             ledgerAgent = res.body;
             callback();
@@ -90,7 +90,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
               body: results.signEvent,
               identity: regularActor
             }), (err, res) => {
-              should.not.exist(err);
+              assertNoError(err);
               res.statusCode.should.equal(204);
               callback();
             })]
@@ -107,7 +107,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
             url: ledgerAgent.service.ledgerBlockService,
             identity: regularActor
           }), (err, res) => {
-            should.not.exist(err);
+            assertNoError(err);
             res.statusCode.should.equal(200);
             currentBlock = res.body.latest.block.id;
             callback(null, res.body);
@@ -123,7 +123,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
               url: blockUrl,
               identity: regularActor
             }), (err, res) => {
-              should.not.exist(err);
+              assertNoError(err);
               res.statusCode.should.equal(200);
               if(!res.body.block.previousBlock || attempts > maxAttempts) {
                 done = true;
@@ -176,7 +176,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           body: {ledgerConfiguration: results.signConfig},
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(201);
           callback(null, res.headers.location);
         })],
@@ -185,7 +185,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           url: results.add,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(200);
           ledgerAgent = res.body;
           callback();
@@ -206,7 +206,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           body: results.signOpAlpha,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(204);
           callback();
         })],
@@ -227,7 +227,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           body: results.signConfigAlpha,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(204);
           callback();
         })],
@@ -245,7 +245,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           body: results.signOpBeta,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           // this event should fail
           res.statusCode.should.equal(400);
           res.body.type.should.equal('ValidationError');
@@ -265,7 +265,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           body: results.signOpGamma,
           identity: regularActor
         }), (err, res) => {
-          should.not.exist(err);
+          assertNoError(err);
           res.statusCode.should.equal(204);
           callback();
         })]

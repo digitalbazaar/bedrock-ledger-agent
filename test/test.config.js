@@ -1,9 +1,8 @@
 /*
- * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 
 const config = require('bedrock').config;
-const fs = require('fs');
 const path = require('path');
 require('bedrock-permission');
 

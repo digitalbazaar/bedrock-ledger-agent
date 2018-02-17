@@ -312,8 +312,6 @@ mock.groups = {
   }
 };
 
-
-
 const ledgerConfigurations = mock.ledgerConfigurations = {};
 
 ledgerConfigurations.uni = {
