@@ -72,7 +72,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
           const createConcertRecordOp =
             bedrock.util.clone(mockData.ops.createConcertRecord);
           createConcertRecordOp.record.id =
-            'https://example.com/eventszzz/' + uuid();
+            'https://example.com/events/' + uuid();
           jsigs.sign(createConcertRecordOp, {
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,

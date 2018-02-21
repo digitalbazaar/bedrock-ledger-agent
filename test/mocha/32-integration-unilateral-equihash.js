@@ -76,7 +76,7 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
           const createConcertRecordOp =
             bedrock.util.clone(mockData.ops.createConcertRecord);
           createConcertRecordOp.record.id =
-            'https://example.com/eventszzz/' + uuid();
+            'https://example.com/events/' + uuid();
           jsigs.sign(createConcertRecordOp, {
             algorithm: 'EquihashProof2018',
             parameters: {

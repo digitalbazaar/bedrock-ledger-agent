@@ -74,7 +74,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
         createConcertRecordOp.record.id =
-          'https://example.com/eventszzz/' + uuid();
+          'https://example.com/events/' + uuid();
         async.auto({
           signEvent: callback => helpers.multiSign(
             createConcertRecordOp, [{
@@ -197,7 +197,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
         createConcertRecordOp.record.id =
-          'https://example.com/eventszzz/' + uuid();
+          'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       },
       addOpAlpha: ['signOpAlpha', (results, callback) =>
@@ -236,7 +236,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
         createConcertRecordOp.record.id =
-          'https://example.com/eventszzz/' + uuid();
+          'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       }],
       addOpBeta: ['signOpBeta', (results, callback) =>
@@ -256,7 +256,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
         const createConcertRecordOp =
           bedrock.util.clone(mockData.ops.createConcertRecord);
         createConcertRecordOp.record.id =
-          'https://example.com/eventszzz/' + uuid();
+          'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, newSigners, callback);
       }],
       addOpGamma: ['signOpGamma', (results, callback) =>
