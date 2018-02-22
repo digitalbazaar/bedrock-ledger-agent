@@ -62,20 +62,19 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/identity/v1",
+  "@context": "https://w3id.org/security/v2",
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
-    "type": "CryptographicKey",
+    "type": "RsaVerificationKey2018",
     "owner": identities[userName].identity.id,
     "publicKeyPem": identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/identity/v1",
-  "type": "CryptographicKey",
+  "@context": "https://w3id.org/security/v2",
+  "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
-  "label": "Signing Key for " + identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
   "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
 };
@@ -130,20 +129,19 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/identity/v1",
+  "@context": "https://w3id.org/security/v2",
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
-    "type": "CryptographicKey",
+    "type": "RsaVerificationKey2018",
     "owner": identities[userName].identity.id,
     "publicKeyPem": identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/identity/v1",
-  "type": "CryptographicKey",
+  "@context": "https://w3id.org/security/v2",
+  "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
-  "label": "Signing Key for " + identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
   "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
 };
@@ -197,20 +195,19 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/identity/v1",
+  "@context": "https://w3id.org/security/v2",
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
-    "type": "CryptographicKey",
+    "type": "RsaVerificationKey2018",
     "owner": identities[userName].identity.id,
     "publicKeyPem": identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/identity/v1",
-  "type": "CryptographicKey",
+  "@context": "https://w3id.org/security/v2",
+  "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
-  "label": "Signing Key for " + identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
   "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
 };
