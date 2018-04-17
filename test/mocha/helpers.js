@@ -7,6 +7,7 @@ const async = require('async');
 const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brKey = require('bedrock-key');
+const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
 const jsigs = require('jsonld-signatures');
 
@@ -44,7 +45,7 @@ api.createKeyPair = options => {
   }
   const newKeyPair = {
     publicKey: {
-      '@context': 'https://w3id.org/identity/v1',
+      '@context': constants.IDENTITY_CONTEXT_V1_URL,
       id: ownerId + '/keys/1',
       type: 'CryptographicKey',
       owner: ownerId,

@@ -3,13 +3,13 @@
   "version": "0.0.1-0",
   "private": true,
   "scripts": {
-    "test": "node --preserve-symlinks test test",
+    "test": "redis-cli flushall && node --preserve-symlinks test test",
     "watch": "grunt watch"
   },
   "dependencies": {
     "async": "^2.4.0",
     "bedrock": "^1.8.0",
-    "bedrock-did-client": "^1.0.0",
+    "bedrock-did-client": "digitalbazaar/bedrock-did-client#jsonld-1.1",
     "bedrock-docs": "^2.1.0",
     "bedrock-express": "^2.0.6",
     "bedrock-identity": "^4.6.0",
@@ -17,7 +17,7 @@
     "bedrock-key": "^4.0.0",
     "bedrock-ledger-consensus-continuity": "digitalbazaar/bedrock-ledger-consensus-continuity#master",
     "bedrock-ledger-consensus-uni": "digitalbazaar/bedrock-ledger-consensus-uni#master",
-    "bedrock-ledger-context": "github:digitalbazaar/bedrock-ledger-context#master",
+    "bedrock-ledger-context": "^1.0.0",
     "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#master",
     "bedrock-ledger-storage-mongodb": "github:digitalbazaar/bedrock-ledger-storage-mongodb#master",
     "bedrock-ledger-validator-equihash": "digitalbazaar/bedrock-ledger-validator-equihash#master",

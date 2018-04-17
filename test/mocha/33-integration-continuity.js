@@ -3,11 +3,11 @@
  */
 'use strict';
 
-const _ = require('lodash');
 const async = require('async');
 const bedrock = require('bedrock');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const brLedgerNode = require('bedrock-ledger-node');
+const cache = require('bedrock-redis');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -27,7 +27,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
+describe('Integration - 4 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
   const nodes = 4;
   let ledgerAgent;
@@ -35,10 +35,12 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
   let genesisLedgerNode;
   const peers = [];
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(done => async.series([
+    callback => cache.client.flushall(callback),
+    callback => helpers.prepareDatabase(mockData, callback)
+  ], done));
   before(function(done) {
     this.timeout(60000);
-    const configEvent = bedrock.util.clone(mockData.events.configContinuity);
     async.auto({
       consensusApi: callback =>
         brLedgerNode.use('Continuity2017', (err, result) => {
@@ -46,7 +48,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
           callback(err);
         }),
       sign: callback => {
-        jsigs.sign(configEvent, {
+        jsigs.sign(mockData.ledgerConfigurations.continuity, {
           algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
@@ -55,7 +57,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
       add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
           url: url.format(urlObj),
-          body: {configEvent: results.sign},
+          body: {ledgerConfiguration: results.sign},
           identity: regularActor
         }), (err, res) => {
           assertNoError(err);
@@ -109,56 +111,49 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     }, err => done(err));
   });
 
-  before(done => {
-    async.map(peers, (ledgerNode, callback) => {
-      consensusApi._voters.get(ledgerNode.id, (err, result) => {
-        if(err) {
-          return callback(err);
-        }
-        callback(null, {id: result.id});
-      });
-    }, (err, result) => {
-      if(err) {
-        return done(err);
-      }
-      consensusApi._election._recommendElectors =
-        (ledgerNode, voter, electors, manifest, callback) => {
-          callback(null, result);
-        };
-      done();
-    });
-  });
-
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
   });
-  it('should add 10 events and blocks', function(done) {
-    this.timeout(60000);
-    async.timesSeries(10, (n, callback) => {
+
+  /* NOTE: in this test, operations are added to the ledger via a ledger agent
+     associated with the genesis ledger node. Since operations are not being
+     added on the additional nodes, the Continuity consensus algorithm will
+     not expand the elector population beyond the genesis node. Under these
+     conditions, all nodes will compute consensus based on a single elector.
+     This test demonstrates that operations added on the genesis node are
+     properly gossiped to all nodes and all nodes generate the same blocks.
+  */
+  it('should add 3 events and blocks', function(done) {
+    this.timeout(120000);
+    async.timesSeries(3, (n, callback) => {
       async.auto({
         sign: callback => {
-          const concertEvent = bedrock.util.clone(mockData.events.concert);
-          concertEvent.input[0].id = 'https://example.com/events/' + uuid();
-          jsigs.sign(concertEvent, {
+          const createConcertRecordOp =
+            bedrock.util.clone(mockData.ops.createConcertRecord);
+          createConcertRecordOp.record.id =
+            'https://example.com/events/' + uuid();
+          jsigs.sign(createConcertRecordOp, {
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, callback);
         },
-        addEvent: ['sign', (results, callback) => {
+        add: ['sign', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerEventService,
+            url: ledgerAgent.service.ledgerOperationService,
             body: results.sign,
             identity: regularActor
           }), (err, res) => {
             assertNoError(err);
-            res.statusCode.should.equal(201);
-            callback(null, res.headers.location);
+            res.statusCode.should.equal(204);
+            callback();
           });
         }],
-        runWorkers: ['addEvent', (results, callback) =>
-          async.each(peers, (ledgerNode, callback) =>
-            consensusApi._worker._run(ledgerNode, callback), callback)],
+        // run two worker cycles per node to propagate events and find consensus
+        runWorkers: ['add', (results, callback) => async.timesSeries(
+          2, (n, callback) => async.eachSeries(peers, (ledgerNode, callback) =>
+            consensusApi._worker._run(ledgerNode, callback), callback)
+          , callback)],
         checkBlock: ['runWorkers', (results, callback) => {
           request.get(helpers.createHttpSignatureRequest({
             url: ledgerAgent.service.ledgerBlockService,
@@ -166,28 +161,28 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
           }), (err, res) => {
             assertNoError(err);
             res.statusCode.should.equal(200);
-            const blockId = res.body.latest.block.id;
-            const currentBlockNumber =
-              parseInt(blockId.substring(blockId.lastIndexOf('/') + 1));
-            const electionResult = res.body.latest.block.electionResult;
-            const voteCount = electionResult.length;
-            const voters = electionResult.map(v => v.voter);
-            voters.should.have.same.members(
-              _.uniq(voters));
-            if(currentBlockNumber === 1) {
-              voteCount.should.equal(1);
-            } else {
-              // there should be 3 or 4 voters on blocks 2+
-              // this represents greater than 2/3 of the 4 electors
-              voteCount.should.be.oneOf([3, 4]);
-            }
-            currentBlockNumber.should.equal(n + 1);
+            const {blockHeight: latestBlockHeight} = res.body.latest.block;
+            latestBlockHeight.should.equal(n + 1);
             callback();
           });
         }]
       }, callback);
-
-    }, err => done(err));
+    }, err => {
+      if(err) {
+        return done(err);
+      }
+      // check to ensure that all nodes have generated the same blocks
+      async.map(peers, (ledgerNode, callback) =>
+        ledgerNode.storage.blocks.getLatestSummary(callback),
+      (err, results) => {
+        if(err) {
+          return done(err);
+        }
+        results.forEach(r => r.eventBlock.block.should.eql(
+          results[0].eventBlock.block));
+        done();
+      });
+    });
   });
   it('should crawl to genesis block from latest block', done => {
     const maxAttempts = 20;

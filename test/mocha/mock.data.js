@@ -3,6 +3,7 @@
  */
 'use strict';
 
+const {constants} = require('bedrock').config;
 const helpers = require('./helpers');
 
 const mock = {};
@@ -62,7 +63,7 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
@@ -72,7 +73,7 @@ mock.ldDocuments[identities[userName].identity.id] = {
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
@@ -129,7 +130,7 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
@@ -139,7 +140,7 @@ mock.ldDocuments[identities[userName].identity.id] = {
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
@@ -195,7 +196,7 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "id": identities[userName].identity.id,
   "publicKey": [{
     "id": identities[userName].keys.publicKey.id,
@@ -205,7 +206,7 @@ mock.ldDocuments[identities[userName].identity.id] = {
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": "https://w3id.org/security/v2",
+  "@context": constants.SECURITY_CONTEXT_V2_URL,
   "type": "RsaVerificationKey2018",
   "owner": identities[userName].identity.id,
   "id": identities[userName].keys.publicKey.id,
@@ -312,7 +313,7 @@ mock.groups = {
 const ledgerConfigurations = mock.ledgerConfigurations = {};
 
 ledgerConfigurations.uni = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
@@ -337,7 +338,7 @@ ledgerConfigurations.uni = {
 };
 
 ledgerConfigurations.continuity = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
   consensusMethod: 'Continuity2017',
@@ -362,7 +363,7 @@ ledgerConfigurations.continuity = {
 };
 
 ledgerConfigurations.multisigAlpha = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
@@ -393,7 +394,7 @@ ledgerConfigurations.multisigAlpha = {
 };
 
 ledgerConfigurations.multisigBeta = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
   consensusMethod: 'UnilateralConsensus2017',
@@ -424,7 +425,7 @@ ledgerConfigurations.multisigBeta = {
 };
 
 ledgerConfigurations.equihash = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
@@ -455,40 +456,40 @@ const events = mock.events = {};
 const ops = mock.ops = {};
 
 events.config = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: ledgerConfigurations.uni
 };
 
 events.configContinuity = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: ledgerConfigurations.continuity
 };
 
 events.multisigConfigAlpha = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: ledgerConfigurations.multisigAlpha
 };
 
 events.multisigConfigBeta = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: ledgerConfigurations.multisigBeta
 };
 
 events.equihashConfig = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'WebLedgerConfigurationEvent',
   ledgerConfiguration: ledgerConfigurations.equihash
 };
 
 ops.createConcertRecord = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   type: 'CreateWebLedgerRecord',
   record: {
-    '@context': 'https://w3id.org/test/v1',
+    '@context': constants.TEST_CONTEXT_V1_URL,
     id: 'https://example.com/events/123456',
     type: 'Concert',
     name: 'Big Band Concert in New York City',
@@ -505,7 +506,7 @@ ops.createConcertRecord = {
 
 const blocks = mock.blocks = {};
 blocks.config = {
-  '@context': 'https://w3id.org/webledger/v1',
+  '@context': constants.WEB_LEDGER_CONTEXT_V1_URL,
   id: '',
   type: 'WebLedgerEventBlock',
   event: [events.config]

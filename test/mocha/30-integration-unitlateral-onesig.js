@@ -89,7 +89,8 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
             res.statusCode.should.equal(204);
             callback();
           });
-        }]}, err => callback(err));
+        }]
+      }, err => callback(err));
     }, err => done(err));
   });
   it('should crawl to genesis block from latest block', done => {
