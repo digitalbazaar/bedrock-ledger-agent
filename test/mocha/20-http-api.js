@@ -257,17 +257,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }]
+        add: ['signOperation', (results, callback) => request.post({
+          url: defaultLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })]
       }, err => done(err));
     });
     // FIXME: it is unknown when operations will make their way into events
@@ -285,17 +282,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback(null, res.headers.location);
-          });
-        }],
+        add: ['signOperation', (results, callback) => request.post({
+          url: defaultLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback(null, res.headers.location);
+        })],
         get: ['add', (results, callback) => {
           const eventUrl = results.add;
           request.get(helpers.createHttpSignatureRequest({
@@ -391,17 +385,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: defaultLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }],
+        add: ['signOperation', (results, callback) => request.post({
+          url: defaultLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })],
         query: ['add', (results, callback) => {
           const queryUrl = defaultLedgerAgent.service.ledgerQueryService;
           request.post(helpers.createHttpSignatureRequest({
@@ -509,16 +500,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post({
-            url: publicLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation
-          }, (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }]
+        add: ['signOperation', (results, callback) => request.post({
+          url: publicLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })]
       }, err => done(err));
     });
     // FIXME: unknown when events will occur, need another way to test
@@ -535,17 +524,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: publicLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(202);
-            callback(null, res.headers.location);
-          });
-        }],
+        add: ['signOperation', (results, callback) => request.post({
+          url: publicLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(202);
+          callback(null, res.headers.location);
+        })],
         get: ['add', (results, callback) => {
           const eventUrl = results.add;
           request.get({
@@ -637,17 +623,14 @@ describe('Ledger Agent HTTP API', () => {
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
           creator: mockData.identities.regularUser.keys.privateKey.publicKey
         }, callback),
-        add: ['signOperation', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: publicLedgerAgent.service.ledgerOperationService,
-            body: results.signOperation,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }],
+        add: ['signOperation', (results, callback) => request.post({
+          url: publicLedgerAgent.service.ledgerOperationService,
+          body: results.signOperation,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })],
         query: ['add', (results, callback) => {
           const queryUrl = publicLedgerAgent.service.ledgerQueryService;
           request.post({

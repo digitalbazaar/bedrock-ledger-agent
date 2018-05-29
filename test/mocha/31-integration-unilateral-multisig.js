@@ -84,16 +84,14 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
               privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
               creator: alternateActor.keys.publicKey.id
             }], callback),
-          add: ['signEvent', (results, callback) =>
-            request.post(helpers.createHttpSignatureRequest({
-              url: ledgerAgent.service.ledgerOperationService,
-              body: results.signEvent,
-              identity: regularActor
-            }), (err, res) => {
-              assertNoError(err);
-              res.statusCode.should.equal(204);
-              callback();
-            })]
+          add: ['signEvent', (results, callback) => request.post({
+            url: ledgerAgent.service.ledgerOperationService,
+            body: results.signEvent,
+          }, (err, res) => {
+            assertNoError(err);
+            res.statusCode.should.equal(204);
+            callback();
+          })]
         }, err => callback(err));
       }, err => done(err)));
     it('should crawl to genesis block from latest block', done => {
@@ -200,16 +198,14 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       },
-      addOpAlpha: ['signOpAlpha', (results, callback) =>
-        request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerOperationService,
-          body: results.signOpAlpha,
-          identity: regularActor
-        }), (err, res) => {
-          assertNoError(err);
-          res.statusCode.should.equal(204);
-          callback();
-        })],
+      addOpAlpha: ['signOpAlpha', (results, callback) => request.post({
+        url: ledgerAgent.service.ledgerOperationService,
+        body: results.signOpAlpha,
+      }, (err, res) => {
+        assertNoError(err);
+        res.statusCode.should.equal(204);
+        callback();
+      })],
       signConfigAlpha: ['addOpAlpha', (results, callback) => {
         const newConfig = bedrock.util.clone(
           mockData.ledgerConfigurations.multisigBeta);
@@ -239,18 +235,16 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, originalSigners, callback);
       }],
-      addOpBeta: ['signOpBeta', (results, callback) =>
-        request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerOperationService,
-          body: results.signOpBeta,
-          identity: regularActor
-        }), (err, res) => {
-          assertNoError(err);
-          // this event should fail
-          res.statusCode.should.equal(400);
-          res.body.type.should.equal('ValidationError');
-          callback();
-        })],
+      addOpBeta: ['signOpBeta', (results, callback) => request.post({
+        url: ledgerAgent.service.ledgerOperationService,
+        body: results.signOpBeta,
+      }, (err, res) => {
+        assertNoError(err);
+        // this event should fail
+        res.statusCode.should.equal(400);
+        res.body.type.should.equal('ValidationError');
+        callback();
+      })],
       signOpGamma: ['addOpBeta', (results, callback) => {
         // sign a new event with the new signers
         const createConcertRecordOp =
@@ -259,16 +253,14 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
           'https://example.com/events/' + uuid();
         helpers.multiSign(createConcertRecordOp, newSigners, callback);
       }],
-      addOpGamma: ['signOpGamma', (results, callback) =>
-        request.post(helpers.createHttpSignatureRequest({
-          url: ledgerAgent.service.ledgerOperationService,
-          body: results.signOpGamma,
-          identity: regularActor
-        }), (err, res) => {
-          assertNoError(err);
-          res.statusCode.should.equal(204);
-          callback();
-        })]
+      addOpGamma: ['signOpGamma', (results, callback) => request.post({
+        url: ledgerAgent.service.ledgerOperationService,
+        body: results.signOpGamma,
+      }, (err, res) => {
+        assertNoError(err);
+        res.statusCode.should.equal(204);
+        callback();
+      })]
     }, done));
   });
 }); // end Integration - 1 Node - Unilateral - Multisignature

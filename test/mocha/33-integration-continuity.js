@@ -138,17 +138,15 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
             creator: regularActor.keys.publicKey.id
           }, callback);
         },
-        add: ['sign', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerOperationService,
-            body: results.sign,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }],
+        add: ['sign', (results, callback) => request.post({
+          url: ledgerAgent.service.ledgerOperationService,
+          body: results.sign,
+          identity: regularActor
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })],
         // run two worker cycles per node to propagate events and find consensus
         runWorkers: ['add', (results, callback) => async.timesSeries(
           2, (n, callback) => async.eachSeries(peers, (ledgerNode, callback) =>

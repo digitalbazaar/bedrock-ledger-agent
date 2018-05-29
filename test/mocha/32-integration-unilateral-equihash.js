@@ -85,17 +85,15 @@ describe('Integration - 1 Node - Unilateral - Equihash', () => {
             }
           }, callback);
         },
-        add: ['sign', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerOperationService,
-            body: results.sign,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }]}, err => callback(err));
+        add: ['sign', (results, callback) => request.post({
+          url: ledgerAgent.service.ledgerOperationService,
+          body: results.sign,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })]
+      }, err => callback(err));
     }, err => done(err));
   });
   it('should crawl to genesis block from latest block', done => {

@@ -65,7 +65,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
   });
-  it('should add 10 events and blocks', done => {
+  it('should add 10 operations and blocks', done => {
     async.times(10, (n, callback) => {
       async.auto({
         sign: callback => {
@@ -79,17 +79,14 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
             creator: regularActor.keys.publicKey.id
           }, callback);
         },
-        add: ['sign', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: ledgerAgent.service.ledgerOperationService,
-            body: results.sign,
-            identity: regularActor
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(204);
-            callback();
-          });
-        }]
+        add: ['sign', (results, callback) => request.post({
+          url: ledgerAgent.service.ledgerOperationService,
+          body: results.sign,
+        }, (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        })]
       }, err => callback(err));
     }, err => done(err));
   });
