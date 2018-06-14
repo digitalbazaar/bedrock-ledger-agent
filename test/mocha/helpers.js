@@ -151,7 +151,7 @@ function insertTestData(mockData, callback) {
     ], callback);
   }, err => {
     if(err) {
-      if(!database.isDuplicateError(err)) {
+      if(err.name === 'DuplicateError' || !database.isDuplicateError(err)) {
         // duplicate error means test data is already loaded
         return callback(err);
       }
