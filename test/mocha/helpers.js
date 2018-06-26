@@ -140,23 +140,34 @@ api.multiSign = (doc, signers, callback) => {
 function insertTestData(mockData, callback) {
   async.forEachOf(mockData.identities, (identity, key, callback) => {
     async.parallel([
-      callback => brIdentity.insert(null, identity.identity, callback),
+      callback => brIdentity.insert(null, identity.identity, err => {
+        if(err) {
+          if(!(err.name === 'DuplicateError' ||
+            database.isDuplicateError(err))) {
+            // only pass on non-duplicate errors
+            // duplicate error means test data is already loaded
+            return callback(err);
+          }
+        }
+        callback();
+      }),
       callback => {
         if(identity.keys) {
-          brKey.addPublicKey(null, identity.keys.publicKey, callback);
+          brKey.addPublicKey(null, identity.keys.publicKey, err => {
+            if(err) {
+              if(!(err.name === 'DuplicateError' ||
+                database.isDuplicateError(err))) {
+                // only pass on non-duplicate errors
+                // duplicate error means test data is already loaded
+                return callback(err);
+              }
+            }
+            callback();
+          });
         } else {
           callback();
         }
       }
     ], callback);
-  }, err => {
-    if(err) {
-      if(!(err.name === 'DuplicateError' || database.isDuplicateError(err))) {
-        // only pass on non-duplicate errors
-        // duplicate error means test data is already loaded
-        return callback(err);
-      }
-    }
-    callback();
-  }, callback);
+  }, callback, callback);
 }
