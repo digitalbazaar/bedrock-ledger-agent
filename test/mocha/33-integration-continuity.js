@@ -43,7 +43,7 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
     this.timeout(60000);
     async.auto({
       consensusApi: callback =>
-        brLedgerNode.use('Continuity2017', (err, result) => {
+        helpers.use('Continuity2017', (err, result) => {
           consensusApi = result.api;
           callback(err);
         }),

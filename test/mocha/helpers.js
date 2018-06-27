@@ -6,6 +6,7 @@
 const async = require('async');
 const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
+const brLedgerNode = require('bedrock-ledger-node');
 const brKey = require('bedrock-key');
 const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
@@ -134,6 +135,16 @@ api.multiSign = (doc, signers, callback) => {
     d.proof = results.map(d => d.proof);
     callback(null, d);
   });
+};
+
+api.use = (plugin, callback) => {
+  let p;
+  try {
+    p = brLedgerNode.use(plugin);
+  } catch(e) {
+    return callback(e);
+  }
+  callback(null, p);
 };
 
 // Insert identities and public keys used for testing into database
