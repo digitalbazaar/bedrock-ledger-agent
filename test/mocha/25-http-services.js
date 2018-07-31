@@ -18,7 +18,11 @@ request = request.defaults({json: true, strictSSL: false});
 jsigs.use('jsonld', bedrock.jsonld);
 
 // register a mock ledgerAgentPlugin
-brLedgerNode.use('mock', mockPlugin);
+try {
+  brLedgerNode.use('mock', mockPlugin);
+} catch(e) {
+  // error means that plugin is already defined, ignore
+}
 
 describe('HTTP Services', () => {
   let signedConfig;

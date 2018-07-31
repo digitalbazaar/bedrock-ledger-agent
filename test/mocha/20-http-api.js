@@ -6,12 +6,13 @@
 const async = require('async');
 const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
-const brLedger = require('bedrock-ledger-node');
+const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
+const mockPlugin = require('./mock.plugin');
 const querystring = require('querystring');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
@@ -20,6 +21,13 @@ const url = require('url');
 const uuid = require('uuid/v4');
 
 jsigs.use('jsonld', bedrock.jsonld);
+
+// register a mock ledgerAgentPlugin
+try {
+  brLedgerNode.use('mock', mockPlugin);
+} catch(e) {
+  // error means that plugin is already defined, ignore
+}
 
 const urlObj = {
   protocol: 'https',
@@ -130,7 +138,7 @@ describe('Ledger Agent HTTP API', () => {
           null, mockData.identities.regularUser.identity.id,
           (err, identity) => callback(err, identity)),
         createNode: ['getRegularUser', (results, callback) => {
-          brLedger.add(results.getRegularUser, options, callback);
+          brLedgerNode.add(results.getRegularUser, options, callback);
         }],
         createAgent: ['createNode', (results, callback) => {
           request.post(helpers.createHttpSignatureRequest({
@@ -183,7 +191,50 @@ describe('Ledger Agent HTTP API', () => {
             const result = res.body;
             should.exist(result.id);
             should.exist(result.service);
-            result.service.should.be.an('object');
+            _testService(result.service);
+            result.owner.should.equal(regularActor.identity.id);
+            result.name.should.equal(options.name);
+            result.description.should.equal(options.description);
+            callback();
+          });
+        }]
+      }, err => done(err));
+    });
+    it('should get an existing ledger agent with a plugin', done => {
+      const options = {
+        ledgerConfiguration: signedConfig,
+        description: uuid(),
+        name: uuid(),
+        plugins: ['mock']
+      };
+      async.auto({
+        add: callback => {
+          request.post(helpers.createHttpSignatureRequest({
+            url: url.format(urlObj),
+            body: options,
+            identity: regularActor
+          }), (err, res) => {
+            assertNoError(err);
+            res.statusCode.should.equal(201);
+            callback(null, res.headers.location);
+          });
+        },
+        get: ['add', (results, callback) => {
+          request.get(helpers.createHttpSignatureRequest({
+            url: results.add,
+            identity: regularActor
+          }), (err, res) => {
+            assertNoError(err);
+            res.statusCode.should.equal(200);
+            const result = res.body;
+            should.exist(result.id);
+            should.exist(result.service);
+            const {service} = result;
+            _testService(service);
+            should.exist(service[mockPlugin.api.serviceType]);
+            service[mockPlugin.api.serviceType].should.be.an('object');
+            should.exist(service[mockPlugin.api.serviceType].id);
+            service[mockPlugin.api.serviceType].id.should.be.a('string');
             result.owner.should.equal(regularActor.identity.id);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
@@ -654,3 +705,19 @@ describe('Ledger Agent HTTP API', () => {
     });
   });
 });
+
+function _testService(service) {
+  service.should.be.an('object');
+  should.exist(service.ledgerAgentStatusService);
+  service.ledgerAgentStatusService.should.be.a('string');
+  should.exist(service.ledgerConfigService);
+  service.ledgerConfigService.should.be.a('string');
+  should.exist(service.ledgerOperationService);
+  service.ledgerOperationService.should.be.a('string');
+  should.exist(service.ledgerEventService);
+  service.ledgerEventService.should.be.a('string');
+  should.exist(service.ledgerBlockService);
+  service.ledgerBlockService.should.be.a('string');
+  should.exist(service.ledgerQueryService);
+  service.ledgerQueryService.should.be.a('string');
+}
