@@ -422,13 +422,15 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    // FIXME: this test is trying to query for an operation that has not
-    // been put into a block yet, needs fixing
-    it.skip('should query state machine successfully', done => {
+    it('should query for a record successfully', done => {
+      let listener;
+      function _waitForBlockAdd(callback) {
+        listener = bedrock.events.on(
+          'bedrock-ledger-storage.block.add', event => callback(null, event));
+      }
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id =
-        'https://example.com/events/' + uuid(),
+      createConcertRecordOp.record.id = `https://example.com/events/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'RsaSignature2018',
@@ -444,7 +446,10 @@ describe('Ledger Agent HTTP API', () => {
           res.statusCode.should.equal(204);
           callback();
         })],
-        query: ['add', (results, callback) => {
+        waitForBlock: callback => _waitForBlockAdd(callback),
+        query: ['add', 'waitForBlock', (results, callback) => {
+          // remove event listener
+          listener._eventListeners['bedrock-ledger-storage.block.add'].pop();
           const queryUrl = defaultLedgerAgent.service.ledgerQueryService;
           request.post(helpers.createHttpSignatureRequest({
             url: queryUrl,
@@ -458,9 +463,9 @@ describe('Ledger Agent HTTP API', () => {
             assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body);
-            should.exist(res.body.object);
+            should.exist(res.body.record);
             should.exist(res.body.meta);
-            res.body.object.should.deep.equal(createConcertRecordOp.record);
+            res.body.record.should.deep.equal(createConcertRecordOp.record);
             callback(null, res.body);
           });
         }]
@@ -662,11 +667,15 @@ describe('Ledger Agent HTTP API', () => {
     });
     // FIXME: this test is trying to query for an operation that has not
     // been put into a block yet, needs fixing
-    it.skip('query state machine on public ledger successful', done => {
+    it('should query for a record successfully', done => {
+      let listener;
+      function _waitForBlockAdd(callback) {
+        listener = bedrock.events.on(
+          'bedrock-ledger-storage.block.add', event => callback(null, event));
+      }
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
-      createConcertRecordOp.record.id =
-        'https://example.com/events/' + uuid(),
+      createConcertRecordOp.record.id = `https://example.com/events/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           algorithm: 'RsaSignature2018',
@@ -682,7 +691,10 @@ describe('Ledger Agent HTTP API', () => {
           res.statusCode.should.equal(204);
           callback();
         })],
-        query: ['add', (results, callback) => {
+        waitForBlock: callback => _waitForBlockAdd(callback),
+        query: ['add', 'waitForBlock', (results, callback) => {
+          // remove event listener
+          listener._eventListeners['bedrock-ledger-storage.block.add'].pop();
           const queryUrl = publicLedgerAgent.service.ledgerQueryService;
           request.post({
             url: queryUrl,
@@ -695,9 +707,9 @@ describe('Ledger Agent HTTP API', () => {
             assertNoError(err);
             res.statusCode.should.equal(200);
             should.exist(res.body);
-            should.exist(res.body.object);
+            should.exist(res.body.record);
             should.exist(res.body.meta);
-            res.body.object.should.deep.equal(createConcertRecordOp.record);
+            res.body.record.should.deep.equal(createConcertRecordOp.record);
             callback(null, res.body);
           });
         }]
