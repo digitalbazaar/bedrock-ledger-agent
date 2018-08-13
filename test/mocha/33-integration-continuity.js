@@ -181,6 +181,49 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
       });
     });
   });
+  it('should add a configuration event', function(done) {
+    const newConfiguration = bedrock.util.clone(
+      mockData.ledgerConfigurations.continuity);
+    const {approvedSigner} = newConfiguration.operationValidator[0];
+    approvedSigner.push(mockData.identities.alternateUser.identity.id);
+    async.auto({
+      sign: callback => {
+        jsigs.sign(newConfiguration, {
+          algorithm: 'RsaSignature2018',
+          privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
+          creator: regularActor.keys.publicKey.id
+        }, callback);
+      },
+      updateConfig: ['sign', (results, callback) => {
+        request.post(helpers.createHttpSignatureRequest({
+          url: ledgerAgent.service.ledgerConfigService,
+          body: results.sign,
+          identity: regularActor
+        }), (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(204);
+          callback();
+        });
+      }],
+      // run two worker cycles per node to propagate events and find consensus
+      runWorkers: ['updateConfig', (results, callback) => async.timesSeries(
+        2, (n, callback) => async.eachSeries(peers, (ledgerNode, callback) =>
+          consensusApi._worker._run(ledgerNode, callback), callback)
+        , callback)],
+      test: ['runWorkers', (results, callback) => {
+        async.eachSeries(peers, (ledgerNode, callback) => {
+          ledgerNode.config.get((err, result) => {
+            assertNoError(err);
+            result.should.eql(results.sign);
+            callback();
+          });
+        }, callback);
+      }]
+    }, err => {
+      assertNoError(err);
+      done();
+    });
+  });
   it('should crawl to genesis block from latest block', done => {
     const maxAttempts = 20;
     let attempts = 0;
