@@ -2,7 +2,7 @@
  * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 
-const config = require('bedrock').config;
+const {config} = require('bedrock');
 const path = require('path');
 require('bedrock-permission');
 
@@ -32,3 +32,9 @@ roles['bedrock-ledger-agent.test'] = {
 
 // reduce processing interval for testing
 config['ledger-consensus-continuity'].worker.election.gossipInterval = 0;
+
+// decrease delay for gossiping with the same peer
+config['ledger-consensus-continuity'].gossip.coolDownPeriod = 250;
+
+// reduce debounce in the event-writer
+config['ledger-consensus-continuity'].writer.debounce = 50;

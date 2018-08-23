@@ -147,11 +147,10 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
           res.statusCode.should.equal(204);
           callback();
         })],
-        // run two worker cycles per node to propagate events and find consensus
-        runWorkers: ['add', (results, callback) => async.timesSeries(
-          2, (n, callback) => async.eachSeries(peers, (ledgerNode, callback) =>
-            consensusApi._worker._run(ledgerNode, callback), callback)
-          , callback)],
+        // run one worker cycle per node to propagate events and find consensus
+        runWorkers: ['add', (results, callback) => async.eachSeries(
+          peers, (ledgerNode, callback) => consensusApi._worker._run(
+            ledgerNode, callback), callback)],
         checkBlock: ['runWorkers', (results, callback) => {
           request.get(helpers.createHttpSignatureRequest({
             url: ledgerAgent.service.ledgerBlockService,
