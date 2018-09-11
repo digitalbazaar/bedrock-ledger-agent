@@ -1,6 +1,6 @@
 {
   "name": "bedrock-ledger-agent",
-  "version": "0.1.0-0",
+  "version": "1.0.0",
   "description": "Bedrock module that provides management of ledger agents.",
   "main": "./lib",
   "repository": {
