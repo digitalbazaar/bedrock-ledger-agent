@@ -1,6 +1,5 @@
 # bedrock-ledger-agent ChangeLog
 
-## 0.1.0 - 2017-06-06
+## 1.0.0 - 2018-09-11
 
-- Initial release
-
+- See git history for changes previous to this release.
