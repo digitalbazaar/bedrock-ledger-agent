@@ -94,7 +94,8 @@ describe('Ledger Agent API', () => {
         should.not.exist(ledgerAgent);
         err.name.should.equal('ValidationError');
         err.details.validatorReports.some(r => r.error && r.error.cause &&
-          r.error.cause.message.includes('No signature found.')).should.be.true;
+          r.error.cause.toString().includes('No signature found.'))
+          .should.be.true;
         done();
       });
     });
