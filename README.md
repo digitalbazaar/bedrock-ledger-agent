@@ -15,17 +15,17 @@ Ledger Nodes, Ledgers, Blocks, and Events.
   * Get a list of all ledger agents
 * POST /ledger-agents?owner={OWNER_ID}
   * Create a new ledger agent
-* GET /ledger-agent/{AGENT_ID}
+* GET /ledger-agents/{AGENT_ID}
   * Get status information on a particular ledger agent
-* POST /ledger-agent/{AGENT_ID}/config
+* POST /ledger-agents/{AGENT_ID}/config
   * Add a new configuration
-* POST /ledger-agent/{AGENT_ID}/operations
+* POST /ledger-agents/{AGENT_ID}/operations
   * Add a new operation
-* GET /ledger-agent/{AGENT_ID}/events?id=EVENT_ID
+* GET /ledger-agents/{AGENT_ID}/events?id=EVENT_ID
   * Get an existing event
-* GET /ledger-agent/{AGENT_ID}/blocks?id=BLOCK_ID
+* GET /ledger-agents/{AGENT_ID}/blocks?id=BLOCK_ID
   * Get an existing block
-* GET /ledger-agent/{AGENT_ID}/query
+* GET /ledger-agents/{AGENT_ID}/query
   * Query the current state of an object in the system
 
 ## The Ledger Agent API
