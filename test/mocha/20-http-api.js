@@ -157,7 +157,7 @@ describe('Ledger Agent HTTP API', () => {
           const agentUrn = `urn:uuid:${agentId}`;
           brLedgerAgent.get(null, agentUrn, (err, result) => {
             assertNoError(err);
-            result.node.id.should.equal(results.createNode.id);
+            result.ledgerNode.id.should.equal(results.createNode.id);
             callback();
           });
         }]

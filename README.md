@@ -49,7 +49,7 @@ const agentId = 'https://example.com/ledger-agents/eb8c22dc';
 const options = {};
 
 agent.get(actor, agentId, options, (err, ledgerAgent) => {
-  ledgerAgent.node.events.add( /* new ledger event details go here */);
+  ledgerAgent.ledgerNode.events.add( /* new ledger event details go here */);
     /* ... do other operations on the ledger */
   });
 });

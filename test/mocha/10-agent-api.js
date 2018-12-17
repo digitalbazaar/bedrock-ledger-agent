@@ -110,7 +110,7 @@ describe('Ledger Agent API', () => {
         const options = {
           owner: regularActor.id
         };
-        const ledgerNodeId = firstLa.node.id;
+        const ledgerNodeId = firstLa.ledgerNode.id;
         brLedgerAgent.add(
           regularActor, ledgerNodeId, options, (err, ledgerAgent) => {
             assertNoError(err);
@@ -118,7 +118,7 @@ describe('Ledger Agent API', () => {
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
             ledgerAgent.id.should.not.equal(firstLa.id);
-            ledgerAgent.node.id.should.equal(ledgerNodeId);
+            ledgerAgent.ledgerNode.id.should.equal(ledgerNodeId);
             done();
           });
       });
@@ -349,7 +349,7 @@ describe('Ledger Agent API', () => {
         const options = {
           owner: regularActor.id
         };
-        const ledgerNodeId = firstLa.node.id;
+        const ledgerNodeId = firstLa.ledgerNode.id;
         brLedgerAgent.add(
           unauthorizedActor, ledgerNodeId, options, (err, ledgerAgent) => {
             should.exist(err);
@@ -554,7 +554,7 @@ describe('Ledger Agent API', () => {
         const options = {
           owner: regularActor.id
         };
-        const ledgerNodeId = firstLa.node.id;
+        const ledgerNodeId = firstLa.ledgerNode.id;
         brLedgerAgent.add(
           adminActor, ledgerNodeId, options, (err, ledgerAgent) => {
             assertNoError(err);
@@ -562,7 +562,7 @@ describe('Ledger Agent API', () => {
             should.exist(ledgerAgent.id);
             should.exist(ledgerAgent.service.ledgerEventService);
             ledgerAgent.id.should.not.equal(firstLa.id);
-            ledgerAgent.node.id.should.equal(ledgerNodeId);
+            ledgerAgent.ledgerNode.id.should.equal(ledgerNodeId);
             done();
           });
       });

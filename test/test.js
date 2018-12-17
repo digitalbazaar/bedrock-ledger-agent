@@ -11,6 +11,7 @@ require('bedrock-ledger-validator-signature');
 require('bedrock-ledger-storage-mongodb');
 require('bedrock-ledger-consensus-uni');
 require('bedrock-ledger-consensus-continuity');
+require('bedrock-ledger-consensus-continuity-es-most-recent-participants');
 require('bedrock-ledger-context');
 
 bedrock.events.on('bedrock.init', () => {

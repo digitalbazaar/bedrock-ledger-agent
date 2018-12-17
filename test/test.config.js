@@ -6,6 +6,9 @@ const {config} = require('bedrock');
 const path = require('path');
 require('bedrock-permission');
 
+// allow use of self signed certificates in the test framework
+config.jsonld.strictSSL = false;
+
 const permissions = config.permission.permissions;
 const roles = config.permission.roles;
 

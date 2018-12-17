@@ -23,7 +23,7 @@ identities[userName].identity.sysResourceRole.push({
   generateResource: 'id'
 });
 identities[userName].keys = helpers.createKeyPair({
-  userName: userName,
+  userName,
   userId: identities[userName].identity.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqv8gApfU3FhZx1gyKmBU\n' +
@@ -90,7 +90,7 @@ identities[userName].identity.sysResourceRole.push({
   generateResource: 'id'
 });
 identities[userName].keys = helpers.createKeyPair({
-  userName: userName,
+  userName,
   userId: identities[userName].identity.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3QS5rF47pcj7+HZsp8Kq\n' +
@@ -156,7 +156,7 @@ identities[userName].identity.sysResourceRole.push({
   generateResource: 'id'
 });
 identities[userName].keys = helpers.createKeyPair({
-  userName: userName,
+  userName,
   userId: identities[userName].identity.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqv8gApfU3FhZx1gyKmBU\n' +
@@ -342,6 +342,9 @@ ledgerConfigurations.continuity = {
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:680f46a4-d466-4d87-bda5-c09535218086',
   consensusMethod: 'Continuity2017',
+  electorSelectionMethod: {
+    type: 'MostRecentParticipants',
+  },
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{

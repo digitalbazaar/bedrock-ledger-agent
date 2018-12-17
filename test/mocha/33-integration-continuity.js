@@ -27,9 +27,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-// FIXME: the operations in this test need to be updated to align with the
-// JSON schema validation added in bedrock-ledger-node
-describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
+describe('Integration - 4 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
   const nodes = 4;
   let ledgerAgent;
@@ -82,7 +80,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
         const agentId = 'urn:uuid:' +
           results.add.substring(results.add.lastIndexOf('/') + 1);
         brLedgerAgent.get(null, agentId, (err, result) => {
-          genesisLedgerNode = result.node;
+          genesisLedgerNode = result.ledgerNode;
           peers.push(genesisLedgerNode);
           callback();
         });
@@ -105,6 +103,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
             genesisBlock: results.genesisRecord.block,
             owner: regularActor.identity.id
           }, (err, ledgerNode) => {
+            assertNoError(err);
             peers.push(ledgerNode);
             callback();
           });
@@ -115,6 +114,29 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
 
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
+  });
+
+  it('should expose peerId', done => {
+    const url = ledgerAgent.id;
+    async.auto({
+      get: callback => {
+        request.get(helpers.createHttpSignatureRequest({
+          url,
+          identity: regularActor
+        }), (err, res) => {
+          assertNoError(err);
+          res.statusCode.should.equal(200);
+          const result = res.body;
+          should.exist(result.id);
+          should.exist(result.service);
+          result.owner.should.equal(regularActor.identity.id);
+          should.exist(result.peerId);
+          result.peerId.should.be.a('string');
+          result.peerId.should.equal(ledgerAgent.peerId);
+          callback();
+        });
+      }
+    }, err => done(err));
   });
 
   /* NOTE: in this test, operations are added to the ledger via a ledger agent
@@ -134,6 +156,9 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
             bedrock.util.clone(mockData.ops.createConcertRecord);
           createConcertRecordOp.record.id =
             'https://example.com/events/' + uuid();
+          // operations must in include `creator` which is the `peerId`
+          // exposed by the ledgerAgent
+          createConcertRecordOp.creator = ledgerAgent.peerId;
           jsigs.sign(createConcertRecordOp, {
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
@@ -184,6 +209,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     });
   });
   it('should add a configuration event', function(done) {
+    this.timeout(120000);
     const newConfiguration = bedrock.util.clone(
       mockData.ledgerConfigurations.continuity);
     const {approvedSigner} = newConfiguration.operationValidator[0];
@@ -210,7 +236,12 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
       // run two worker cycles per node to propagate events and find consensus
       runWorkers: ['updateConfig', (results, callback) => async.timesSeries(
         2, (n, callback) => async.eachSeries(peers, (ledgerNode, callback) =>
-          consensusApi._worker._run(ledgerNode, callback), callback)
+          consensusApi._worker._run(ledgerNode, err => {
+            if(err && err.name === 'LedgerConfigurationChangeError') {
+              return callback();
+            }
+            callback(err);
+          }), callback)
         , callback)],
       test: ['runWorkers', (results, callback) => {
         async.eachSeries(peers, (ledgerNode, callback) => {
