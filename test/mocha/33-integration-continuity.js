@@ -116,7 +116,7 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
 
-  it('should expose peerId', done => {
+  it('should expose targetNode', done => {
     const url = ledgerAgent.id;
     async.auto({
       get: callback => {
@@ -130,9 +130,9 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
           should.exist(result.id);
           should.exist(result.service);
           result.owner.should.equal(regularActor.identity.id);
-          should.exist(result.peerId);
-          result.peerId.should.be.a('string');
-          result.peerId.should.equal(ledgerAgent.peerId);
+          should.exist(result.targetNode);
+          result.targetNode.should.be.a('string');
+          result.targetNode.should.equal(ledgerAgent.targetNode);
           callback();
         });
       }
@@ -156,9 +156,9 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
             bedrock.util.clone(mockData.ops.createConcertRecord);
           createConcertRecordOp.record.id =
             'https://example.com/events/' + uuid();
-          // operations must in include `creator` which is the `peerId`
+          // operations must in include `creator` which is the `targetNode`
           // exposed by the ledgerAgent
-          createConcertRecordOp.creator = ledgerAgent.peerId;
+          createConcertRecordOp.creator = ledgerAgent.targetNode;
           jsigs.sign(createConcertRecordOp, {
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
