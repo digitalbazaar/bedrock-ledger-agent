@@ -358,7 +358,7 @@ ledgerConfigurations.continuity = {
     type: 'SignatureValidator2017',
     validatorFilter: [{
       type: 'ValidatorFilterByType',
-      validatorFilterByType: ['CreateWebLedgerRecord']
+      validatorFilterByType: ['CreateWebLedgerRecord', 'UpdateWebLedgerRecord']
     }],
     approvedSigner: [identities.regularUser.identity.id],
     minimumSignaturesRequired: 1

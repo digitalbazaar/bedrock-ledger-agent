@@ -147,7 +147,7 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
      This test demonstrates that operations added on the genesis node are
      properly gossiped to all nodes and all nodes generate the same blocks.
   */
-  it('should add 3 events and blocks', function(done) {
+  it('should add 3 operations and blocks', function(done) {
     this.timeout(120000);
     async.timesSeries(3, (n, callback) => {
       async.auto({
