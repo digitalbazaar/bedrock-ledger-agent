@@ -1,6 +1,6 @@
 # bedrock-ledger-agent ChangeLog
 
-## 2.1.0 - TBD
+## 2.1.0 - 2018-12-31
 
 ### Added
 - Expose `targetNode` to be used for pinning operations to a specific ledger
