@@ -334,7 +334,8 @@ ledgerConfigurations.uni = {
     }],
     approvedSigner: [identities.regularUser.identity.id],
     minimumSignaturesRequired: 1
-  }]
+  }],
+  sequence: 0
 };
 
 ledgerConfigurations.continuity = {
@@ -362,7 +363,8 @@ ledgerConfigurations.continuity = {
     }],
     approvedSigner: [identities.regularUser.identity.id],
     minimumSignaturesRequired: 1
-  }]
+  }],
+  sequence: 0,
 };
 
 ledgerConfigurations.multisigAlpha = {
@@ -393,7 +395,8 @@ ledgerConfigurations.multisigAlpha = {
       identities.alternateUser.identity.id
     ],
     minimumSignaturesRequired: 2
-  }]
+  }],
+  sequence: 0
 };
 
 ledgerConfigurations.multisigBeta = {
@@ -424,7 +427,8 @@ ledgerConfigurations.multisigBeta = {
       identities.alternateUser.identity.id
     ],
     minimumSignaturesRequired: 2
-  }]
+  }],
+  sequence: 0
 };
 
 ledgerConfigurations.equihash = {

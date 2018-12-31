@@ -112,6 +112,14 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
     }, err => done(err));
   });
 
+  before(async () => {
+    for(const ledgerNode of peers) {
+      const ledgerNodeId = ledgerNode.id;
+      const result = await consensusApi._voters.get({ledgerNodeId});
+      ledgerNode._peerId = result.id;
+    }
+  });
+
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
   });
@@ -212,6 +220,8 @@ describe('Integration - 4 Nodes - Continuity - One Signature', () => {
     this.timeout(120000);
     const newConfiguration = bedrock.util.clone(
       mockData.ledgerConfigurations.continuity);
+    newConfiguration.sequence = 1;
+    newConfiguration.creator = peers[0]._peerId;
     const {approvedSigner} = newConfiguration.operationValidator[0];
     approvedSigner.push(mockData.identities.alternateUser.identity.id);
     async.auto({

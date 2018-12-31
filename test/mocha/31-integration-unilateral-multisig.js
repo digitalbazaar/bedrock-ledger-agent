@@ -209,6 +209,7 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
       signConfigAlpha: ['addOpAlpha', (results, callback) => {
         const newConfig = bedrock.util.clone(
           mockData.ledgerConfigurations.multisigBeta);
+        newConfig.sequence = 1;
         // change approvedSigners for CreateWebLedgerRecord
         newConfig.operationValidator[0].approvedSigner = [
           mockData.identities.regularUser.identity.id,
