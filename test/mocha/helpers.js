@@ -137,8 +137,6 @@ api.multiSign = (doc, signers, callback) => {
   });
 };
 
-api.sleep = (delay) => new Promise(resolve => setTimeout(resolve, delay));
-
 api.use = (plugin, callback) => {
   let p;
   try {

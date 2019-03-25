@@ -8,7 +8,6 @@ const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
-const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -18,7 +17,7 @@ let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
-const uuid = require('uuid/v4');
+const {config, util: {uuid}} = bedrock;
 
 jsigs.use('jsonld', bedrock.jsonld);
 

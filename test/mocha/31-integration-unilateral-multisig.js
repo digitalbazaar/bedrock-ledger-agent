@@ -5,7 +5,6 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
-const config = bedrock.config;
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -13,7 +12,7 @@ let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
-const uuid = require('uuid/v4');
+const {config, util: {uuid}} = bedrock;
 const querystring = require('querystring');
 
 const urlObj = {

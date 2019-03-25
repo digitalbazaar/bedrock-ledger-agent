@@ -9,7 +9,7 @@ const bedrock = require('bedrock');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const brLedgerNode = require('bedrock-ledger-node');
 const cache = require('bedrock-redis');
-const {config} = bedrock;
+const {config, util: {uuid}} = bedrock;
 const {constants} = config;
 const helpers = require('./helpers');
 const httpsAgent = new require('https').Agent({rejectUnauthorized: false});
@@ -18,7 +18,6 @@ const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 const url = require('url');
-const uuid = require('uuid/v4');
 
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);

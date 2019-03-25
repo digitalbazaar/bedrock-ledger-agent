@@ -11,7 +11,7 @@ const database = require('bedrock-mongodb');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
-const uuid = require('uuid/v4');
+const {util: {uuid}} = bedrock;
 
 // use local JSON-LD processor for signatures
 jsigs.use('jsonld', bedrock.jsonld);

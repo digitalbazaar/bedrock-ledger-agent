@@ -9,7 +9,7 @@
   "dependencies": {
     "async": "^2.4.0",
     "axios": "^0.18.0",
-    "bedrock": "^1.8.0",
+    "bedrock": "^1.15.0",
     "bedrock-did-client": "digitalbazaar/bedrock-did-client#testnet_v2",
     "bedrock-docs": "^3.0.0",
     "bedrock-express": "^2.0.6",
