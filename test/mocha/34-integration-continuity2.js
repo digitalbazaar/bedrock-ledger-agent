@@ -132,23 +132,35 @@ describe('Continuity Integration Part II', () => {
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
     });
-    await axios({
-      method: 'POST',
-      httpsAgent,
-      url: ledgerAgent.service.ledgerOperationService,
-      data: signed,
-      identity: regularActor
-    });
+    let error;
+    try {
+      await axios({
+        method: 'POST',
+        httpsAgent,
+        url: ledgerAgent.service.ledgerOperationService,
+        data: signed,
+        identity: regularActor
+      });
+    } catch(e) {
+      error = e;
+    }
+    should.not.exist(error);
     // operation should reach consensus in one worker cycle
     await consensusApi._worker._run(peers[0]);
-    const res = await axios({
-      url: ledgerAgent.service.ledgerQueryService,
-      method: 'POST',
-      httpsAgent,
-      params: {
-        id: encodeURIComponent(recordId)
-      }
-    });
+    let res;
+    try {
+      res = await axios({
+        url: ledgerAgent.service.ledgerQueryService,
+        method: 'POST',
+        httpsAgent,
+        params: {
+          id: encodeURIComponent(recordId)
+        }
+      });
+    } catch(e) {
+      error = e;
+    }
+    should.not.exist(error);
     res.data.record.should.eql(createConcertRecordOp.record);
     // adds an end date
     const endDate = '2017-07-14T23:30';
@@ -157,6 +169,12 @@ describe('Continuity Integration Part II', () => {
       creator: ledgerAgent.targetNode,
       type: 'UpdateWebLedgerRecord',
       recordPatch: {
+        '@context': [constants.JSON_LD_PATCH_CONTEXT_V1_URL, {
+          value: {
+            '@id': 'jldp:value',
+            '@context': constants.TEST_CONTEXT_V1_URL
+          }
+        }],
         target: recordId,
         sequence: 0,
         patch: [{
@@ -169,23 +187,34 @@ describe('Continuity Integration Part II', () => {
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
     });
-    await axios({
-      method: 'POST',
-      httpsAgent,
-      url: ledgerAgent.service.ledgerOperationService,
-      data: signedUpdate,
-      identity: regularActor
-    });
+    try {
+      await axios({
+        method: 'POST',
+        httpsAgent,
+        url: ledgerAgent.service.ledgerOperationService,
+        data: signedUpdate,
+        identity: regularActor
+      });
+    } catch(e) {
+      error = e;
+    }
+    should.not.exist(error);
     // operation should reach consensus in one worker cycle
     await consensusApi._worker._run(peers[0]);
-    const updateRes = await axios({
-      url: ledgerAgent.service.ledgerQueryService,
-      method: 'POST',
-      httpsAgent,
-      params: {
-        id: encodeURIComponent(recordId)
-      }
-    });
+    let updateRes;
+    try {
+      updateRes = await axios({
+        url: ledgerAgent.service.ledgerQueryService,
+        method: 'POST',
+        httpsAgent,
+        params: {
+          id: encodeURIComponent(recordId)
+        }
+      });
+    } catch(e) {
+      error = e;
+    }
+    should.not.exist(error);
     // add endDate to the local copy of the operation
     createConcertRecordOp.record.endDate = endDate;
     updateRes.data.record.should.eql(createConcertRecordOp.record);
