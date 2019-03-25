@@ -1,5 +1,10 @@
 # bedrock-ledger-agent ChangeLog
 
+## 2.2.0 - 2019-03-25
+
+### Changed
+- Use bedrock-ledger-node@8.
+
 ## 2.1.0 - 2018-12-31
 
 ### Added
