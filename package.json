@@ -3,6 +3,9 @@
   "version": "2.1.1-0",
   "description": "Bedrock module that provides management of ledger agents.",
   "main": "./lib",
+  "scripts": {
+    "lint": "eslint lib"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/digitalbazaar/bedrock-ledger-agent.git"
@@ -38,5 +41,9 @@
   },
   "engines": {
     "node": ">=6.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.15.3",
+    "eslint-config-digitalbazaar": "^2.0.0"
   }
 }
