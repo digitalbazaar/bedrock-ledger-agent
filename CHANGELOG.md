@@ -1,5 +1,10 @@
 # bedrock-ledger-agent ChangeLog
 
+## 3.1.0 - TBD
+
+### Fixed
+- Change owners calculation to handle account system.
+
 ## 3.0.0 - 2020-06-18
 
 ### Added
