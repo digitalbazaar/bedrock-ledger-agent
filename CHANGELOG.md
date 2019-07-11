@@ -30,6 +30,8 @@
 
 ### Changed
 - Update for latest bedrock events API.
+### Fixed
+- Change owners calculation to handle account system.
 
 ## 2.2.0 - 2019-03-25
 
