@@ -39,7 +39,7 @@
     "bedrock-server": "^2.2.0"
   },
   "engines": {
-    "node": ">=6.3.0"
+    "node": ">=8"
   },
   "devDependencies": {
     "eslint": "^5.15.3",
