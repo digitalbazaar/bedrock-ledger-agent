@@ -21,18 +21,18 @@
   "homepage": "https://github.com/digitalbazaar/bedrock-ledger-agent",
   "dependencies": {
     "assert-plus": "^1.0.0",
-    "async": "^2.4.0",
+    "async": "^2.6.3",
     "cors": "^2.8.3",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.15",
     "param-case": "^2.1.1"
   },
   "peerDependencies": {
-    "bedrock": "^1.15.0",
-    "bedrock-docs": "^3.0.0",
+    "bedrock": "1.15.0 - 2.x",
+    "bedrock-docs": "^3.2.1",
     "bedrock-express": "^2.0.6",
     "bedrock-ledger-context": "^11.0.0",
     "bedrock-ledger-node": "^8.0.0",
-    "bedrock-mongodb": "^5.0.0",
+    "bedrock-mongodb": "5.x - 6.x",
     "bedrock-passport": "^3.3.0",
     "bedrock-permission": "^2.3.2",
     "bedrock-rest": "^2.1.0",
@@ -42,7 +42,7 @@
     "node": ">=8"
   },
   "devDependencies": {
-    "eslint": "^5.15.3",
+    "eslint": "^6.6.0",
     "eslint-config-digitalbazaar": "^2.0.0"
   }
 }
