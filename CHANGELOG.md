@@ -1,5 +1,7 @@
 # bedrock-ledger-agent ChangeLog
 
+## 2.3.0 - 2019-11-08
+
 ### Changed
 - Update for latest bedrock events API.
 
