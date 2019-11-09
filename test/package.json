@@ -27,7 +27,7 @@
     "bedrock-ledger-context": "^13.0.0",
     "bedrock-ledger-node": "^9.0.1",
     "bedrock-ledger-storage-mongodb": "^3.0.0",
-    "bedrock-ledger-validator-signature": "^3.0.0",
+    "bedrock-ledger-validator-signature": "github:digitalbazaar/bedrock-ledger-validator-signature#bedrock-2",
     "bedrock-mongodb": "^6.0.2",
     "bedrock-passport": "^5.0.0",
     "bedrock-permission": "^2.3.2",
@@ -36,7 +36,7 @@
     "bedrock-security-context": "^2.0.0",
     "bedrock-server": "^2.4.0",
     "bedrock-test": "^4.0.2",
-    "bedrock-validation": "^4.0.0",
+    "bedrock-validation": "^4.2.0",
     "grunt": "^1.0.1",
     "jsonld-signatures": "^4.4.0",
     "request": "^2.88.0"
