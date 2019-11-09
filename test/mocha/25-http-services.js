@@ -8,14 +8,13 @@ const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const mockPlugin = require('./mock.plugin');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
-
-jsigs.use('jsonld', bedrock.jsonld);
 
 // register a mock ledgerAgentPlugin
 try {
@@ -40,6 +39,7 @@ describe('HTTP Services', () => {
           callback(err);
         }),
       signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+        documentLoader,
         algorithm: 'RsaSignature2018',
         privateKeyPem:
           mockData.identities.regularUser.keys.privateKey.privateKeyPem,

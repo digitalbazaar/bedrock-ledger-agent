@@ -8,13 +8,11 @@ const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const database = require('bedrock-mongodb');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const {util: {uuid}} = bedrock;
-
-// use local JSON-LD processor for signatures
-jsigs.use('jsonld', bedrock.jsonld);
 
 describe('Ledger Agent API', () => {
   before(done => {
@@ -42,6 +40,7 @@ describe('Ledger Agent API', () => {
             callback(err);
           }),
         signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -315,6 +314,7 @@ describe('Ledger Agent API', () => {
             callback(err);
           }),
         signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -522,6 +522,7 @@ describe('Ledger Agent API', () => {
             callback(err);
           }),
         signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
