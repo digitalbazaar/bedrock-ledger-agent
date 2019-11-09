@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2017-2019 Digital Bazaar, Inc. All rights reserved.
  */
 
 const {config} = require('bedrock');
@@ -38,3 +38,5 @@ config['ledger-consensus-continuity'].gossip.coolDownPeriod = 250;
 
 // reduce debounce in the event-writer
 config['ledger-consensus-continuity'].writer.debounce = 50;
+
+config['https-agent'].rejectUnauthorized = false;
