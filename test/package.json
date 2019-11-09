@@ -11,7 +11,6 @@
     "axios": "^0.18.0",
     "bedrock": "^3.0.0",
     "bedrock-account": "^2.1.2",
-    "bedrock-did-client": "digitalbazaar/bedrock-did-client#testnet_v2",
     "bedrock-docs": "^3.0.0",
     "bedrock-express": "^3.0.0",
     "bedrock-https-agent": "^1.0.0",

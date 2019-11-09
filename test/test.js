@@ -2,7 +2,6 @@
  * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 const bedrock = require('bedrock');
-const brDidClient = require('bedrock-did-client');
 const {jsonLdDocumentLoader} = require('bedrock-jsonld-document-loader');
 
 require('bedrock-https-agent');
@@ -22,9 +21,6 @@ bedrock.events.on('bedrock.init', () => {
   for(const url in mockData.ldDocuments) {
     jsonLdDocumentLoader.addStatic(url, mockData.ldDocuments[url]);
   }
-  // override jsonld.documentLoader in brDidClient so this document loader
-  // can be used for did: and https: URLs
-  brDidClient.jsonld.documentLoader = jsonLdDocumentLoader;
 });
 
 require('bedrock-test');
