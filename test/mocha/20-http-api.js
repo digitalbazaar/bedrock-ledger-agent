@@ -8,6 +8,7 @@ const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -18,8 +19,6 @@ request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const {config, util: {uuid}} = bedrock;
-
-jsigs.use('jsonld', bedrock.jsonld);
 
 // register a mock ledgerAgentPlugin
 try {
@@ -50,6 +49,7 @@ describe('Ledger Agent HTTP API', () => {
           callback(err);
         }),
       signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
+        documentLoader,
         algorithm: 'RsaSignature2018',
         privateKeyPem:
           mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -302,6 +302,7 @@ describe('Ledger Agent HTTP API', () => {
         `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -327,6 +328,7 @@ describe('Ledger Agent HTTP API', () => {
         `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -432,6 +434,7 @@ describe('Ledger Agent HTTP API', () => {
       createConcertRecordOp.record.id = `https://example.com/events/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -550,6 +553,7 @@ describe('Ledger Agent HTTP API', () => {
         `https://example.com/concerts/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -574,6 +578,7 @@ describe('Ledger Agent HTTP API', () => {
         'https://example.com/concerts/' + uuid(),
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -677,6 +682,7 @@ describe('Ledger Agent HTTP API', () => {
       createConcertRecordOp.record.id = `https://example.com/events/${uuid()}`;
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
