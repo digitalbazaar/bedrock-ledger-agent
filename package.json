@@ -27,15 +27,15 @@
     "param-case": "^2.1.1"
   },
   "peerDependencies": {
-    "bedrock": "1.15.0 - 2.x",
-    "bedrock-docs": "^3.2.1",
-    "bedrock-express": "^2.0.6",
+    "bedrock": "1.15.0 - 3.x",
+    "bedrock-docs": "^3.2.2",
+    "bedrock-express": "2.0.6 - 3.x",
     "bedrock-ledger-context": "^11.0.0",
     "bedrock-ledger-node": "^8.0.0",
     "bedrock-mongodb": "5.x - 6.x",
     "bedrock-passport": "^3.3.0",
     "bedrock-permission": "^2.3.2",
-    "bedrock-rest": "^2.1.0",
+    "bedrock-rest": "2.1.0 - 3.x",
     "bedrock-server": "^2.2.0"
   },
   "engines": {
@@ -43,6 +43,6 @@
   },
   "devDependencies": {
     "eslint": "^6.6.0",
-    "eslint-config-digitalbazaar": "^2.0.0"
+    "eslint-config-digitalbazaar": "^2.0.1"
   }
 }
