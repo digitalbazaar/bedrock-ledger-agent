@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -20,9 +21,6 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-// use local JSON-LD processor for signatures
-jsigs.use('jsonld', bedrock.jsonld);
-
 describe('Integration - 1 Node - Unilateral - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
@@ -32,6 +30,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
     async.auto({
       sign: callback => {
         jsigs.sign(mockData.ledgerConfigurations.uni, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
@@ -73,6 +72,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
           createConcertRecordOp.record.id =
             'https://example.com/events/' + uuid();
           jsigs.sign(createConcertRecordOp, {
+            documentLoader,
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id

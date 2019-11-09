@@ -8,6 +8,7 @@ const bedrock = require('bedrock');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const brLedgerNode = require('bedrock-ledger-node');
 const cache = require('bedrock-redis');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -16,9 +17,6 @@ request = request.defaults({json: true, strictSSL: false});
 const url = require('url');
 const {config, util: {uuid}} = bedrock;
 const querystring = require('querystring');
-
-// use local JSON-LD processor for signatures
-jsigs.use('jsonld', bedrock.jsonld);
 
 const urlObj = {
   protocol: 'https',
@@ -48,6 +46,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
         }),
       sign: callback => {
         jsigs.sign(mockData.ledgerConfigurations.continuity, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
@@ -167,6 +166,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
           // exposed by the ledgerAgent
           createConcertRecordOp.creator = ledgerAgent.targetNode;
           jsigs.sign(createConcertRecordOp, {
+            documentLoader,
             algorithm: 'RsaSignature2018',
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
@@ -226,6 +226,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     async.auto({
       sign: callback => {
         jsigs.sign(newConfiguration, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
