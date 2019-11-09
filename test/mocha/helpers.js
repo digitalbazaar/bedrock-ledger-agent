@@ -10,9 +10,8 @@ const brLedgerNode = require('bedrock-ledger-node');
 const brKey = require('bedrock-key');
 const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const jsigs = require('jsonld-signatures');
-
-jsigs.use('jsonld', bedrock.jsonld);
 
 const api = {};
 module.exports = api;
@@ -124,6 +123,7 @@ api.multiSign = (doc, signers, callback) => {
     throw new TypeError('Signers must be an array.');
   }
   async.map(signers, (s, callback) => jsigs.sign(doc, {
+    documentLoader,
     algorithm: 'RsaSignature2018',
     privateKeyPem: s.privateKeyPem,
     creator: s.creator

@@ -12,15 +12,13 @@ const brLedgerNode = require('bedrock-ledger-node');
 const cache = require('bedrock-redis');
 const {config, util: {uuid}} = bedrock;
 const {constants} = config;
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 const url = require('url');
-
-// use local JSON-LD processor for signatures
-jsigs.use('jsonld', bedrock.jsonld);
 
 const urlObj = {
   protocol: 'https',
@@ -50,6 +48,7 @@ describe('Continuity Integration Part II', () => {
         }),
       sign: callback => {
         jsigs.sign(mockData.ledgerConfigurations.continuity, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
@@ -127,6 +126,7 @@ describe('Continuity Integration Part II', () => {
     // exposed by the ledgerAgent
     createConcertRecordOp.creator = ledgerAgent.targetNode;
     const signed = await jsigs.sign(createConcertRecordOp, {
+      documentLoader,
       algorithm: 'RsaSignature2018',
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
@@ -183,6 +183,7 @@ describe('Continuity Integration Part II', () => {
       }
     };
     const signedUpdate = await jsigs.sign(updateRecordOp, {
+      documentLoader,
       algorithm: 'RsaSignature2018',
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
