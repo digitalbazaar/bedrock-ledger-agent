@@ -6,13 +6,13 @@
 const async = require('async');
 const axios = require('axios');
 const bedrock = require('bedrock');
+const brHttpsAgent = require('bedrock-https-agent');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const brLedgerNode = require('bedrock-ledger-node');
 const cache = require('bedrock-redis');
 const {config, util: {uuid}} = bedrock;
 const {constants} = config;
 const helpers = require('./helpers');
-const httpsAgent = new require('https').Agent({rejectUnauthorized: false});
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
@@ -131,6 +131,7 @@ describe('Continuity Integration Part II', () => {
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
     });
+    const {httpsAgent} = brHttpsAgent;
     let error;
     try {
       await axios({

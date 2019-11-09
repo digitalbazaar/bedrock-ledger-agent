@@ -1,13 +1,10 @@
 /*
- * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2017-2019 Digital Bazaar, Inc. All rights reserved.
  */
 
 const {config} = require('bedrock');
 const path = require('path');
 require('bedrock-permission');
-
-// allow use of self signed certificates in the test framework
-config.jsonld.strictSSL = false;
 
 const permissions = config.permission.permissions;
 const roles = config.permission.roles;
@@ -41,3 +38,5 @@ config['ledger-consensus-continuity'].gossip.coolDownPeriod = 250;
 
 // reduce debounce in the event-writer
 config['ledger-consensus-continuity'].writer.debounce = 50;
+
+config['https-agent'].rejectUnauthorized = false;
