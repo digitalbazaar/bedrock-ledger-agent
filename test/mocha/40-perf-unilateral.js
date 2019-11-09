@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
@@ -13,8 +14,6 @@ request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const {config, util: {uuid}} = bedrock;
-
-jsigs.use('jsonld', bedrock.jsonld);
 
 const urlObj = {
   protocol: 'https',
@@ -35,6 +34,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         const concertEvent = bedrock.util.clone(mockData.events.concert);
         concertEvent.input[0].id = 'https://example.com/events/' + uuid();
         jsigs.sign(concertEvent, {
+          documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
             mockData.identities.regularUser.keys.privateKey.privateKeyPem,
@@ -45,6 +45,7 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         });
       }, callback),
       signConfig: callback => jsigs.sign(mockData.events.config, {
+        documentLoader,
         algorithm: 'RsaSignature2018',
         privateKeyPem:
           mockData.identities.regularUser.keys.privateKey.privateKeyPem,

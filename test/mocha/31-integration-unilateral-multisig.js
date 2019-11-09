@@ -6,7 +6,6 @@
 const async = require('async');
 const bedrock = require('bedrock');
 const helpers = require('./helpers');
-const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
@@ -20,9 +19,6 @@ const urlObj = {
   host: config.server.host,
   pathname: config['ledger-agent'].routes.agents
 };
-
-// use local JSON-LD processor for signatures
-jsigs.use('jsonld', bedrock.jsonld);
 
 describe('Integration - 1 Node - Unilateral - Multisignature', () => {
   describe('Add events and navigate the chain', () => {
