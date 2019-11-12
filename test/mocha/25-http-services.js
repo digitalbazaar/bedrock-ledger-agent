@@ -33,8 +33,8 @@ describe('HTTP Services', () => {
   before(done => {
     let regularActor;
     async.auto({
-      getRegularUser: callback => brIdentity.get(
-        null, mockData.identities.regularUser.identity.id, (err, result) => {
+      getRegularUser: callback => brIdentity.getCapabilities(
+        {id: mockData.identities.regularUser.identity.id}, (err, result) => {
           regularActor = result;
           callback(err);
         }),

@@ -17,8 +17,9 @@ let userName;
 userName = 'regularUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(
-  'did:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
-identities[userName].identity.sysResourceRole.push({
+  'urn:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
+identities[userName].meta = {sysResourceRole: []};
+identities[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
 });
@@ -85,7 +86,8 @@ userName = 'alternateUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(
   'did:v1:09af68f7-fc2b-43ad-b885-28e153db5866');
-identities[userName].identity.sysResourceRole.push({
+identities[userName].meta = {sysResourceRole: []};
+identities[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
 });
@@ -151,7 +153,8 @@ userName = 'gamma';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(
   'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484');
-identities[userName].identity.sysResourceRole.push({
+identities[userName].meta = {sysResourceRole: []};
+identities[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
 });
@@ -222,7 +225,8 @@ identities[userName].identity = helpers.createIdentity(userName);
 userName = 'adminUser';
 identities[userName] = {};
 identities[userName].identity = helpers.createIdentity(userName);
-identities[userName].identity.sysResourceRole.push({
+identities[userName].meta = {sysResourceRole: []};
+identities[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test'
   // generateResource: 'id' -- removing this restriction grants admin privileges
 });
