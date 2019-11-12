@@ -43,8 +43,8 @@ describe('Ledger Agent HTTP API', () => {
   before(done => {
     let regularActor;
     async.auto({
-      getRegularUser: callback => brIdentity.get(
-        null, mockData.identities.regularUser.identity.id, (err, result) => {
+      getRegularUser: callback => brIdentity.getCapabilities(
+        {id: mockData.identities.regularUser.identity.id}, (err, result) => {
           regularActor = result;
           callback(err);
         }),
@@ -87,7 +87,7 @@ describe('Ledger Agent HTTP API', () => {
   describe('authenticated as regularUser', () => {
     const regularActor = mockData.identities.regularUser;
 
-    it('should add ledger agent for new ledger', done => {
+    it.only('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
         url: url.format(urlObj),
         body: {ledgerConfiguration: signedConfig},
