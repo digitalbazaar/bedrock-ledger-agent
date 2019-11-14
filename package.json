@@ -2,7 +2,8 @@
   "name": "bedrock-ledger-agent",
   "version": "2.3.1-0",
   "description": "Bedrock module that provides management of ledger agents.",
-  "main": "./lib",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "main": "lib",
   "scripts": {
     "lint": "eslint lib"
   },
@@ -30,10 +31,10 @@
     "bedrock": "1.15.0 - 3.x",
     "bedrock-docs": "^3.2.2",
     "bedrock-express": "2.0.6 - 3.x",
-    "bedrock-ledger-context": "^11.0.0",
-    "bedrock-ledger-node": "^8.0.0",
+    "bedrock-ledger-context": "^14.0.0",
+    "bedrock-ledger-node": "8.x - 9.x",
     "bedrock-mongodb": "5.x - 6.x",
-    "bedrock-passport": "^3.3.0",
+    "bedrock-passport": "3.x - 5.x",
     "bedrock-permission": "^2.3.2",
     "bedrock-rest": "2.1.0 - 3.x",
     "bedrock-server": "^2.2.0"
