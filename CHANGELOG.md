@@ -1,5 +1,10 @@
 # bedrock-ledger-agent ChangeLog
 
+## 2.3.2 - 2019-12-17
+
+### Changed
+- Update peer dependencies.
+
 ## 2.3.1 - 2019-11-13
 
 ### Changed
