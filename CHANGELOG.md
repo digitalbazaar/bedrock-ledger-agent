@@ -30,6 +30,11 @@
 
 ### Changed
 - Update for latest bedrock events API.
+- Changed mongo index & collection creation to work with latest `bedrock-mongodb`.
+
+### Removed
+- Removed all instances of `bedrock-identity` in favor of account.
+
 ### Fixed
 - Change owners calculation to handle account system.
 
