@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const {RSAKeyPair} = require('crypto-ld');
 const brIdentity = require('bedrock-identity');
 const brLedgerNode = require('bedrock-ledger-node');
 const brKey = require('bedrock-key');
@@ -32,6 +33,12 @@ api.createIdentity = userName => {
   };
   return newIdentity;
 };
+
+// used for new suites
+api.ldKeyPair = ({publicKeyPem, privateKeyPem}) => new RSAKeyPair({
+  publicKeyPem,
+  privateKeyPem
+});
 
 api.createKeyPair = options => {
   const userName = options.userName;
