@@ -26,7 +26,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe('Continuity Integration Part II', () => {
+describe.skip('Continuity Integration Part II', () => {
   const regularActor = mockData.identities.regularUser;
   const nodes = 1;
   let ledgerAgent;

@@ -4,7 +4,8 @@
   "description": "Bedrock module that provides management of ledger agents.",
   "main": "./lib",
   "scripts": {
-    "lint": "eslint lib"
+    "lint": "eslint lib",
+    "test": "cd ./test && npm test"
   },
   "repository": {
     "type": "git",

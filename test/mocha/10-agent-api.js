@@ -14,7 +14,7 @@ const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const {util: {uuid}} = bedrock;
 
-describe('Ledger Agent API', () => {
+describe.skip('Ledger Agent API', () => {
   before(done => {
     async.series([
       callback => helpers.prepareDatabase(mockData, callback)

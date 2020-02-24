@@ -21,7 +21,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe('Integration - 1 Node - Unilateral - One Signature', () => {
+describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
   const regularActor = mockData.identities.regularUser;
   let ledgerAgent;
 
