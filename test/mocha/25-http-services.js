@@ -23,7 +23,7 @@ try {
   // error means that plugin is already defined, ignore
 }
 
-describe('HTTP Services', () => {
+describe.skip('HTTP Services', () => {
   let signedConfig;
   let defaultLedgerAgent;
   let publicLedgerAgent;

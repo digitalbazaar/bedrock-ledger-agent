@@ -3,6 +3,7 @@
  */
 'use strict';
 
+const util = require('util');
 const async = require('async');
 const bedrock = require('bedrock');
 const brIdentity = require('bedrock-identity');
@@ -34,6 +35,8 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
+const addLedgerAgentAsync = util.promisify(brLedgerAgent.add);
+
 describe('Ledger Agent HTTP API', () => {
   let signedConfig;
   let defaultLedgerAgent;
@@ -41,45 +44,22 @@ describe('Ledger Agent HTTP API', () => {
 
   before(done => helpers.prepareDatabase(mockData, done));
 
-  before(done => {
-    let regularActor;
-
-    async.auto({
-      getRegularUser: callback => brIdentity.getCapabilities(
-        {id: mockData.identities.regularUser.identity.id}, (err, result) => {
-          regularActor = result;
-          callback(err);
-        }),
-      signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
-        documentLoader,
-        suite: mockData.identities.regularUser.suite,
-        purpose
-      }, (err, result) => {
-        signedConfig = result;
-        callback(err);
-      }),
-      addDefault: ['getRegularUser', 'signConfig', (results, callback) => {
-        const options = {
-          ledgerConfiguration: signedConfig,
-          owner: regularActor.id,
-        };
-        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-          defaultLedgerAgent = ledgerAgent;
-          callback(err);
-        });
-      }],
-      addPublic: ['getRegularUser', 'signConfig', (results, callback) => {
-        const options = {
-          ledgerConfiguration: signedConfig,
-          owner: regularActor.id,
-          public: true
-        };
-        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-          publicLedgerAgent = ledgerAgent;
-          callback(err);
-        });
-      }]
-    }, err => done(err));
+  before(async () => {
+    const regularActor = await brIdentity.getCapabilities(
+      {id: mockData.identities.regularUser.identity.id});
+    signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
+      documentLoader,
+      suite: mockData.identities.regularUser.suite,
+      purpose
+    });
+    const options = {
+      ledgerConfiguration: signedConfig,
+      owner: regularActor.id,
+    };
+    console.log(regularActor, options);
+    await addLedgerAgentAsync(regularActor, null, options);
+    const publicOps = Object.assign({public: true}, options);
+    await addLedgerAgentAsync(regularActor, null, publicOps);
   });
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
