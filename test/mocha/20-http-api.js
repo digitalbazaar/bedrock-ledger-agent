@@ -19,6 +19,7 @@ request = request.defaults({json: true, strictSSL: false});
 // require('request-debug')(request);
 const url = require('url');
 const {config, util: {uuid}} = bedrock;
+const {purpose} = mockData;
 
 // register a mock ledgerAgentPlugin
 try {
@@ -42,6 +43,7 @@ describe('Ledger Agent HTTP API', () => {
 
   before(done => {
     let regularActor;
+
     async.auto({
       getRegularUser: callback => brIdentity.getCapabilities(
         {id: mockData.identities.regularUser.identity.id}, (err, result) => {
@@ -50,10 +52,8 @@ describe('Ledger Agent HTTP API', () => {
         }),
       signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
         documentLoader,
-        algorithm: 'RsaSignature2018',
-        privateKeyPem:
-          mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-        creator: mockData.identities.regularUser.keys.privateKey.publicKey
+        suite: mockData.identities.regularUser.suite,
+        purpose
       }, (err, result) => {
         signedConfig = result;
         callback(err);
@@ -303,10 +303,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: defaultLedgerAgent.service.ledgerOperationService,
@@ -329,10 +327,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: defaultLedgerAgent.service.ledgerOperationService,
@@ -435,10 +431,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: defaultLedgerAgent.service.ledgerOperationService,
@@ -554,10 +548,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: publicLedgerAgent.service.ledgerOperationService,
@@ -579,10 +571,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: publicLedgerAgent.service.ledgerOperationService,
@@ -683,10 +673,8 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          algorithm: 'RsaSignature2018',
-          privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          suite: mockData.identities.regularUser.suite,
+          purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
           url: publicLedgerAgent.service.ledgerOperationService,

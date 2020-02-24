@@ -2,9 +2,14 @@
  * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
-
+const jsigs = require('jsonld-signatures');
 const {constants} = require('bedrock').config;
 const helpers = require('./helpers');
+
+const {
+  purposes: {PublicKeyProofPurpose},
+  suites: {RsaSignature2018}
+} = jsigs;
 
 const mock = {};
 module.exports = mock;
@@ -12,7 +17,6 @@ module.exports = mock;
 const identities = mock.identities = {};
 mock.ldDocuments = {};
 let userName;
-
 // identity with permission to access its own ledgers
 userName = 'regularUser';
 identities[userName] = {};
@@ -23,10 +27,7 @@ identities[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
   generateResource: 'id'
 });
-identities[userName].keys = helpers.createKeyPair({
-  userName,
-  userId: identities[userName].identity.id,
-  publicKey: '-----BEGIN PUBLIC KEY-----\n' +
+identities[userName].publicKey = '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqv8gApfU3FhZx1gyKmBU\n' +
     'czZ1Ba3DQbqcGRJiwWz6wrr9E/K0PcpRws/+GPc1znG4cKLdxkdyA2zROUt/lbaM\n' +
     'TU+/kZzRh3ICZZOuo8kJpGqxPDIm7L1lIcBLOWu/UEV2VaWNOENwiQbh61VJlR+k\n' +
@@ -34,8 +35,8 @@ identities[userName].keys = helpers.createKeyPair({
     'lBKAjmGMwizbWFccDQqv0yZfAFpdVY2MNKlDSUNMnZyUgBZNpGOGPm9zi9aMFT2d\n' +
     'DrN9fpWMdu0QeZrJrDHzk6TKwtKrBB9xNMuHGYdPxy8Ix0uNmUt0mqt6H5Vhl4O0\n' +
     '0QIDAQAB\n' +
-    '-----END PUBLIC KEY-----\n',
-  privateKey: '-----BEGIN RSA PRIVATE KEY-----\n' +
+    '-----END PUBLIC KEY-----\n';
+identities[userName].privateKey = '-----BEGIN RSA PRIVATE KEY-----\n' +
     'MIIEpQIBAAKCAQEAqv8gApfU3FhZx1gyKmBUczZ1Ba3DQbqcGRJiwWz6wrr9E/K0\n' +
     'PcpRws/+GPc1znG4cKLdxkdyA2zROUt/lbaMTU+/kZzRh3ICZZOuo8kJpGqxPDIm\n' +
     '7L1lIcBLOWu/UEV2VaWNOENwiQbh61VJlR+kHK9LhQxYYZT554MYaXzcSRTC/RzH\n' +
@@ -61,8 +62,21 @@ identities[userName].keys = helpers.createKeyPair({
     'bNRfU+cCgYEAoBYwp0PJ1QEp3lSmb+gJiTxfNwIrP+VLkWYzPREpSbghDYjE2DfC\n' +
     'M8pNbVWpnOfT7OlhN3jw8pxHWap6PxNyVT2W/1AHNGKTK/BfFVn3nVGhOgPgH1AO\n' +
     'sObYxm9gpkNkelXejA/trbLe4hg7RWNYzOztbfbZakdVjMNfXnyw+Q0=\n' +
-    '-----END RSA PRIVATE KEY-----\n'
+    '-----END RSA PRIVATE KEY-----\n';
+identities[userName].keys = helpers.createKeyPair({
+  userName,
+  userId: identities[userName].identity.id,
+  publicKey: identities[userName].publicKey,
+  privateKey: identities[userName].privateKey
 });
+identities[userName].suite = new RsaSignature2018({
+  creator: mock.identities.regularUser.keys.privateKey.publicKey,
+  key: helpers.ldKeyPair({
+    publicKeyPem: identities[userName].publicKey,
+    privateKeyPem: identities[userName].privateKey
+  })
+});
+
 mock.ldDocuments[identities[userName].identity.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
   id: identities[userName].identity.id,
@@ -522,3 +536,6 @@ blocks.config = {
   type: 'WebLedgerEventBlock',
   event: [events.config]
 };
+
+mock.purpose = new PublicKeyProofPurpose();
+
