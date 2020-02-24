@@ -20,7 +20,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe('Integration - 1 Node - Unilateral - Multisignature', () => {
+describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
   describe('Add events and navigate the chain', () => {
     const regularActor = mockData.identities.regularUser;
     const alternateActor = mockData.identities.alternateUser;

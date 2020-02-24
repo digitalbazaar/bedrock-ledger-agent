@@ -7,7 +7,7 @@ const {constants} = require('bedrock').config;
 const helpers = require('./helpers');
 
 const {
-  purposes: {PublicKeyProofPurpose},
+  purposes: {AssertionProofPurpose},
   suites: {RsaSignature2018}
 } = jsigs;
 
@@ -537,5 +537,5 @@ blocks.config = {
   event: [events.config]
 };
 
-mock.purpose = new PublicKeyProofPurpose();
+mock.purpose = new AssertionProofPurpose();
 
