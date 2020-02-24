@@ -37,6 +37,7 @@
     "bedrock-server": "^2.4.0",
     "bedrock-test": "^4.0.2",
     "bedrock-validation": "^4.2.0",
+    "crypto-ld": "^3.7.0",
     "grunt": "^1.0.1",
     "jsonld-signatures": "^4.4.0",
     "request": "^2.88.0"
