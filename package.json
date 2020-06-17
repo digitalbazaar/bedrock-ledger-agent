@@ -5,8 +5,8 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "main": "lib",
   "scripts": {
-    "lint": "eslint lib",
-    "test": "cd ./test && npm test"
+    "test": "cd ./test && npm test",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
