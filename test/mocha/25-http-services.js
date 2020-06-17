@@ -67,6 +67,7 @@ describe('HTTP Services', () => {
           public: true
         };
         brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
+          // eslint-disable-next-line no-unused-vars
           publicLedgerAgent = ledgerAgent;
           callback(err);
         });
