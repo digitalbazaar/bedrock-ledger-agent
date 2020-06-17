@@ -63,21 +63,21 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "id": identities[userName].identity.id,
-  "publicKey": [{
-    "id": identities[userName].keys.publicKey.id,
-    "type": "RsaVerificationKey2018",
-    "owner": identities[userName].identity.id,
-    "publicKeyPem": identities[userName].keys.publicKey.id
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  id: identities[userName].identity.id,
+  publicKey: [{
+    id: identities[userName].keys.publicKey.id,
+    type: 'RsaVerificationKey2018',
+    owner: identities[userName].identity.id,
+    publicKeyPem: identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "type": "RsaVerificationKey2018",
-  "owner": identities[userName].identity.id,
-  "id": identities[userName].keys.publicKey.id,
-  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  type: 'RsaVerificationKey2018',
+  owner: identities[userName].identity.id,
+  id: identities[userName].keys.publicKey.id,
+  publicKeyPem: identities[userName].keys.publicKey.publicKeyPem
 };
 
 // identity with permission to access its own ledgers
@@ -130,21 +130,21 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "id": identities[userName].identity.id,
-  "publicKey": [{
-    "id": identities[userName].keys.publicKey.id,
-    "type": "RsaVerificationKey2018",
-    "owner": identities[userName].identity.id,
-    "publicKeyPem": identities[userName].keys.publicKey.id
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  id: identities[userName].identity.id,
+  publicKey: [{
+    id: identities[userName].keys.publicKey.id,
+    type: 'RsaVerificationKey2018',
+    owner: identities[userName].identity.id,
+    publicKeyPem: identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "type": "RsaVerificationKey2018",
-  "owner": identities[userName].identity.id,
-  "id": identities[userName].keys.publicKey.id,
-  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  type: 'RsaVerificationKey2018',
+  owner: identities[userName].identity.id,
+  id: identities[userName].keys.publicKey.id,
+  publicKeyPem: identities[userName].keys.publicKey.publicKeyPem
 };
 // identity with permission to access its own ledgers
 userName = 'gamma';
@@ -196,21 +196,21 @@ identities[userName].keys = helpers.createKeyPair({
     '-----END RSA PRIVATE KEY-----\n'
 });
 mock.ldDocuments[identities[userName].identity.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "id": identities[userName].identity.id,
-  "publicKey": [{
-    "id": identities[userName].keys.publicKey.id,
-    "type": "RsaVerificationKey2018",
-    "owner": identities[userName].identity.id,
-    "publicKeyPem": identities[userName].keys.publicKey.id
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  id: identities[userName].identity.id,
+  publicKey: [{
+    id: identities[userName].keys.publicKey.id,
+    type: 'RsaVerificationKey2018',
+    owner: identities[userName].identity.id,
+    publicKeyPem: identities[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[identities[userName].keys.publicKey.id] = {
-  "@context": constants.SECURITY_CONTEXT_V2_URL,
-  "type": "RsaVerificationKey2018",
-  "owner": identities[userName].identity.id,
-  "id": identities[userName].keys.publicKey.id,
-  "publicKeyPem": identities[userName].keys.publicKey.publicKeyPem
+  '@context': constants.SECURITY_CONTEXT_V2_URL,
+  type: 'RsaVerificationKey2018',
+  owner: identities[userName].identity.id,
+  id: identities[userName].keys.publicKey.id,
+  publicKeyPem: identities[userName].keys.publicKey.publicKeyPem
 };
 
 // identity with no permissions

@@ -174,7 +174,9 @@ describe('Ledger Agent API', () => {
             promise.then(ledgerAgent => {
               iteratorAgents.push(ledgerAgent.id);
               callback();
-            }).catch(err => {throw err;});
+            }).catch(err => {
+              throw err;
+            });
           }, callback);
         }],
         test: ['iterate', (results, callback) => {
@@ -491,7 +493,9 @@ describe('Ledger Agent API', () => {
             promise.then(ledgerAgent => {
               iteratorAgents.push(ledgerAgent.id);
               callback();
-            }).catch(err => {throw err;});
+            }).catch(err => {
+              throw err;
+            });
           }, callback);
         }],
         test: ['iterate', (results, callback) => {
@@ -618,7 +622,9 @@ describe('Ledger Agent API', () => {
             promise.then(ledgerAgent => {
               iteratorAgents.push(ledgerAgent.id);
               callback();
-            }).catch(err => {throw err;});
+            }).catch(err => {
+              throw err;
+            });
           }, callback);
         }],
         test: ['iterate', (results, callback) => {
