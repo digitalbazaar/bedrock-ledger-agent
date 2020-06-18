@@ -1,5 +1,13 @@
 # bedrock-ledger-agent ChangeLog
 
+## 3.0.0 - 2020-06-18
+
+### Added
+- Setup CI workflow.
+
+### Changed
+- **BREAKING**: Remove `bedrock-docs` dependency and RAML documentation.
+
 ## 2.3.2 - 2019-12-17
 
 ### Changed
