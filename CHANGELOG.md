@@ -2,8 +2,11 @@
 
 ## 3.1.0 - TBD
 
+### Added
+- Add support for `bedrock-accounts` with private ledger agents.
+
 ### Fixed
-- Change owners calculation to handle account system.
+- Correct owner calculation with private ledger agents.
 
 ## 3.0.0 - 2020-06-18
 
