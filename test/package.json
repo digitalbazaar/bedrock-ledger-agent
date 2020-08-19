@@ -39,10 +39,18 @@
     "bedrock-test": "^5.3.0",
     "bedrock-validation": "^4.2.0",
     "bedrock-views": "^7.1.0",
+    "bedrock-ledger-context": "^15.0.0",
+    "bedrock-ledger-node": "^8.0.0",
+    "bedrock-ledger-validator-signature": "^3.0.0",
+    "bedrock-mongodb": "^7.0.0",
+    "bedrock-permission": "^3.0.0",
+    "bedrock-redis": "^3.1.0",
+    "bedrock-security-context": "^3.0.0",
     "cors": "^2.8.3",
     "crypto-ld": "^3.7.0",
     "grunt": "^1.0.1",
     "jsonld-signatures": "^4.5.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "request": "^2.88.0"
   }
 }
