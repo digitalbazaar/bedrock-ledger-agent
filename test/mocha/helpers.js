@@ -12,8 +12,6 @@ const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
 const jsigs = require('jsonld-signatures');
 
-jsigs.use('jsonld', bedrock.jsonld);
-
 const api = {};
 module.exports = api;
 
