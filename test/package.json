@@ -41,7 +41,7 @@
     "bedrock-views": "^5.0.2",
     "cors": "^2.8.3",
     "grunt": "^1.0.1",
-    "jsonld-signatures": "^2.1.1",
+    "jsonld-signatures": "^4.5.0",
     "lodash": "^4.17.4"
   }
 }
