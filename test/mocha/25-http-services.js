@@ -5,7 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
-const brIdentity = require('bedrock-identity');
+const brAccount = require('bedrock-account');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
@@ -33,7 +33,7 @@ describe.skip('HTTP Services', () => {
   before(done => {
     let regularActor;
     async.auto({
-      getRegularUser: callback => brIdentity.getCapabilities(
+      getRegularUser: callback => brAccount.getCapabilities(
         {id: mockData.identities.regularUser.identity.id}, (err, result) => {
           regularActor = result;
           callback(err);
