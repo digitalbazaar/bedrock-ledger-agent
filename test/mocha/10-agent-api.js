@@ -5,7 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
-const brIdentity = require('bedrock-identity');
+const brAccount = require('bedrock-account');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const database = require('bedrock-mongodb');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
@@ -29,12 +29,12 @@ describe.skip('Ledger Agent API', () => {
     let signedConfig;
     before(done => {
       async.auto({
-        getRegularUser: callback => brIdentity.getCapabilities(
+        getRegularUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
-        getAdminUser: callback => brIdentity.getCapabilities(
+        getAdminUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.adminUser.identity.id}, (err, result) => {
             adminActor = result;
             callback(err);
@@ -302,12 +302,12 @@ describe.skip('Ledger Agent API', () => {
     let signedConfig;
     before(done => {
       async.auto({
-        getRegularUser: callback => brIdentity.getCapabilities(
+        getRegularUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
-        getUnauthorizedUser: callback => brIdentity.getCapabilities(
+        getUnauthorizedUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.unauthorizedUser.identity.id},
           (err, result) => {
             unauthorizedActor = result;
@@ -511,12 +511,12 @@ describe.skip('Ledger Agent API', () => {
     let signedConfig;
     before(done => {
       async.auto({
-        getRegularUser: callback => brIdentity.getCapabilities(
+        getRegularUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
-        getAdminUser: callback => brIdentity.getCapabilities(
+        getAdminUser: callback => brAccount.getCapabilities(
           {id: mockData.identities.adminUser.identity.id}, (err, result) => {
             adminActor = result;
             callback(err);

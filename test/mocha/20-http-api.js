@@ -6,7 +6,7 @@
 const util = require('util');
 const async = require('async');
 const bedrock = require('bedrock');
-const brIdentity = require('bedrock-identity');
+const brAccount = require('bedrock-account');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
@@ -45,7 +45,7 @@ describe('Ledger Agent HTTP API', () => {
   before(done => helpers.prepareDatabase(mockData, done));
 
   before(async () => {
-    const regularActor = await brIdentity.getCapabilities(
+    const regularActor = await brAccount.getCapabilities(
       {id: mockData.identities.regularUser.identity.id});
     signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
       documentLoader,
@@ -113,7 +113,7 @@ describe('Ledger Agent HTTP API', () => {
         ledgerConfiguration: signedConfig
       };
       async.auto({
-        getRegularUser: callback => brIdentity.get(
+        getRegularUser: callback => brAccount.get(
           null, mockData.identities.regularUser.identity.id,
           (err, identity) => callback(err, identity)),
         createNode: ['getRegularUser', (results, callback) => {
