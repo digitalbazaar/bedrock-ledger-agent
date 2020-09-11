@@ -5,8 +5,8 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const brAccount = require('bedrock-account');
 const {RSAKeyPair} = require('crypto-ld');
-const brIdentity = require('bedrock-identity');
 const brLedgerNode = require('bedrock-ledger-node');
 const brKey = require('bedrock-key');
 const {constants} = bedrock.config;
@@ -52,7 +52,7 @@ api.createKeyPair = options => {
   }
   const newKeyPair = {
     publicKey: {
-      '@context': constants.IDENTITY_CONTEXT_V1_URL,
+      '@context': constants.SECURITY_CONTEXT_V1_URL,
       id: ownerId + '/keys/1',
       type: 'CryptographicKey',
       owner: ownerId,
@@ -158,7 +158,7 @@ api.use = (plugin, callback) => {
 function insertTestData(mockData, callback) {
   async.forEachOf(mockData.identities, (identity, key, callback) => {
     async.parallel([
-      callback => brIdentity.insert(
+      callback => brAccount.insert(
         {actor: null, identity: identity.identity, meta: identity.meta},
         err => {
           if(err) {
