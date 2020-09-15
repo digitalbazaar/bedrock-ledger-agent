@@ -8,7 +8,6 @@ const bedrock = require('bedrock');
 const brAccount = require('bedrock-account');
 const {RSAKeyPair} = require('crypto-ld');
 const brLedgerNode = require('bedrock-ledger-node');
-const brKey = require('bedrock-key');
 const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
@@ -93,7 +92,7 @@ api.removeCollection = (collection, callback) => {
   const collectionNames = [collection];
   database.openCollections(collectionNames, () => {
     async.each(collectionNames, (collectionName, callback) => {
-      database.collections[collectionName].remove({}, callback);
+      database.collections[collectionName].deleteMany({}, callback);
     }, err => {
       callback(err);
     });
@@ -104,7 +103,7 @@ api.removeCollections = callback => {
   const collectionNames = ['identity', 'eventLog'];
   database.openCollections(collectionNames, () => {
     async.each(collectionNames, (collectionName, callback) => {
-      database.collections[collectionName].remove({}, callback);
+      database.collections[collectionName].deleteMany({}, callback);
     }, err => {
       callback(err);
     });
@@ -173,6 +172,8 @@ function insertTestData(mockData, callback) {
         }),
       callback => {
         if(identity.keys) {
+console.log('tried to add a key');
+/*
           brKey.addPublicKey(
             {actor: null, publicKey: identity.keys.publicKey}, err => {
               if(err) {
@@ -185,6 +186,8 @@ function insertTestData(mockData, callback) {
               }
               callback();
             });
+*/
+callback();
         } else {
           callback();
         }
