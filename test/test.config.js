@@ -9,7 +9,8 @@ require('bedrock-permission');
 const permissions = config.permission.permissions;
 const roles = config.permission.roles;
 
-config.mocha.tests.push(path.join(__dirname, 'mocha'));
+// note this should not have a file name at the end of it
+config.mocha.tests.push(path.join(__dirname, 'mocha', '10-agent-api.js'));
 
 // MongoDB
 config.mongodb.name = 'bedrock_ledger_agent_test';
