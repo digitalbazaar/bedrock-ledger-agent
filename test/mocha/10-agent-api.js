@@ -30,12 +30,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getAdminUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.adminUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.adminUser.identity.id}, (err, result) => {
             adminActor = result;
             callback(err);
           }),
@@ -43,8 +43,8 @@ describe.skip('Ledger Agent API', () => {
           documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
         }, (err, result) => {
           signedConfig = result;
           callback(err);
@@ -303,12 +303,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getUnauthorizedUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.unauthorizedUser.identity.id},
+          {id: mockData.accounts.unauthorizedUser.identity.id},
           (err, result) => {
             unauthorizedActor = result;
             callback(err);
@@ -317,8 +317,8 @@ describe.skip('Ledger Agent API', () => {
           documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
         }, (err, result) => {
           signedConfig = result;
           callback(err);
@@ -512,12 +512,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getAdminUser: callback => brAccount.getCapabilities(
-          {id: mockData.identities.adminUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.adminUser.identity.id}, (err, result) => {
             adminActor = result;
             callback(err);
           }),
@@ -525,8 +525,8 @@ describe.skip('Ledger Agent API', () => {
           documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
         }, (err, result) => {
           signedConfig = result;
           callback(err);

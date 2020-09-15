@@ -22,7 +22,7 @@ const urlObj = {
 };
 
 describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
-  const regularActor = mockData.identities.regularUser;
+  const regularActor = mockData.accounts.regularUser;
   let ledgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));

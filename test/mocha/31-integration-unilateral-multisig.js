@@ -22,8 +22,8 @@ const urlObj = {
 
 describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
   describe('Add events and navigate the chain', () => {
-    const regularActor = mockData.identities.regularUser;
-    const alternateActor = mockData.identities.alternateUser;
+    const regularActor = mockData.accounts.regularUser;
+    const alternateActor = mockData.accounts.alternateUser;
     let ledgerAgent;
 
     before(done => helpers.prepareDatabase(mockData, done));
@@ -141,9 +141,9 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
     });
   }); // end Add events and navigate the chain
   describe('Change Ledger Configuration', () => {
-    const regularActor = mockData.identities.regularUser;
-    const alternateActor = mockData.identities.alternateUser;
-    const gammaActor = mockData.identities.gamma;
+    const regularActor = mockData.accounts.regularUser;
+    const alternateActor = mockData.accounts.alternateUser;
+    const gammaActor = mockData.accounts.gamma;
     const originalSigners = [{
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
@@ -207,8 +207,8 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
         newConfig.sequence = 1;
         // change approvedSigners for CreateWebLedgerRecord
         newConfig.operationValidator[0].approvedSigner = [
-          mockData.identities.regularUser.identity.id,
-          mockData.identities.gamma.identity.id
+          mockData.accounts.regularUser.identity.id,
+          mockData.accounts.gamma.identity.id
         ];
         // the original signers sign the new config
         helpers.multiSign(newConfig, originalSigners, callback);
