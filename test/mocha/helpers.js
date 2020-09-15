@@ -16,21 +16,12 @@ const jsigs = require('jsonld-signatures');
 const api = {};
 module.exports = api;
 
-api.createIdentity = userName => {
-  const newIdentity = {
-    id: userName,
-    type: 'Identity',
-    sysSlug: userName,
-    label: userName,
+api.createAccount = userName => {
+  const newAccount = {
+    id: `unr:uuid:${bedrock.utils.uuid()}`,
     email: userName + '@bedrock.dev',
-    sysPassword: 'password',
-    sysPublic: ['label', 'url', 'description'],
-    sysResourceRole: [],
-    url: 'https://example.com',
-    description: userName,
-    sysStatus: 'active'
   };
-  return newIdentity;
+  return newAccount;
 };
 
 // used for new suites
@@ -161,6 +152,7 @@ function insertTestData(mockData, callback) {
         {actor: null, account: identity.identity, meta: identity.meta},
         err => {
           if(err) {
+console.log('error', err);
             if(!(err.name === 'DuplicateError' ||
               database.isDuplicateError(err))) {
               // only pass on non-duplicate errors
@@ -171,8 +163,8 @@ function insertTestData(mockData, callback) {
           callback();
         }),
       callback => {
+console.log('waiting on account insert', identity);
         if(identity.keys) {
-console.log('tried to add a key');
 /*
           brKey.addPublicKey(
             {actor: null, publicKey: identity.keys.publicKey}, err => {

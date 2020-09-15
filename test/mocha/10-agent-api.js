@@ -14,11 +14,9 @@ const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const {util: {uuid}} = bedrock;
 
-describe.skip('Ledger Agent API', () => {
-  before(done => {
-    async.series([
-      callback => helpers.prepareDatabase(mockData, callback)
-    ], done);
+describe('Ledger Agent API', function() {
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
   });
   beforeEach(done => {
     helpers.removeCollection('ledger_testLedger', done);
@@ -30,12 +28,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.account.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getAdminUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.adminUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.adminUser.account.id}, (err, result) => {
             adminActor = result;
             callback(err);
           }),
@@ -303,12 +301,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.account.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getUnauthorizedUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.unauthorizedUser.identity.id},
+          {id: mockData.accounts.unauthorizedUser.account.id},
           (err, result) => {
             unauthorizedActor = result;
             callback(err);
@@ -512,12 +510,12 @@ describe.skip('Ledger Agent API', () => {
     before(done => {
       async.auto({
         getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.regularUser.account.id}, (err, result) => {
             regularActor = result;
             callback(err);
           }),
         getAdminUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.adminUser.identity.id}, (err, result) => {
+          {id: mockData.accounts.adminUser.account.id}, (err, result) => {
             adminActor = result;
             callback(err);
           }),
