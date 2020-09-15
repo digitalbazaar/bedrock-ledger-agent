@@ -154,12 +154,12 @@ api.use = (plugin, callback) => {
   callback(null, p);
 };
 
-// Insert identities and public keys used for testing into database
+// Insert accounts and public keys used for testing into database
 function insertTestData(mockData, callback) {
-  async.forEachOf(mockData.identities, (identity, key, callback) => {
+  async.forEachOf(mockData.accounts, (identity, key, callback) => {
     async.parallel([
       callback => brAccount.insert(
-        {actor: null, identity: identity.identity, meta: identity.meta},
+        {actor: null, account: identity.identity, meta: identity.meta},
         err => {
           if(err) {
             if(!(err.name === 'DuplicateError' ||

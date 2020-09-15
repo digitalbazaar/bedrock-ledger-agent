@@ -22,7 +22,7 @@ const urlObj = {
 };
 
 describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
-  const regularActor = mockData.identities.regularUser;
+  const regularActor = mockData.accounts.regularUser;
   const numEvents = 100;
   let ledgerAgent;
   const signedEvents = [];
@@ -37,8 +37,8 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
           documentLoader,
           algorithm: 'RsaSignature2018',
           privateKeyPem:
-            mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.identities.regularUser.keys.privateKey.publicKey
+            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
         }, (err, result) => {
           signedEvents.push(result);
           callback();
@@ -48,8 +48,8 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
         documentLoader,
         algorithm: 'RsaSignature2018',
         privateKeyPem:
-          mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-        creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+        creator: mockData.accounts.regularUser.keys.privateKey.publicKey
       }, callback),
       add: ['signConfig', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({

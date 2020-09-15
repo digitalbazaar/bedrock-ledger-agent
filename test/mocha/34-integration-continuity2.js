@@ -28,7 +28,7 @@ const urlObj = {
 };
 
 describe.skip('Continuity Integration Part II', () => {
-  const regularActor = mockData.identities.regularUser;
+  const regularActor = mockData.accounts.regularUser;
   const nodes = 1;
   let ledgerAgent;
   let consensusApi;

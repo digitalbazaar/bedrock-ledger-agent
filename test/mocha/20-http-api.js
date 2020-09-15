@@ -46,10 +46,10 @@ describe('Ledger Agent HTTP API', () => {
 
   before(async () => {
     const regularActor = await brAccount.getCapabilities(
-      {id: mockData.identities.regularUser.identity.id});
+      {id: mockData.accounts.regularUser.identity.id});
     signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
       documentLoader,
-      suite: mockData.identities.regularUser.suite,
+      suite: mockData.accounts.regularUser.suite,
       purpose
     });
     const options = {
@@ -65,7 +65,7 @@ describe('Ledger Agent HTTP API', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   describe('authenticated as regularUser', () => {
-    const regularActor = mockData.identities.regularUser;
+    const regularActor = mockData.accounts.regularUser;
 
     it.only('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
@@ -114,7 +114,7 @@ describe('Ledger Agent HTTP API', () => {
       };
       async.auto({
         getRegularUser: callback => brAccount.get(
-          null, mockData.identities.regularUser.identity.id,
+          null, mockData.accounts.regularUser.identity.id,
           (err, identity) => callback(err, identity)),
         createNode: ['getRegularUser', (results, callback) => {
           brLedgerNode.add(results.getRegularUser, options, callback);
@@ -283,7 +283,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
@@ -307,7 +307,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
@@ -411,7 +411,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
@@ -450,7 +450,7 @@ describe('Ledger Agent HTTP API', () => {
   });
 
   describe('unauthenticated clients', () => {
-    const regularActor = mockData.identities.regularUser;
+    const regularActor = mockData.accounts.regularUser;
 
     it('should not add ledger agent for new ledger', done => {
       request.post({
@@ -528,7 +528,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
@@ -551,7 +551,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
@@ -653,7 +653,7 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         signOperation: callback => jsigs.sign(createConcertRecordOp, {
           documentLoader,
-          suite: mockData.identities.regularUser.suite,
+          suite: mockData.accounts.regularUser.suite,
           purpose
         }, callback),
         add: ['signOperation', (results, callback) => request.post({
