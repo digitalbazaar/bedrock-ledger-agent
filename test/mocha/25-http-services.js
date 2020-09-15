@@ -34,7 +34,7 @@ describe.skip('HTTP Services', () => {
     let regularActor;
     async.auto({
       getRegularUser: callback => brAccount.getCapabilities(
-        {id: mockData.identities.regularUser.identity.id}, (err, result) => {
+        {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
           regularActor = result;
           callback(err);
         }),
@@ -42,8 +42,8 @@ describe.skip('HTTP Services', () => {
         documentLoader,
         algorithm: 'RsaSignature2018',
         privateKeyPem:
-          mockData.identities.regularUser.keys.privateKey.privateKeyPem,
-        creator: mockData.identities.regularUser.keys.privateKey.publicKey
+          mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
+        creator: mockData.accounts.regularUser.keys.privateKey.publicKey
       }, (err, result) => {
         signedConfig = result;
         callback(err);
@@ -78,7 +78,7 @@ describe.skip('HTTP Services', () => {
     helpers.removeCollection('ledger_testLedger', done);
   });
   describe('plugins', () => {
-    const regularActor = mockData.identities.regularUser;
+    const regularActor = mockData.accounts.regularUser;
     it('should return an error on a request to unknown plugin', done => {
       const basePath = defaultLedgerAgent.service.ledgerAgentStatusService;
       async.auto({
