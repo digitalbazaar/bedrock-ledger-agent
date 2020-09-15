@@ -17,10 +17,10 @@ module.exports = mock;
 const accounts = mock.accounts = {};
 mock.ldDocuments = {};
 let userName;
-// identity with permission to access its own ledgers
+//.account with permission to access its own ledgers
 userName = 'regularUser';
 accounts[userName] = {};
-accounts[userName].identity = helpers.createIdentity(
+accounts[userName].account = helpers.createIdentity(
   'urn:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -65,7 +65,7 @@ accounts[userName].privateKey = '-----BEGIN RSA PRIVATE KEY-----\n' +
     '-----END RSA PRIVATE KEY-----\n';
 accounts[userName].keys = helpers.createKeyPair({
   userName,
-  userId: accounts[userName].identity.id,
+  userId: accounts[userName].account.id,
   publicKey: accounts[userName].publicKey,
   privateKey: accounts[userName].privateKey
 });
@@ -77,28 +77,28 @@ accounts[userName].suite = new RsaSignature2018({
   })
 });
 
-mock.ldDocuments[accounts[userName].identity.id] = {
+mock.ldDocuments[accounts[userName].account.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
-  id: accounts[userName].identity.id,
+  id: accounts[userName].account.id,
   publicKey: [{
     id: accounts[userName].keys.publicKey.id,
     type: 'RsaVerificationKey2018',
-    owner: accounts[userName].identity.id,
+    owner: accounts[userName].account.id,
     publicKeyPem: accounts[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
   type: 'RsaVerificationKey2018',
-  owner: accounts[userName].identity.id,
+  owner: accounts[userName].account.id,
   id: accounts[userName].keys.publicKey.id,
   publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem
 };
 
-// identity with permission to access its own ledgers
+//.account with permission to access its own ledgers
 userName = 'alternateUser';
 accounts[userName] = {};
-accounts[userName].identity = helpers.createIdentity(
+accounts[userName].account = helpers.createIdentity(
   'did:v1:09af68f7-fc2b-43ad-b885-28e153db5866');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -107,7 +107,7 @@ accounts[userName].meta.sysResourceRole.push({
 });
 accounts[userName].keys = helpers.createKeyPair({
   userName,
-  userId: accounts[userName].identity.id,
+  userId: accounts[userName].account.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3QS5rF47pcj7+HZsp8Kq\n' +
     '7z7nx3fulu9mHbAuWUNORNOG2cHLSjNT7pzKV+dQkmcPO0govt4uxfUsrE9xtteu\n' +
@@ -145,27 +145,27 @@ accounts[userName].keys = helpers.createKeyPair({
     '0vMjVanUjnBSpnEmSI4I7o2E8ejxfCZjT053kf47BupJ6nLde+gZ\n' +
     '-----END RSA PRIVATE KEY-----\n'
 });
-mock.ldDocuments[accounts[userName].identity.id] = {
+mock.ldDocuments[accounts[userName].account.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
-  id: accounts[userName].identity.id,
+  id: accounts[userName].account.id,
   publicKey: [{
     id: accounts[userName].keys.publicKey.id,
     type: 'RsaVerificationKey2018',
-    owner: accounts[userName].identity.id,
+    owner: accounts[userName].account.id,
     publicKeyPem: accounts[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
   type: 'RsaVerificationKey2018',
-  owner: accounts[userName].identity.id,
+  owner: accounts[userName].account.id,
   id: accounts[userName].keys.publicKey.id,
   publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem
 };
-// identity with permission to access its own ledgers
+//.account with permission to access its own ledgers
 userName = 'gamma';
 accounts[userName] = {};
-accounts[userName].identity = helpers.createIdentity(
+accounts[userName].account = helpers.createIdentity(
   'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -174,7 +174,7 @@ accounts[userName].meta.sysResourceRole.push({
 });
 accounts[userName].keys = helpers.createKeyPair({
   userName,
-  userId: accounts[userName].identity.id,
+  userId: accounts[userName].account.id,
   publicKey: '-----BEGIN PUBLIC KEY-----\n' +
     'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqv8gApfU3FhZx1gyKmBU\n' +
     'czZ1Ba3DQbqcGRJiwWz6wrr9E/K0PcpRws/+GPc1znG4cKLdxkdyA2zROUt/lbaM\n' +
@@ -212,33 +212,33 @@ accounts[userName].keys = helpers.createKeyPair({
     'sObYxm9gpkNkelXejA/trbLe4hg7RWNYzOztbfbZakdVjMNfXnyw+Q0=\n' +
     '-----END RSA PRIVATE KEY-----\n'
 });
-mock.ldDocuments[accounts[userName].identity.id] = {
+mock.ldDocuments[accounts[userName].account.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
-  id: accounts[userName].identity.id,
+  id: accounts[userName].account.id,
   publicKey: [{
     id: accounts[userName].keys.publicKey.id,
     type: 'RsaVerificationKey2018',
-    owner: accounts[userName].identity.id,
+    owner: accounts[userName].account.id,
     publicKeyPem: accounts[userName].keys.publicKey.id
   }]
 };
 mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
   '@context': constants.SECURITY_CONTEXT_V2_URL,
   type: 'RsaVerificationKey2018',
-  owner: accounts[userName].identity.id,
+  owner: accounts[userName].account.id,
   id: accounts[userName].keys.publicKey.id,
   publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem
 };
 
-// identity with no permissions
+//.account with no permissions
 userName = 'unauthorizedUser';
 accounts[userName] = {};
-accounts[userName].identity = helpers.createIdentity(userName);
+accounts[userName].account = helpers.createIdentity(userName);
 
-// identity with admin permission
+//.account with admin permission
 userName = 'adminUser';
 accounts[userName] = {};
-accounts[userName].identity = helpers.createIdentity(userName);
+accounts[userName].account = helpers.createIdentity(userName);
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test'
@@ -341,7 +341,7 @@ ledgerConfigurations.uni = {
       type: 'ValidatorFilterByType',
       validatorFilterByType: ['WebLedgerConfiguration']
     }],
-    approvedSigner: [accounts.regularUser.identity.id],
+    approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
   operationValidator: [{
@@ -350,7 +350,7 @@ ledgerConfigurations.uni = {
       type: 'ValidatorFilterByType',
       validatorFilterByType: ['CreateWebLedgerRecord']
     }],
-    approvedSigner: [accounts.regularUser.identity.id],
+    approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
   sequence: 0
@@ -370,7 +370,7 @@ ledgerConfigurations.continuity = {
       type: 'ValidatorFilterByType',
       validatorFilterByType: ['WebLedgerConfiguration']
     }],
-    approvedSigner: [accounts.regularUser.identity.id],
+    approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
   operationValidator: [{
@@ -379,7 +379,7 @@ ledgerConfigurations.continuity = {
       type: 'ValidatorFilterByType',
       validatorFilterByType: ['CreateWebLedgerRecord', 'UpdateWebLedgerRecord']
     }],
-    approvedSigner: [accounts.regularUser.identity.id],
+    approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
   sequence: 0,
@@ -397,8 +397,8 @@ ledgerConfigurations.multisigAlpha = {
       validatorFilterByType: ['WebLedgerConfiguration']
     }],
     approvedSigner: [
-      accounts.regularUser.identity.id,
-      accounts.alternateUser.identity.id
+      accounts.regularUser.account.id,
+      accounts.alternateUser.account.id
     ],
     minimumSignaturesRequired: 2
   }],
@@ -409,8 +409,8 @@ ledgerConfigurations.multisigAlpha = {
       validatorFilterByType: ['CreateWebLedgerRecord']
     }],
     approvedSigner: [
-      accounts.regularUser.identity.id,
-      accounts.alternateUser.identity.id
+      accounts.regularUser.account.id,
+      accounts.alternateUser.account.id
     ],
     minimumSignaturesRequired: 2
   }],
@@ -429,8 +429,8 @@ ledgerConfigurations.multisigBeta = {
       validatorFilterByType: ['WebLedgerConfiguration']
     }],
     approvedSigner: [
-      accounts.regularUser.identity.id,
-      accounts.alternateUser.identity.id
+      accounts.regularUser.account.id,
+      accounts.alternateUser.account.id
     ],
     minimumSignaturesRequired: 2
   }],
@@ -441,8 +441,8 @@ ledgerConfigurations.multisigBeta = {
       validatorFilterByType: ['CreateWebLedgerRecord']
     }],
     approvedSigner: [
-      accounts.regularUser.identity.id,
-      accounts.alternateUser.identity.id
+      accounts.regularUser.account.id,
+      accounts.alternateUser.account.id
     ],
     minimumSignaturesRequired: 2
   }],
@@ -461,8 +461,8 @@ ledgerConfigurations.equihash = {
       validatorFilterByType: ['WebLedgerConfiguration']
     }],
     approvedSigner: [
-      accounts.regularUser.identity.id,
-      accounts.alternateUser.identity.id
+      accounts.regularUser.account.id,
+      accounts.alternateUser.account.id
     ],
     minimumSignaturesRequired: 1
   }],
