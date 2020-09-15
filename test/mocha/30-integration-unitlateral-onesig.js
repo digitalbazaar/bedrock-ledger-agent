@@ -22,7 +22,7 @@ const urlObj = {
 };
 
 describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
-  const regularActor = mockData.identities.regularUser;
+  const regularActor = mockData.accounts.regularUser;
   let ledgerAgent;
 
   before(done => helpers.prepareDatabase(mockData, done));

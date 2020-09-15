@@ -25,7 +25,7 @@ const urlObj = {
 };
 
 describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
-  const regularActor = mockData.identities.regularUser;
+  const regularActor = mockData.accounts.regularUser;
   const nodes = 4;
   let ledgerAgent;
   let consensusApi;
@@ -222,7 +222,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     newConfiguration.sequence = 1;
     newConfiguration.creator = peers[0]._peerId;
     const {approvedSigner} = newConfiguration.operationValidator[0];
-    approvedSigner.push(mockData.identities.alternateUser.identity.id);
+    approvedSigner.push(mockData.accounts.alternateUser.identity.id);
     async.auto({
       sign: callback => {
         jsigs.sign(newConfiguration, {
