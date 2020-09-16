@@ -16,9 +16,9 @@ const jsigs = require('jsonld-signatures');
 const api = {};
 module.exports = api;
 
-api.createAccount = userName => {
+api.createAccount = ({userName, id}) => {
   const newAccount = {
-    id: `urn:uuid:${bedrock.util.uuid()}`,
+    id: id || `urn:uuid:${bedrock.util.uuid()}`,
     email: userName + '@bedrock.dev',
   };
   return newAccount;
