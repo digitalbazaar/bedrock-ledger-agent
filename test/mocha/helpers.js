@@ -18,7 +18,7 @@ module.exports = api;
 
 api.createAccount = userName => {
   const newAccount = {
-    id: `unr:uuid:${bedrock.utils.uuid()}`,
+    id: `urn:uuid:${bedrock.util.uuid()}`,
     email: userName + '@bedrock.dev',
   };
   return newAccount;
@@ -145,45 +145,22 @@ api.use = (plugin, callback) => {
 };
 
 // Insert accounts and public keys used for testing into database
-function insertTestData(mockData, callback) {
-  async.forEachOf(mockData.accounts, (identity, key, callback) => {
-    async.parallel([
-      callback => brAccount.insert(
-        {actor: null, account: identity.identity, meta: identity.meta},
-        err => {
-          if(err) {
-console.log('error', err);
-            if(!(err.name === 'DuplicateError' ||
-              database.isDuplicateError(err))) {
-              // only pass on non-duplicate errors
-              // duplicate error means test data is already loaded
-              return callback(err);
-            }
-          }
-          callback();
-        }),
-      callback => {
-console.log('waiting on account insert', identity);
-        if(identity.keys) {
-/*
-          brKey.addPublicKey(
-            {actor: null, publicKey: identity.keys.publicKey}, err => {
-              if(err) {
-                if(!(err.name === 'DuplicateError' ||
-                  database.isDuplicateError(err))) {
-                  // only pass on non-duplicate errors
-                  // duplicate error means test data is already loaded
-                  return callback(err);
-                }
-              }
-              callback();
-            });
-*/
-callback();
-        } else {
-          callback();
-        }
+async function insertTestData(mockData) {
+  const accounts = mockData.accounts.map(async user => {
+    try {
+      await brAccount.insert({
+        actor: null,
+        account: user.account,
+        meta: user.meta});
+      // FIXME check for keystore, create one, add keys here
+    } catch(err) {
+      if(!(err.name === 'DuplicateError' ||
+        database.isDuplicateError(err))) {
+        // only pass on non-duplicate errors
+        // duplicate error means test data is already loaded
+        throw err;
       }
-    ], callback);
-  }, callback, callback);
+    }
+  });
+  return Promise.all(accounts);
 }
