@@ -20,7 +20,7 @@ let userName;
 //.account with permission to access its own ledgers
 userName = 'regularUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createIdentity(
+accounts[userName].account = helpers.createAccount(
   'urn:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -98,7 +98,7 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with permission to access its own ledgers
 userName = 'alternateUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createIdentity(
+accounts[userName].account = helpers.createAccount(
   'did:v1:09af68f7-fc2b-43ad-b885-28e153db5866');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -165,7 +165,7 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with permission to access its own ledgers
 userName = 'gamma';
 accounts[userName] = {};
-accounts[userName].account = helpers.createIdentity(
+accounts[userName].account = helpers.createAccount(
   'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484');
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
@@ -233,12 +233,12 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with no permissions
 userName = 'unauthorizedUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createIdentity(userName);
+accounts[userName].account = helpers.createAccount(userName);
 
 //.account with admin permission
 userName = 'adminUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createIdentity(userName);
+accounts[userName].account = helpers.createAccount(userName);
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test'
