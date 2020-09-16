@@ -146,7 +146,8 @@ api.use = (plugin, callback) => {
 
 // Insert accounts and public keys used for testing into database
 async function insertTestData(mockData) {
-  const accounts = mockData.accounts.map(async user => {
+  const accounts = Object.keys(mockData.accounts).map(async prop => {
+    const user = mockData.accounts[prop];
     try {
       await brAccount.insert({
         actor: null,
