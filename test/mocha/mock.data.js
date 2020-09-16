@@ -1,7 +1,8 @@
 /*!
- * Copyright (c) 2017-2018 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2017-2020 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
+
 const jsigs = require('jsonld-signatures');
 const {constants} = require('bedrock').config;
 const helpers = require('./helpers');
