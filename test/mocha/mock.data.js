@@ -21,8 +21,9 @@ let userName;
 //.account with permission to access its own ledgers
 userName = 'regularUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createAccount(
-  'urn:v1:0a02328e-ba9d-43f8-830c-f05105495d66');
+accounts[userName].account = helpers.createAccount({
+  id: 'urn:uuid:0a02328e-ba9d-43f8-830c-f05105495d66'
+});
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
@@ -99,8 +100,9 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with permission to access its own ledgers
 userName = 'alternateUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createAccount(
-  'did:v1:09af68f7-fc2b-43ad-b885-28e153db5866');
+accounts[userName].account = helpers.createAccount({
+  id: 'urn:uuid:09af68f7-fc2b-43ad-b885-28e153db5866'
+});
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
@@ -166,8 +168,9 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with permission to access its own ledgers
 userName = 'gamma';
 accounts[userName] = {};
-accounts[userName].account = helpers.createAccount(
-  'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484');
+accounts[userName].account = helpers.createAccount({
+  id: 'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484'
+});
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test',
@@ -234,12 +237,18 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 //.account with no permissions
 userName = 'unauthorizedUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createAccount(userName);
+accounts[userName].account = helpers.createAccount({
+  id: 'urn:uuid:ee4a78b7-fe7b-47e7-8dbc-9dc9aaef00b7',
+  userName
+});
 
 //.account with admin permission
 userName = 'adminUser';
 accounts[userName] = {};
-accounts[userName].account = helpers.createAccount(userName);
+accounts[userName].account = helpers.createAccount({
+  id: 'urn:uuid:ee4a78b7-fe7b-47e7-8dbc-9dc4aaef00a7',
+  userName
+});
 accounts[userName].meta = {sysResourceRole: []};
 accounts[userName].meta.sysResourceRole.push({
   sysRole: 'bedrock-ledger-agent.test'
