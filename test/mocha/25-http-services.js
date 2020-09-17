@@ -36,7 +36,7 @@ describe.skip('HTTP Services', () => {
     let regularActor;
     async.auto({
       getRegularUser: callback => brAccount.getCapabilities(
-        {id: mockData.accounts.regularUser.identity.id}, (err, result) => {
+        {id: mockData.accounts.regularUser.account.id}, (err, result) => {
           regularActor = result;
           callback(err);
         }),
