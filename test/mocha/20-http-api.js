@@ -41,7 +41,6 @@ describe('Ledger Agent HTTP API', () => {
   let signedConfig;
   let defaultLedgerAgent;
   let publicLedgerAgent;
-
   before(async function() {
     await helpers.prepareDatabase(mockData);
   });
@@ -67,14 +66,19 @@ describe('Ledger Agent HTTP API', () => {
   });
   describe('authenticated as regularUser', () => {
     const regularActor = mockData.accounts.regularUser;
+    let actor = null;
+    before(async function() {
+      actor = await brAccount.getCapabilities(
+        {id: mockData.accounts.regularUser.account.id});
+      helpers.stubPassport({actor, account: regularActor.account});
+    });
 
-    it.only('should add ledger agent for new ledger', done => {
+    it('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
         url: url.format(urlObj),
         body: {ledgerConfiguration: signedConfig},
         identity: regularActor
       }), (err, res) => {
-console.log('res', res.body, err);
         res.statusCode.should.equal(201);
         should.exist(res.headers.location);
         done(err);

@@ -47,6 +47,7 @@
     "grunt": "^1.0.1",
     "jsonld-signatures": "^4.5.0",
     "lodash": "^4.17.4",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "sinon": "^9.0.3"
   }
 }

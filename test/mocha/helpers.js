@@ -24,7 +24,7 @@ api.stubs = {
   ensureAuthenticated: sinon.stub(brPassport, 'ensureAuthenticated')
 };
 
-exports.stubPassport = ({account = {}, actor}) => {
+api.stubPassport = ({account = {}, actor}) => {
   const fakeAuth = (req, res, next) => {
     req.user = {
       account,

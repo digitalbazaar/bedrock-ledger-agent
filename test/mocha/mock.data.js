@@ -18,7 +18,7 @@ module.exports = mock;
 const accounts = mock.accounts = {};
 mock.ldDocuments = {};
 let userName;
-//.account with permission to access its own ledgers
+// account with permission to access its own ledgers
 userName = 'regularUser';
 accounts[userName] = {};
 accounts[userName].account = helpers.createAccount({
