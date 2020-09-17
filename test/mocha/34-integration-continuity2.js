@@ -102,7 +102,7 @@ describe.skip('Continuity Integration Part II', () => {
         async.times(nodes - 1, (i, callback) => {
           brLedgerNode.add(null, {
             genesisBlock: results.genesisRecord.block,
-            owner: regularActor.identity.id
+            owner: regularActor.account.id
           }, (err, ledgerNode) => {
             assertNoError(err);
             peers.push(ledgerNode);

@@ -99,7 +99,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
         async.times(nodes - 1, (i, callback) => {
           brLedgerNode.add(null, {
             genesisBlock: results.genesisRecord.block,
-            owner: regularActor.identity.id
+            owner: regularActor.account.id
           }, (err, ledgerNode) => {
             assertNoError(err);
             peers.push(ledgerNode);
@@ -135,7 +135,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
           const result = res.body;
           should.exist(result.id);
           should.exist(result.service);
-          result.owner.should.equal(regularActor.identity.id);
+          result.owner.should.equal(regularActor.account.id);
           should.exist(result.targetNode);
           result.targetNode.should.be.a('string');
           result.targetNode.should.equal(ledgerAgent.targetNode);
@@ -222,7 +222,7 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     newConfiguration.sequence = 1;
     newConfiguration.creator = peers[0]._peerId;
     const {approvedSigner} = newConfiguration.operationValidator[0];
-    approvedSigner.push(mockData.accounts.alternateUser.identity.id);
+    approvedSigner.push(mockData.accounts.alternateUser.account.id);
     async.auto({
       sign: callback => {
         jsigs.sign(newConfiguration, {
