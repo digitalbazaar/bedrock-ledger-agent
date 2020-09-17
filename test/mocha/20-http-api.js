@@ -48,7 +48,7 @@ describe('Ledger Agent HTTP API', () => {
 
   before(async () => {
     const regularActor = await brAccount.getCapabilities(
-      {id: mockData.accounts.regularUser.identity.id});
+      {id: mockData.accounts.regularUser.account.id});
     signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
       documentLoader,
       suite: mockData.accounts.regularUser.suite,
@@ -58,7 +58,6 @@ describe('Ledger Agent HTTP API', () => {
       ledgerConfiguration: signedConfig,
       owner: regularActor.id,
     };
-    console.log(regularActor, options);
     await addLedgerAgentAsync(regularActor, null, options);
     const publicOps = Object.assign({public: true}, options);
     await addLedgerAgentAsync(regularActor, null, publicOps);
@@ -111,13 +110,13 @@ describe('Ledger Agent HTTP API', () => {
     });
     it('should add a ledger agent for an existing ledger node', done => {
       const options = {
-        owner: regularActor.identity.id,
+        owner: regularActor.account.id,
         ledgerConfiguration: signedConfig
       };
       async.auto({
         getRegularUser: callback => brAccount.get(
-          null, mockData.accounts.regularUser.identity.id,
-          (err, identity) => callback(err, identity)),
+          null, mockData.accounts.regularUser.account.id,
+          (err, account) => callback(err, account)),
         createNode: ['getRegularUser', (results, callback) => {
           brLedgerNode.add(results.getRegularUser, options, callback);
         }],
@@ -173,7 +172,7 @@ describe('Ledger Agent HTTP API', () => {
             should.exist(result.id);
             should.exist(result.service);
             _testService(result.service);
-            result.owner.should.equal(regularActor.identity.id);
+            result.owner.should.equal(regularActor.account.id);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
             callback();
@@ -216,7 +215,7 @@ describe('Ledger Agent HTTP API', () => {
             service[mockPlugin.api.serviceType].should.be.an('object');
             should.exist(service[mockPlugin.api.serviceType].id);
             service[mockPlugin.api.serviceType].id.should.be.a('string');
-            result.owner.should.equal(regularActor.identity.id);
+            result.owner.should.equal(regularActor.account.id);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
             callback();
@@ -266,7 +265,7 @@ describe('Ledger Agent HTTP API', () => {
         getAll: ['add', (results, callback) => {
           request.get(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
-            qs: {owner: regularActor.identity.id},
+            qs: {owner: regularActor.account.id},
             identity: regularActor
           }), (err, res) => {
             assertNoError(err);
@@ -491,7 +490,7 @@ describe('Ledger Agent HTTP API', () => {
             should.exist(result.id);
             should.exist(result.service);
             result.service.should.be.an('object');
-            result.owner.should.equal(regularActor.identity.id);
+            result.owner.should.equal(regularActor.account.id);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
             callback();

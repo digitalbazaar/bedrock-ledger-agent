@@ -211,8 +211,8 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
         newConfig.sequence = 1;
         // change approvedSigners for CreateWebLedgerRecord
         newConfig.operationValidator[0].approvedSigner = [
-          mockData.accounts.regularUser.identity.id,
-          mockData.accounts.gamma.identity.id
+          mockData.accounts.regularUser.account.id,
+          mockData.accounts.gamma.account.id
         ];
         // the original signers sign the new config
         helpers.multiSign(newConfig, originalSigners, callback);
