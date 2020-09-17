@@ -25,7 +25,9 @@ describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
   const regularActor = mockData.accounts.regularUser;
   let ledgerAgent;
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
+  });
   before(done => {
     async.auto({
       sign: callback => {

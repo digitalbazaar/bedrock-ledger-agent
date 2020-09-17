@@ -27,7 +27,9 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
   let ledgerAgent;
   const signedEvents = [];
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
+  });
   before(done => {
     async.auto({
       generateEvents: callback => async.times(numEvents, (n, callback) => {
