@@ -42,7 +42,9 @@ describe('Ledger Agent HTTP API', () => {
   let defaultLedgerAgent;
   let publicLedgerAgent;
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
+  });
 
   before(async () => {
     const regularActor = await brAccount.getCapabilities(

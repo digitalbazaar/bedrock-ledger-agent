@@ -10,7 +10,7 @@ const permissions = config.permission.permissions;
 const roles = config.permission.roles;
 
 // note this should not have a file name at the end of it
-config.mocha.tests.push(path.join(__dirname, 'mocha', '10-agent-api.js'));
+config.mocha.tests.push(path.join(__dirname, 'mocha'));
 config.mocha.options.timeout = 60000;
 
 // MongoDB

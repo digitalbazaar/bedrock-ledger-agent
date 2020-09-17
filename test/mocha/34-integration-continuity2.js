@@ -35,10 +35,10 @@ describe.skip('Continuity Integration Part II', () => {
   let genesisLedgerNode;
   const peers = [];
 
-  before(done => async.series([
-    callback => cache.client.flushall(callback),
-    callback => helpers.prepareDatabase(mockData, callback)
-  ], done));
+  before(async function() {
+    await cache.client.flushall();
+    await helpers.prepareDatabase(mockData);
+  });
   before(function(done) {
     this.timeout(60000);
     async.auto({
