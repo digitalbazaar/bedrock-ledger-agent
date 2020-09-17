@@ -113,8 +113,8 @@ describe.skip('Continuity Integration Part II', () => {
     }, err => done(err));
   });
 
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
 
   it('should add an operations and an update operation', async function() {

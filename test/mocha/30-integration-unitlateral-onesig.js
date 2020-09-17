@@ -62,8 +62,8 @@ describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
       }]
     }, err => done(err));
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
   it('should add 10 operations and blocks', done => {
     async.times(10, (n, callback) => {

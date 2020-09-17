@@ -76,8 +76,8 @@ describe.skip('HTTP Services', () => {
       }]
     }, err => done(err));
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
   describe('plugins', () => {
     const regularActor = mockData.accounts.regularUser;
