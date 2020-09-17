@@ -63,8 +63,8 @@ describe('Ledger Agent HTTP API', () => {
     const publicOps = Object.assign({public: true}, options);
     await addLedgerAgentAsync(regularActor, null, publicOps);
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
   describe('authenticated as regularUser', () => {
     const regularActor = mockData.accounts.regularUser;
