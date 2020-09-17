@@ -345,6 +345,9 @@ ledgerConfigurations.uni = {
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
+  // FIXME implement a SignatureValidator that works with
+  // bedrock-kms systems
+  /*
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{
@@ -363,6 +366,7 @@ ledgerConfigurations.uni = {
     approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
+  */
   sequence: 0
 };
 
@@ -374,6 +378,7 @@ ledgerConfigurations.continuity = {
   electorSelectionMethod: {
     type: 'MostRecentParticipants',
   },
+  /*
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{
@@ -392,6 +397,7 @@ ledgerConfigurations.continuity = {
     approvedSigner: [accounts.regularUser.account.id],
     minimumSignaturesRequired: 1
   }],
+  */
   sequence: 0,
 };
 
@@ -400,6 +406,8 @@ ledgerConfigurations.multisigAlpha = {
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
+  // FIXME add a new signature validator
+  /*
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{
@@ -424,6 +432,7 @@ ledgerConfigurations.multisigAlpha = {
     ],
     minimumSignaturesRequired: 2
   }],
+  */
   sequence: 0
 };
 
@@ -432,6 +441,8 @@ ledgerConfigurations.multisigBeta = {
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:7804fdf1-c56d-4006-bb4c-baba9dc0cbfe',
   consensusMethod: 'UnilateralConsensus2017',
+  // FIXME add a new signature validator
+  /*
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{
@@ -456,6 +467,7 @@ ledgerConfigurations.multisigBeta = {
     ],
     minimumSignaturesRequired: 2
   }],
+  */
   sequence: 0
 };
 
@@ -464,6 +476,8 @@ ledgerConfigurations.equihash = {
   type: 'WebLedgerConfiguration',
   ledger: 'did:v1:eb8c22dc-bde6-4315-92e2-59bd3f3c7d59',
   consensusMethod: 'UnilateralConsensus2017',
+  // FIXME add a new signature validator
+  /*
   ledgerConfigurationValidator: [{
     type: 'SignatureValidator2017',
     validatorFilter: [{
@@ -476,6 +490,7 @@ ledgerConfigurations.equihash = {
     ],
     minimumSignaturesRequired: 1
   }],
+  */
   operationValidator: [{
     type: 'EquihashValidator2018',
     validatorFilter: [{
