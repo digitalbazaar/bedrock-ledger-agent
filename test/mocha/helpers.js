@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const {promisify} = require('util');
 const brAccount = require('bedrock-account');
 const {RSAKeyPair} = require('crypto-ld');
 const brLedgerNode = require('bedrock-ledger-node');
@@ -79,37 +80,21 @@ api.createHttpSignatureRequest = options => {
   return newRequest;
 };
 
-api.removeCollection = (collection, callback) => {
+api.removeCollection = async collection => {
   const collectionNames = [collection];
-  database.openCollections(collectionNames, () => {
-    async.each(collectionNames, (collectionName, callback) => {
-      database.collections[collectionName].deleteMany({}, callback);
-    }, err => {
-      callback(err);
-    });
-  });
+  return api.removeCollections(collectionNames);
 };
 
-api.removeCollections = callback => {
-  const collectionNames = ['identity', 'eventLog'];
-  database.openCollections(collectionNames, () => {
-    async.each(collectionNames, (collectionName, callback) => {
-      database.collections[collectionName].deleteMany({}, callback);
-    }, err => {
-      callback(err);
-    });
-  });
+api.removeCollections = async (collectionNames = ['identity', 'eventLog']) => {
+  await promisify(database.openCollections)(collectionNames);
+  for(const collectionName of collectionNames) {
+    await database.collections[collectionName].deleteMany({});
+  }
 };
 
-api.prepareDatabase = (mockData, callback) => {
-  async.series([
-    callback => {
-      api.removeCollections(callback);
-    },
-    callback => {
-      insertTestData(mockData, callback);
-    }
-  ], callback);
+api.prepareDatabase = async mockData => {
+  await api.removeCollections();
+  await insertTestData(mockData);
 };
 
 api.getEventNumber = eventId =>

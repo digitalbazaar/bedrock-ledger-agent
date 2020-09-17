@@ -18,8 +18,8 @@ describe('Ledger Agent API', function() {
   before(async function() {
     await helpers.prepareDatabase(mockData);
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
   describe('regularUser as actor', () => {
     let regularActor;
@@ -37,11 +37,6 @@ describe('Ledger Agent API', function() {
         purpose: mockData.purpose,
         creator: mockData.accounts.regularUser.keys.privateKey.publicKey
       });
-console.log({
-  regularActor,
-  adminActor,
-  signedConfig
-});
     });
     it('should add a ledger agent for a new ledger', done => {
       const options = {
@@ -292,32 +287,18 @@ console.log({
     let regularActor;
     let unauthorizedActor;
     let signedConfig;
-    before(done => {
-      async.auto({
-        getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.regularUser.account.id}, (err, result) => {
-            regularActor = result;
-            callback(err);
-          }),
-        getUnauthorizedUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.unauthorizedUser.account.id},
-          (err, result) => {
-            unauthorizedActor = result;
-            callback(err);
-          }),
-        signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
-          documentLoader,
-          algorithm: 'RsaSignature2018',
-          suite: mockData.accounts.regularUser.suite,
-          purpose: mockData.purpose,
-          privateKeyPem:
-            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
-        }, (err, result) => {
-          signedConfig = result;
-          callback(err);
-        })
-      }, err => done(err));
+    before(async function() {
+      regularActor = await brAccount.getCapabilities(
+        {id: mockData.accounts.regularUser.account.id});
+      unauthorizedActor = await brAccount.getCapabilities(
+        {id: mockData.accounts.unauthorizedUser.account.id});
+      signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
+        documentLoader,
+        algorithm: 'RsaSignature2018',
+        suite: mockData.accounts.regularUser.suite,
+        purpose: mockData.purpose,
+        creator: mockData.accounts.regularUser.keys.privateKey.publicKey
+      });
     });
     it('returns PermissionDenied for unauthorized add', done => {
       const options = {
@@ -503,31 +484,18 @@ console.log({
     let regularActor;
     let adminActor;
     let signedConfig;
-    before(done => {
-      async.auto({
-        getRegularUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.regularUser.account.id}, (err, result) => {
-            regularActor = result;
-            callback(err);
-          }),
-        getAdminUser: callback => brAccount.getCapabilities(
-          {id: mockData.accounts.adminUser.account.id}, (err, result) => {
-            adminActor = result;
-            callback(err);
-          }),
-        signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
-          documentLoader,
-          algorithm: 'RsaSignature2018',
-          suite: mockData.accounts.regularUser.suite,
-          purpose: mockData.purpose,
-          privateKeyPem:
-            mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
-          creator: mockData.accounts.regularUser.keys.privateKey.publicKey
-        }, (err, result) => {
-          signedConfig = result;
-          callback(err);
-        })
-      }, err => done(err));
+    before(async function() {
+      regularActor = await brAccount.getCapabilities(
+        {id: mockData.accounts.regularUser.account.id});
+      adminActor = await brAccount.getCapabilities(
+        {id: mockData.accounts.adminUser.account.id});
+      signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
+        documentLoader,
+        algorithm: 'RsaSignature2018',
+        suite: mockData.accounts.regularUser.suite,
+        purpose: mockData.purpose,
+        creator: mockData.accounts.regularUser.keys.privateKey.publicKey
+      });
     });
     it('should add a ledger agent for a new ledger', done => {
       const options = {
