@@ -26,7 +26,9 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
     const alternateActor = mockData.accounts.alternateUser;
     let ledgerAgent;
 
-    before(done => helpers.prepareDatabase(mockData, done));
+    before(async function() {
+      await helpers.prepareDatabase(mockData);
+    });
     before(done => {
       async.auto({
         signConfig: callback => helpers.multiSign(
@@ -159,7 +161,9 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
       creator: gammaActor.keys.publicKey.id
     }];
     let ledgerAgent;
-    before(done => helpers.prepareDatabase(mockData, done));
+    before(async function() {
+      await helpers.prepareDatabase(mockData);
+    });
     before(done => async.auto({
       signConfig: callback => helpers.multiSign(
         mockData.ledgerConfigurations.multisigBeta, originalSigners, callback),

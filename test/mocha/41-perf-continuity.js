@@ -25,7 +25,9 @@ describe.skip('Performance - 3 Nodes - Continuity - One Signature', () => {
   const regularActor = mockData.accounts.regularUser;
   let ledgerAgent;
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
+  });
   before(done => {
     const configEvent = bedrock.util.clone(mockData.events.configContinuity);
     async.auto({

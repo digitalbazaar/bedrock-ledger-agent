@@ -28,7 +28,9 @@ describe.skip('HTTP Services', () => {
   let defaultLedgerAgent;
   let publicLedgerAgent;
 
-  before(done => helpers.prepareDatabase(mockData, done));
+  before(async function() {
+    await helpers.prepareDatabase(mockData);
+  });
 
   before(done => {
     let regularActor;
