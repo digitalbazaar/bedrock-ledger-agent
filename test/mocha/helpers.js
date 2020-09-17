@@ -13,9 +13,29 @@ const {constants} = bedrock.config;
 const database = require('bedrock-mongodb');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
 const jsigs = require('jsonld-signatures');
+const brPassport = require('bedrock-passport');
+const sinon = require('sinon');
 
 const api = {};
 module.exports = api;
+
+api.stubs = {
+  optionallyAuthenticated: sinon.stub(brPassport, 'optionallyAuthenticated'),
+  ensureAuthenticated: sinon.stub(brPassport, 'ensureAuthenticated')
+};
+
+exports.stubPassport = ({account = {}, actor}) => {
+  const fakeAuth = (req, res, next) => {
+    req.user = {
+      account,
+      actor,
+    };
+    next();
+  };
+  api.stubs.optionallyAuthenticated.callsFake(fakeAuth);
+  api.stubs.ensureAuthenticated.callsFake(fakeAuth);
+  return api.stubs;
+};
 
 api.createAccount = ({userName, id}) => {
   const newAccount = {
