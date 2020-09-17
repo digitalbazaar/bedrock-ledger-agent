@@ -77,8 +77,8 @@ describe.skip('Performance - 1 Node - Unilateral - One Signature', () => {
       }]
     }, err => done(err));
   });
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
   let eventsPerSecond = 0;
   it('adds ' + numEvents + ' events and blocks', done => {

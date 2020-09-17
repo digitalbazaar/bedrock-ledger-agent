@@ -118,8 +118,8 @@ describe.skip('Integration - 4 Nodes - Continuity - One Signature', () => {
     }
   });
 
-  beforeEach(done => {
-    helpers.removeCollection('ledger_testLedger', done);
+  beforeEach(async function() {
+    await helpers.removeCollection('ledger_testLedger');
   });
 
   it('should expose targetNode', done => {
