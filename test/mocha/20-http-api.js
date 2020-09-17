@@ -46,7 +46,7 @@ describe('Ledger Agent HTTP API', () => {
     await helpers.prepareDatabase(mockData);
   });
 
-  before(async () => {
+  before(async function() {
     const regularActor = await brAccount.getCapabilities(
       {id: mockData.accounts.regularUser.account.id});
     signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
@@ -74,6 +74,7 @@ describe('Ledger Agent HTTP API', () => {
         body: {ledgerConfiguration: signedConfig},
         identity: regularActor
       }), (err, res) => {
+console.log('res', res.body, err);
         res.statusCode.should.equal(201);
         should.exist(res.headers.location);
         done(err);
