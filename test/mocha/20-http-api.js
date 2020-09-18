@@ -413,53 +413,53 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should query for a record successfully', done => {
+    it('should query for a record successfully', async function() {
       let listener;
-      function _waitForBlockAdd(callback) {
-        listener = bedrock.events.on(
-          'bedrock-ledger-storage.block.add', event => callback(null, event));
-      }
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id = `https://example.com/events/${uuid()}`;
-      async.auto({
-        signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          documentLoader,
-          suite: mockData.accounts.regularUser.suite,
-          purpose
-        }, callback),
-        add: ['signOperation', (results, callback) => request.post({
-          url: defaultLedgerAgent.service.ledgerOperationService,
-          body: results.signOperation,
-        }, (err, res) => {
-          assertNoError(err);
-          res.statusCode.should.equal(204);
-          callback();
-        })],
-        waitForBlock: callback => _waitForBlockAdd(callback),
-        query: ['add', 'waitForBlock', (results, callback) => {
-          // remove event listener
-          listener._eventListeners['bedrock-ledger-storage.block.add'].pop();
-          const queryUrl = defaultLedgerAgent.service.ledgerQueryService;
-          request.post(helpers.createHttpSignatureRequest({
-            url: queryUrl,
-            identity: regularActor,
-            headers: [{
-              name: 'accept',
-              value: 'application/ld+json'
-            }],
-            qs: {id: createConcertRecordOp.record.id}
-          }), (err, res) => {
-            assertNoError(err);
-            res.statusCode.should.equal(200);
-            should.exist(res.body);
-            should.exist(res.body.record);
-            should.exist(res.body.meta);
-            res.body.record.should.deep.equal(createConcertRecordOp.record);
-            callback(null, res.body);
-          });
-        }]
-      }, err => done(err));
+      const _waitForBlockAdd = new Promise(resolve => {
+        listener = bedrock.events.on(
+          'bedrock-ledger-storage.block.add', event => resolve(event));
+      });
+      const signOperation = await jsigs.sign(createConcertRecordOp, {
+        documentLoader,
+        suite: mockData.accounts.regularUser.suite,
+        purpose
+      });
+      let err = null;
+      let response = null;
+      try {
+        response = await httpClient.post(
+          defaultLedgerAgent.service.ledgerOperationService,
+          {agent: brHttpsAgent.agent, json: signOperation});
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      response.status.should.equal(204);
+      await _waitForBlockAdd;
+      // clean up the listeners for block add
+      listener._eventListeners.get('bedrock-ledger-storage.block.add').pop();
+      const queryUrl = defaultLedgerAgent.service.ledgerQueryService + '?' +
+        new URLSearchParams({id: createConcertRecordOp.record.id});
+      try {
+        response = await httpClient.post(queryUrl, {
+          agent: brHttpsAgent.agent,
+          headers: {
+            accept: 'application/ld+json'
+          },
+          json: signOperation});
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      response.status.should.equal(200);
+      const body = response.data;
+      should.exist(body);
+      should.exist(body.record);
+      should.exist(body.meta);
+      body.record.should.deep.equal(createConcertRecordOp.record);
     });
   });
 
