@@ -465,7 +465,12 @@ describe('Ledger Agent HTTP API', () => {
 
   describe('unauthenticated clients', () => {
     const regularActor = mockData.accounts.regularUser;
-
+    beforeEach(function() {
+      helpers.stubPassport({
+        actor: null,
+        account: null
+      });
+    });
     it('should not add ledger agent for new ledger', done => {
       request.post({
         url: url.format(urlObj),
@@ -483,6 +488,10 @@ describe('Ledger Agent HTTP API', () => {
         name: uuid(),
         public: true
       };
+      helpers.stubPassport({
+        actor,
+        account: mockData.accounts.regularUser.account
+      });
       async.auto({
         add: callback => {
           request.post(helpers.createHttpSignatureRequest({
@@ -492,6 +501,11 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             assertNoError(err);
             res.statusCode.should.equal(201);
+            helpers.stubPassport({
+              actor: null,
+              account: null
+            });
+
             callback(null, res.headers.location);
           });
         },
@@ -514,6 +528,10 @@ describe('Ledger Agent HTTP API', () => {
     it('should get all existing public ledger agents', done => {
       async.auto({
         add: callback => {
+          helpers.stubPassport({
+            actor,
+            account: mockData.accounts.regularUser.account
+          });
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
             body: {ledgerConfiguration: signedConfig},
@@ -525,6 +543,10 @@ describe('Ledger Agent HTTP API', () => {
           });
         },
         getAll: ['add', (results, callback) => {
+          helpers.stubPassport({
+            actor: null,
+            account: null
+          });
           request.get({url: url.format(urlObj)}, (err, res) => {
             assertNoError(err);
             res.statusCode.should.equal(200);
@@ -534,26 +556,30 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should process operation on public ledger', done => {
+    it('should process operation on public ledger', async function() {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id =
         `https://example.com/concerts/${uuid()}`;
-      async.auto({
-        signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          documentLoader,
-          suite: mockData.accounts.regularUser.suite,
-          purpose
-        }, callback),
-        add: ['signOperation', (results, callback) => request.post({
-          url: publicLedgerAgent.service.ledgerOperationService,
-          body: results.signOperation
-        }, (err, res) => {
-          assertNoError(err);
-          res.statusCode.should.equal(204);
-          callback();
-        })]
-      }, err => done(err));
+      const signOperation = await jsigs.sign(createConcertRecordOp, {
+        documentLoader,
+        suite: mockData.accounts.regularUser.suite,
+        purpose
+      });
+      let err = null;
+      let response = null;
+      try {
+        response = await httpClient.post(
+          publicLedgerAgent.service.ledgerOperationService,
+          {
+            agent: brHttpsAgent.agent,
+            json: signOperation
+          });
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      response.status.should.equal(204);
     });
     // FIXME: unknown when events will occur, need another way to test
     // getting an event from the event endpoint
