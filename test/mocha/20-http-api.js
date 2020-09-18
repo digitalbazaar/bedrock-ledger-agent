@@ -8,9 +8,11 @@ const async = require('async');
 const bedrock = require('bedrock');
 const brAccount = require('bedrock-account');
 const brLedgerNode = require('bedrock-ledger-node');
+const brHttpsAgent = require('bedrock-https-agent');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
+const {httpClient} = require('@digitalbazaar/http-client');
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 const mockPlugin = require('./mock.plugin');
@@ -113,40 +115,42 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, done);
     });
-    it('should add a ledger agent for an existing ledger node', done => {
+    it.only('should add a ledger agent for an existing ledger node', async function() {
       const options = {
         owner: regularActor.account.id,
         ledgerConfiguration: signedConfig
       };
-      async.auto({
-        getRegularUser: callback => brAccount.get(
-          null, mockData.accounts.regularUser.account.id,
-          (err, account) => callback(err, account)),
-        createNode: ['getRegularUser', (results, callback) => {
-          brLedgerNode.add(results.getRegularUser, options, callback);
-        }],
-        createAgent: ['createNode', (results, callback) => {
-          request.post(helpers.createHttpSignatureRequest({
-            url: url.format(urlObj),
-            body: {ledgerNodeId: results.createNode.id},
-            identity: regularActor
-          }), (err, res) => {
-            res.statusCode.should.equal(201);
-            should.exist(res.headers.location);
-            callback(err, res.headers.location);
-          });
-        }],
-        getAgent: ['createAgent', (results, callback) => {
-          const agentId = results.createAgent.substring(
-            results.createAgent.lastIndexOf('/') + 1);
-          const agentUrn = `urn:uuid:${agentId}`;
-          brLedgerAgent.get(null, agentUrn, (err, result) => {
-            assertNoError(err);
-            result.ledgerNode.id.should.equal(results.createNode.id);
-            callback();
-          });
-        }]
-      }, err => done(err));
+      const _actor = await brAccount.getCapabilities({
+        id: mockData.accounts.regularUser.account.id
+      });
+      const ledgerNode = await brLedgerNode.add(_actor, options);
+      let err = null;
+      let response = null;
+      try {
+        response = await httpClient.post(url.format(urlObj), {
+          agent: brHttpsAgent.agent,
+          json: {
+            ledgerNodeId: ledgerNode.id
+          }
+        });
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+console.log(response.headers);
+      const _location = response.headers.location;
+      should.exist(_location);
+      const agentIndex = _location.lastIndexOf('/') + 1;
+      const agentId = _location.substring(agentIndex);
+      const agentUrn = `urn:uuid:${agentId}`;
+      let actualAgent = null;
+      try {
+        actualAgent = await brLedgerAgent.get(null, agentUrn);
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      ledgerNode.id.should.equal(actualAgent.id);
     });
     it('should get an existing ledger agent', done => {
       const options = {
