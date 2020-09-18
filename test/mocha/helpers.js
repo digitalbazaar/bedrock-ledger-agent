@@ -21,7 +21,7 @@ module.exports = api;
 
 api.stubs = {
   optionallyAuthenticated: sinon.stub(brPassport, 'optionallyAuthenticated'),
-  ensureAuthenticated: sinon.stub(brPassport, 'ensureAuthenticated')
+  authenticateAll: sinon.stub(brPassport, 'authenticateAll')
 };
 
 api.stubPassport = ({account = {}, actor}) => {
@@ -33,7 +33,7 @@ api.stubPassport = ({account = {}, actor}) => {
     next();
   };
   api.stubs.optionallyAuthenticated.callsFake(fakeAuth);
-  api.stubs.ensureAuthenticated.callsFake(fakeAuth);
+  api.stubs.authenticateAll.returns({user: {account, actor}});
   return api.stubs;
 };
 
