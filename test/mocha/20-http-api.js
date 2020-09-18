@@ -63,9 +63,10 @@ describe('Ledger Agent HTTP API', () => {
       ledgerConfiguration: signedConfig,
       owner: regularActor.id,
     };
-    await addLedgerAgentAsync(regularActor, null, options);
+    defaultLedgerAgent = await addLedgerAgentAsync(regularActor, null, options);
     const publicOps = Object.assign({public: true}, options);
-    await addLedgerAgentAsync(regularActor, null, publicOps);
+    publicLedgerAgent = await addLedgerAgentAsync(
+      regularActor, null, publicOps);
   });
   beforeEach(async function() {
     await helpers.removeCollection('ledger_testLedger');
@@ -287,26 +288,27 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    it('should process operation', done => {
+    it('should process operation', async function() {
       const createConcertRecordOp =
         bedrock.util.clone(mockData.ops.createConcertRecord);
       createConcertRecordOp.record.id =
         `https://example.com/concerts/${uuid()}`;
-      async.auto({
-        signOperation: callback => jsigs.sign(createConcertRecordOp, {
-          documentLoader,
-          suite: mockData.accounts.regularUser.suite,
-          purpose
-        }, callback),
-        add: ['signOperation', (results, callback) => request.post({
-          url: defaultLedgerAgent.service.ledgerOperationService,
-          body: results.signOperation,
-        }, (err, res) => {
-          assertNoError(err);
-          res.statusCode.should.equal(204);
-          callback();
-        })]
-      }, err => done(err));
+      const signOperation = await jsigs.sign(createConcertRecordOp, {
+        documentLoader,
+        suite: mockData.accounts.regularUser.suite,
+        purpose
+      });
+      let err = null;
+      let response = null;
+      try {
+        response = await httpClient.post(
+          defaultLedgerAgent.service.ledgerOperationService,
+          {agent: brHttpsAgent.agent, json: signOperation});
+      } catch(e) {
+        err = e;
+      }
+      assertNoError(err);
+      response.status.should.equal(204);
     });
     // FIXME: it is unknown when operations will make their way into events
     // so this test needs some tweaking if it is to figure out a URL from which
