@@ -38,6 +38,7 @@ const urlObj = {
 };
 
 const addLedgerAgentAsync = util.promisify(brLedgerAgent.add);
+const getLedgerAgentAsync = util.promisify(brLedgerAgent.get);
 
 describe('Ledger Agent HTTP API', () => {
   let signedConfig;
@@ -137,15 +138,14 @@ describe('Ledger Agent HTTP API', () => {
         err = e;
       }
       assertNoError(err);
-console.log(response.headers);
-      const _location = response.headers.location;
+      const _location = response.headers.get('location');
       should.exist(_location);
       const agentIndex = _location.lastIndexOf('/') + 1;
       const agentId = _location.substring(agentIndex);
       const agentUrn = `urn:uuid:${agentId}`;
       let actualAgent = null;
       try {
-        actualAgent = await brLedgerAgent.get(null, agentUrn);
+        actualAgent = await getLedgerAgentAsync(null, agentUrn);
       } catch(e) {
         err = e;
       }
