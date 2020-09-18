@@ -22,6 +22,7 @@ let userName;
 userName = 'regularUser';
 accounts[userName] = {};
 accounts[userName].account = helpers.createAccount({
+  userName,
   id: 'urn:uuid:0a02328e-ba9d-43f8-830c-f05105495d66'
 });
 accounts[userName].meta = {sysResourceRole: []};
@@ -101,6 +102,7 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 userName = 'alternateUser';
 accounts[userName] = {};
 accounts[userName].account = helpers.createAccount({
+  userName,
   id: 'urn:uuid:09af68f7-fc2b-43ad-b885-28e153db5866'
 });
 accounts[userName].meta = {sysResourceRole: []};
@@ -169,6 +171,7 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
 userName = 'gamma';
 accounts[userName] = {};
 accounts[userName].account = helpers.createAccount({
+  userName,
   id: 'did:v1:4306602b-f9a7-417b-8ab3-e1c2230e3484'
 });
 accounts[userName].meta = {sysResourceRole: []};
