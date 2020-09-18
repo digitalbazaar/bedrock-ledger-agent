@@ -44,6 +44,8 @@ describe('Ledger Agent HTTP API', () => {
   let signedConfig;
   let defaultLedgerAgent;
   let publicLedgerAgent;
+  // this is used to stub ensureAuthenticated
+  let actor = null;
   before(async function() {
     await helpers.prepareDatabase(mockData);
   });
@@ -51,6 +53,7 @@ describe('Ledger Agent HTTP API', () => {
   before(async function() {
     const regularActor = await brAccount.getCapabilities(
       {id: mockData.accounts.regularUser.account.id});
+    actor = regularActor;
     signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
       documentLoader,
       suite: mockData.accounts.regularUser.suite,
@@ -66,15 +69,13 @@ describe('Ledger Agent HTTP API', () => {
   });
   beforeEach(async function() {
     await helpers.removeCollection('ledger_testLedger');
+    helpers.stubPassport({
+      actor,
+      account: mockData.accounts.regularUser.account
+    });
   });
   describe('authenticated as regularUser', () => {
     const regularActor = mockData.accounts.regularUser;
-    let actor = null;
-    before(async function() {
-      actor = await brAccount.getCapabilities(
-        {id: mockData.accounts.regularUser.account.id});
-      helpers.stubPassport({actor, account: regularActor.account});
-    });
 
     it('should add ledger agent for new ledger', done => {
       request.post(helpers.createHttpSignatureRequest({
@@ -116,42 +117,43 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, done);
     });
-    it.only('should add a ledger agent for an existing ledger node', async function() {
-      const options = {
-        owner: regularActor.account.id,
-        ledgerConfiguration: signedConfig
-      };
-      const _actor = await brAccount.getCapabilities({
-        id: mockData.accounts.regularUser.account.id
-      });
-      const ledgerNode = await brLedgerNode.add(_actor, options);
-      let err = null;
-      let response = null;
-      try {
-        response = await httpClient.post(url.format(urlObj), {
-          agent: brHttpsAgent.agent,
-          json: {
-            ledgerNodeId: ledgerNode.id
-          }
+    it('should add a ledger agent for an existing ledger node',
+      async function() {
+        const options = {
+          owner: regularActor.account.id,
+          ledgerConfiguration: signedConfig
+        };
+        const _actor = await brAccount.getCapabilities({
+          id: mockData.accounts.regularUser.account.id
         });
-      } catch(e) {
-        err = e;
-      }
-      assertNoError(err);
-      const _location = response.headers.get('location');
-      should.exist(_location);
-      const agentIndex = _location.lastIndexOf('/') + 1;
-      const agentId = _location.substring(agentIndex);
-      const agentUrn = `urn:uuid:${agentId}`;
-      let actualAgent = null;
-      try {
-        actualAgent = await getLedgerAgentAsync(null, agentUrn);
-      } catch(e) {
-        err = e;
-      }
-      assertNoError(err);
-      ledgerNode.id.should.equal(actualAgent.id);
-    });
+        const ledgerNode = await brLedgerNode.add(_actor, options);
+        let err = null;
+        let response = null;
+        try {
+          response = await httpClient.post(url.format(urlObj), {
+            agent: brHttpsAgent.agent,
+            json: {
+              ledgerNodeId: ledgerNode.id
+            }
+          });
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        const _location = response.headers.get('location');
+        should.exist(_location);
+        const agentIndex = _location.lastIndexOf('/') + 1;
+        const agentId = _location.substring(agentIndex);
+        const agentUrn = `urn:uuid:${agentId}`;
+        let actualAgent = null;
+        try {
+          actualAgent = await getLedgerAgentAsync(null, agentUrn);
+        } catch(e) {
+          err = e;
+        }
+        assertNoError(err);
+        ledgerNode.id.should.equal(actualAgent.ledgerNode.id);
+      });
     it('should get an existing ledger agent', done => {
       const options = {
         ledgerConfiguration: signedConfig,
