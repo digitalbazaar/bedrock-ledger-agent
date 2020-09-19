@@ -73,7 +73,8 @@ accounts[userName].keys = helpers.createKeyPair({
   privateKey: accounts[userName].privateKey
 });
 accounts[userName].suite = new RsaSignature2018({
-  creator: mock.accounts.regularUser.keys.privateKey.publicKey,
+  // FIXME this creator does not look right
+  creator: mock.accounts[userName].keys.privateKey.publicKey,
   key: helpers.ldKeyPair({
     publicKeyPem: accounts[userName].publicKey,
     privateKeyPem: accounts[userName].privateKey
@@ -167,6 +168,14 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
   id: accounts[userName].keys.publicKey.id,
   publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem
 };
+accounts[userName].suite = new RsaSignature2018({
+  creator: mock.accounts[userName].keys.privateKey.publicKey,
+  key: helpers.ldKeyPair({
+    publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem,
+    privateKeyPem: accounts[userName].keys.privateKey.privateKeyPem
+  })
+});
+
 //.account with permission to access its own ledgers
 userName = 'gamma';
 accounts[userName] = {};
@@ -236,6 +245,13 @@ mock.ldDocuments[accounts[userName].keys.publicKey.id] = {
   id: accounts[userName].keys.publicKey.id,
   publicKeyPem: accounts[userName].keys.publicKey.publicKeyPem
 };
+accounts[userName].suite = new RsaSignature2018({
+  creator: mock.accounts[userName].keys.privateKey.publicKey,
+  key: helpers.ldKeyPair({
+    publicKeyPem: accounts[userName].publicKey,
+    privateKeyPem: accounts[userName].privateKey
+  })
+});
 
 //.account with no permissions
 userName = 'unauthorizedUser';

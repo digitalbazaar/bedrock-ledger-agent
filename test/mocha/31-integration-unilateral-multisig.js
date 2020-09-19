@@ -20,7 +20,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
+describe('Integration - 1 Node - Unilateral - Multisignature', () => {
   describe('Add events and navigate the chain', () => {
     const regularActor = mockData.accounts.regularUser;
     const alternateActor = mockData.accounts.alternateUser;
@@ -33,9 +33,13 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
       async.auto({
         signConfig: callback => helpers.multiSign(
           mockData.ledgerConfigurations.multisigBeta, [{
+            suite: regularActor.suite,
+            purpose: mockData.purpose,
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, {
+            suite: alternateActor.suite,
+            purpose: mockData.purpose,
             privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
             creator: alternateActor.keys.publicKey.id
           }], callback),
@@ -75,9 +79,13 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
         async.auto({
           signEvent: callback => helpers.multiSign(
             createConcertRecordOp, [{
+              suite: regularActor.suite,
+              purpose: mockData.purpose,
               privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
               creator: regularActor.keys.publicKey.id
             }, {
+              suite: alternateActor.suite,
+              purpose: mockData.purpose,
               privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
               creator: alternateActor.keys.publicKey.id
             }], callback),
@@ -147,16 +155,24 @@ describe.skip('Integration - 1 Node - Unilateral - Multisignature', () => {
     const alternateActor = mockData.accounts.alternateUser;
     const gammaActor = mockData.accounts.gamma;
     const originalSigners = [{
+      suite: regularActor.suite,
+      purpose: mockData.purpose,
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
     }, {
+      suite: alternateActor.suite,
+      purpose: mockData.purpose,
       privateKeyPem: alternateActor.keys.privateKey.privateKeyPem,
       creator: alternateActor.keys.publicKey.id
     }];
     const newSigners = [{
+      suite: regularActor.suite,
+      purpose: mockData.purpose,
       privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
       creator: regularActor.keys.publicKey.id
     }, {
+      suite: gammaActor.suite,
+      purpose: mockData.purpose,
       privateKeyPem: gammaActor.keys.privateKey.privateKeyPem,
       creator: gammaActor.keys.publicKey.id
     }];
