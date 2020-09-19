@@ -23,7 +23,7 @@ try {
   // error means that plugin is already defined, ignore
 }
 
-describe.skip('HTTP Services', () => {
+describe('HTTP Services', () => {
   let signedConfig;
   let defaultLedgerAgent;
   let publicLedgerAgent;
@@ -43,6 +43,8 @@ describe.skip('HTTP Services', () => {
       signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
         documentLoader,
         algorithm: 'RsaSignature2018',
+        suite: mockData.accounts.regularUser.suite,
+        purpose: mockData.purpose,
         privateKeyPem:
           mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
         creator: mockData.accounts.regularUser.keys.privateKey.publicKey
