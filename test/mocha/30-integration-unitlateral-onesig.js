@@ -21,7 +21,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
+describe('Integration - 1 Node - Unilateral - One Signature', () => {
   const regularActor = mockData.accounts.regularUser;
   let ledgerAgent;
 
@@ -34,6 +34,8 @@ describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
         jsigs.sign(mockData.ledgerConfigurations.uni, {
           documentLoader,
           algorithm: 'RsaSignature2018',
+          suite: mockData.accounts.regularUser.suite,
+          purpose: mockData.purpose,
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
         }, callback);
@@ -76,6 +78,8 @@ describe.skip('Integration - 1 Node - Unilateral - One Signature', () => {
           jsigs.sign(createConcertRecordOp, {
             documentLoader,
             algorithm: 'RsaSignature2018',
+            suite: mockData.accounts.regularUser.suite,
+            purpose: mockData.purpose,
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
           }, callback);

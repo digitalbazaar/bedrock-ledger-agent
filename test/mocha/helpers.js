@@ -127,6 +127,8 @@ api.multiSign = (doc, signers, callback) => {
   async.map(signers, (s, callback) => jsigs.sign(doc, {
     documentLoader,
     algorithm: 'RsaSignature2018',
+    suite: s.suite,
+    purpose: s.purpose,
     privateKeyPem: s.privateKeyPem,
     creator: s.creator
   }, callback), (err, results) => {
