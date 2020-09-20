@@ -24,16 +24,23 @@ api.stubs = {
   authenticateAll: sinon.stub(brPassport, 'authenticateAll')
 };
 
-api.stubPassport = ({account = {}, actor}) => {
+/**
+ *  Stubs bedrock passport's authenticateAll with either a user object or false.
+ *
+ *  @param {object} options - Options to use.
+ *  @param {object|boolean| [options.user = false] - A user object.
+ *  @param {object} options.user.actor - The actor from getCapabilities.
+ *  @param {object} options.user.account - An account object with an id.
+ *
+ *  @returns {object} An object with the stubs.
+ */
+api.stubPassport = ({user = false} = {}) => {
   const fakeAuth = (req, res, next) => {
-    req.user = {
-      account,
-      actor,
-    };
+    req.user = user;
     next();
   };
   api.stubs.optionallyAuthenticated.callsFake(fakeAuth);
-  api.stubs.authenticateAll.returns({user: {account, actor}});
+  api.stubs.authenticateAll.returns({user});
   return api.stubs;
 };
 
