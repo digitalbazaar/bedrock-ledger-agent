@@ -64,15 +64,17 @@ describe('Ledger Agent HTTP API', () => {
       owner: regularActor.id,
     };
     defaultLedgerAgent = await addLedgerAgentAsync(regularActor, null, options);
-    const publicOps = Object.assign({public: true}, options);
+    const publicOps = Object.assign(options, {public: true});
     publicLedgerAgent = await addLedgerAgentAsync(
       regularActor, null, publicOps);
   });
   beforeEach(async function() {
     await helpers.removeCollection('ledger_testLedger');
     helpers.stubPassport({
-      actor,
-      account: mockData.accounts.regularUser.account
+      user: {
+        actor,
+        account: mockData.accounts.regularUser.account
+      }
     });
   });
   describe('authenticated as regularUser', () => {
@@ -466,10 +468,8 @@ describe('Ledger Agent HTTP API', () => {
   describe('unauthenticated clients', () => {
     const regularActor = mockData.accounts.regularUser;
     beforeEach(function() {
-      helpers.stubPassport({
-        actor: null,
-        account: null
-      });
+      // if not authenticated user is false
+      helpers.stubPassport({user: false});
     });
     it('should not add ledger agent for new ledger', done => {
       request.post({
@@ -489,8 +489,10 @@ describe('Ledger Agent HTTP API', () => {
         public: true
       };
       helpers.stubPassport({
-        actor,
-        account: mockData.accounts.regularUser.account
+        user: {
+          actor,
+          account: mockData.accounts.regularUser.account
+        }
       });
       async.auto({
         add: callback => {
@@ -501,11 +503,7 @@ describe('Ledger Agent HTTP API', () => {
           }), (err, res) => {
             assertNoError(err);
             res.statusCode.should.equal(201);
-            helpers.stubPassport({
-              actor: null,
-              account: null
-            });
-
+            helpers.stubPassport({user: false});
             callback(null, res.headers.location);
           });
         },
@@ -529,8 +527,10 @@ describe('Ledger Agent HTTP API', () => {
       async.auto({
         add: callback => {
           helpers.stubPassport({
-            actor,
-            account: mockData.accounts.regularUser.account
+            user: {
+              actor,
+              account: mockData.accounts.regularUser.account
+            }
           });
           request.post(helpers.createHttpSignatureRequest({
             url: url.format(urlObj),
@@ -543,10 +543,7 @@ describe('Ledger Agent HTTP API', () => {
           });
         },
         getAll: ['add', (results, callback) => {
-          helpers.stubPassport({
-            actor: null,
-            account: null
-          });
+          helpers.stubPassport({user: false});
           request.get({url: url.format(urlObj)}, (err, res) => {
             assertNoError(err);
             res.statusCode.should.equal(200);

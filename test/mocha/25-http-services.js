@@ -28,7 +28,8 @@ try {
 describe('HTTP Services', () => {
   let signedConfig;
   let defaultLedgerAgent;
-  let publicLedgerAgent;
+  // FIXME unused test data?
+  // let publicLedgerAgent;
 
   before(async function() {
     await helpers.prepareDatabase(mockData);
@@ -53,11 +54,15 @@ describe('HTTP Services', () => {
       plugins: ['mock'],
     };
     defaultLedgerAgent = await addLedgerAgentAsync(regularActor, null, options);
+    /*
+     * FIXME this was in the setup step, but is not used by any tests?
     const publicOptions = {
       ...options,
       public: true
     };
-    publicLedgerAgent = await addLedgerAgentAsync(regularActor, null, publicOptions);
+    publicLedgerAgent = await addLedgerAgentAsync(
+      regularActor, null, publicOptions);
+    */
   });
   beforeEach(async function() {
     await helpers.removeCollection('ledger_testLedger');
