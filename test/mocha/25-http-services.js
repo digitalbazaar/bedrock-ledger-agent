@@ -4,7 +4,7 @@
 'use strict';
 
 const async = require('async');
-const bedrock = require('bedrock');
+const util = require('util');
 const brAccount = require('bedrock-account');
 const brLedgerNode = require('bedrock-ledger-node');
 const brLedgerAgent = require('bedrock-ledger-agent');
@@ -15,6 +15,8 @@ const mockData = require('./mock.data');
 const mockPlugin = require('./mock.plugin');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
+
+const addLedgerAgentAsync = util.promisify(brLedgerAgent.add);
 
 // register a mock ledgerAgentPlugin
 try {
@@ -32,51 +34,30 @@ describe('HTTP Services', () => {
     await helpers.prepareDatabase(mockData);
   });
 
-  before(done => {
-    let regularActor;
-    async.auto({
-      getRegularUser: callback => brAccount.getCapabilities(
-        {id: mockData.accounts.regularUser.account.id}, (err, result) => {
-          regularActor = result;
-          callback(err);
-        }),
-      signConfig: callback => jsigs.sign(mockData.ledgerConfigurations.uni, {
-        documentLoader,
-        algorithm: 'RsaSignature2018',
-        suite: mockData.accounts.regularUser.suite,
-        purpose: mockData.purpose,
-        privateKeyPem:
+  before(async function() {
+    const regularActor = await brAccount.getCapabilities(
+      {id: mockData.accounts.regularUser.account.id});
+    signedConfig = await jsigs.sign(mockData.ledgerConfigurations.uni, {
+      documentLoader,
+      algorithm: 'RsaSignature2018',
+      suite: mockData.accounts.regularUser.suite,
+      purpose: mockData.purpose,
+      privateKeyPem:
           mockData.accounts.regularUser.keys.privateKey.privateKeyPem,
-        creator: mockData.accounts.regularUser.keys.privateKey.publicKey
-      }, (err, result) => {
-        signedConfig = result;
-        callback(err);
-      }),
-      addDefault: ['getRegularUser', 'signConfig', (results, callback) => {
-        const options = {
-          ledgerConfiguration: signedConfig,
-          owner: regularActor.id,
-          // specify that the mock service
-          plugins: ['mock'],
-        };
-        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-          defaultLedgerAgent = ledgerAgent;
-          callback(err);
-        });
-      }],
-      addPublic: ['getRegularUser', 'signConfig', (results, callback) => {
-        const options = {
-          ledgerConfiguration: signedConfig,
-          owner: regularActor.id,
-          public: true
-        };
-        brLedgerAgent.add(regularActor, null, options, (err, ledgerAgent) => {
-          // eslint-disable-next-line no-unused-vars
-          publicLedgerAgent = ledgerAgent;
-          callback(err);
-        });
-      }]
-    }, err => done(err));
+      creator: mockData.accounts.regularUser.keys.privateKey.publicKey
+    });
+    const options = {
+      ledgerConfiguration: signedConfig,
+      owner: regularActor.id,
+      // specify that the mock service
+      plugins: ['mock'],
+    };
+    defaultLedgerAgent = await addLedgerAgentAsync(regularActor, null, options);
+    const publicOptions = {
+      ...options,
+      public: true
+    };
+    publicLedgerAgent = await addLedgerAgentAsync(regularActor, null, publicOptions);
   });
   beforeEach(async function() {
     await helpers.removeCollection('ledger_testLedger');
