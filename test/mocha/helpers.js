@@ -131,19 +131,19 @@ api.multiSign = (doc, signers, callback) => {
   if(!Array.isArray(signers)) {
     throw new TypeError('Signers must be an array.');
   }
-  async.map(signers, (s, callback) => jsigs.sign(doc, {
+  async.map(signers, (s, _callback) => jsigs.sign(doc, {
     documentLoader,
     algorithm: 'RsaSignature2018',
     suite: s.suite,
     purpose: s.purpose,
     privateKeyPem: s.privateKeyPem,
     creator: s.creator
-  }, callback), (err, results) => {
+  }).then(r => _callback(null, r)).catch(e => _callback(e)), (err, results) => {
     if(err) {
       return callback(err);
     }
     const d = bedrock.util.clone(results[0]);
-    d.proof = results.map(d => d.proof);
+    d.proof = results.flatMap(d => d.proof);
     callback(null, d);
   });
 };

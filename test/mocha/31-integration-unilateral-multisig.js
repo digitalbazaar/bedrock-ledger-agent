@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const brAccount = require('bedrock-account');
 const helpers = require('./helpers');
 const mockData = require('./mock.data');
 let request = require('request');
@@ -20,7 +21,7 @@ const urlObj = {
   pathname: config['ledger-agent'].routes.agents
 };
 
-describe('Integration - 1 Node - Unilateral - Multisignature', () => {
+describe.only('Integration - 1 Node - Unilateral - Multisignature', () => {
   describe('Add events and navigate the chain', () => {
     const regularActor = mockData.accounts.regularUser;
     const alternateActor = mockData.accounts.alternateUser;
@@ -28,6 +29,15 @@ describe('Integration - 1 Node - Unilateral - Multisignature', () => {
 
     before(async function() {
       await helpers.prepareDatabase(mockData);
+      const actor = await brAccount.getCapabilities(
+        {id: mockData.accounts.regularUser.account.id});
+      helpers.stubPassport({
+        user: {
+          actor,
+          account: mockData.accounts.regularUser.account
+        }
+      });
+
     });
     before(done => {
       async.auto({
