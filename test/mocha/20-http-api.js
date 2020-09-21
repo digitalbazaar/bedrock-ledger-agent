@@ -64,7 +64,7 @@ describe('Ledger Agent HTTP API', () => {
       owner: regularActor.id,
     };
     defaultLedgerAgent = await addLedgerAgentAsync(regularActor, null, options);
-    const publicOps = Object.assign(options, {public: true});
+    const publicOps = Object.assign({}, options, {public: true});
     publicLedgerAgent = await addLedgerAgentAsync(
       regularActor, null, publicOps);
   });
@@ -676,8 +676,6 @@ describe('Ledger Agent HTTP API', () => {
         }]
       }, err => done(err));
     });
-    // FIXME: this test is trying to query for an operation that has not
-    // been put into a block yet, needs fixing
     it('should query for a record successfully', async function() {
       let listener;
       const _waitForBlockAdd = new Promise(resolve => {
@@ -696,7 +694,7 @@ describe('Ledger Agent HTTP API', () => {
       let response = null;
       try {
         response = await httpClient.post(
-          defaultLedgerAgent.service.ledgerOperationService,
+          publicLedgerAgent.service.ledgerOperationService,
           {agent: brHttpsAgent.agent, json: signOperation});
       } catch(e) {
         err = e;
@@ -706,7 +704,7 @@ describe('Ledger Agent HTTP API', () => {
       await _waitForBlockAdd;
       // remove event listener
       listener._eventListeners.get('bedrock-ledger-storage.block.add').pop();
-      const queryUrl = defaultLedgerAgent.service.ledgerQueryService + '?' +
+      const queryUrl = publicLedgerAgent.service.ledgerQueryService + '?' +
         new URLSearchParams({id: createConcertRecordOp.record.id});
       try {
         response = await httpClient.post(queryUrl, {
