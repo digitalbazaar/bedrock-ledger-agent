@@ -5,6 +5,7 @@
 
 const async = require('async');
 const bedrock = require('bedrock');
+const brAccount = require('bedrock-account');
 const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
 const jsigs = require('jsonld-signatures');
@@ -27,6 +28,14 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
 
   before(async function() {
     await helpers.prepareDatabase(mockData);
+    const actor = await brAccount.getCapabilities(
+      {id: mockData.accounts.regularUser.account.id});
+    helpers.stubPassport({
+      user: {
+        actor,
+        account: mockData.accounts.regularUser.account
+      }
+    });
   });
   before(done => {
     async.auto({
@@ -38,7 +47,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
           purpose: mockData.purpose,
           privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
           creator: regularActor.keys.publicKey.id
-        }, callback);
+        }).then(result => callback(null, result)).catch(e => callback(e));
       },
       add: ['sign', (results, callback) => {
         request.post(helpers.createHttpSignatureRequest({
@@ -82,7 +91,7 @@ describe('Integration - 1 Node - Unilateral - One Signature', () => {
             purpose: mockData.purpose,
             privateKeyPem: regularActor.keys.privateKey.privateKeyPem,
             creator: regularActor.keys.publicKey.id
-          }, callback);
+          }).then(result => callback(null, result)).catch(e => callback(e));
         },
         add: ['sign', (results, callback) => request.post({
           url: ledgerAgent.service.ledgerOperationService,
