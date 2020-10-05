@@ -78,7 +78,8 @@ describe('HTTP Services', () => {
             identity: regularActor
           }), (err, res) => {
             assertNoError(err);
-            res.statusCode.should.equal(406);
+            // bedrock-rest now returns 404
+            res.statusCode.should.equal(404);
             callback();
           });
         }
@@ -94,7 +95,7 @@ describe('HTTP Services', () => {
             identity: regularActor
           }), (err, res) => {
             assertNoError(err);
-            res.statusCode.should.equal(406);
+            res.statusCode.should.equal(404);
             callback();
           });
         }
