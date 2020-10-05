@@ -14,7 +14,6 @@ const {config, util: {uuid}} = bedrock;
 const {constants} = config;
 const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
-const httpsAgent = new (require('https').Agent)({rejectUnauthorized: false});
 const jsigs = require('jsonld-signatures');
 const mockData = require('./mock.data');
 let request = require('request');
