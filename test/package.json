@@ -28,7 +28,6 @@
     "bedrock-ledger-context": "^15.0.0",
     "bedrock-ledger-node": "github:digitalbazaar/bedrock-ledger-node#mongo-version-3",
     "bedrock-ledger-storage-mongodb": "github:digitalbazaar/bedrock-ledger-storage-mongodb#mongo-version-3",
-    "bedrock-ledger-validator-signature": "^3.0.0",
     "bedrock-mongodb": "^8.0.0",
     "bedrock-passport": "^6.0.0",
     "bedrock-permission": "^3.0.0",

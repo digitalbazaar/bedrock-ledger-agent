@@ -1,5 +1,22 @@
 # bedrock-ledger-agent ChangeLog
 
+## 4.0.0 -
+
+### Added
+- Added a debug mode to the test project.
+- Added `bedrock-account` & other updated deps to the test project.
+
+### Changed
+- **BREAKING**: Upgraded to `bedrock-mongodb` 7.x - 8.x.
+- **BREAKING**: Updated mongodb api calls to use mongo driver 3.5.
+- **BREAKING**: Changed calls on `req.user.identity` to `req.user.actor`or account.
+- Changed tests to use latest bedrock settings & practices.
+- Changed some test helpers to be async.
+
+### Removed
+- **BREAKING**: Removed `bedrock-identity` 
+- **BREAKING**: Removed `bedrock-ledger-validator-signature`
+
 ## 3.1.0 - TBD
 
 ### Added
