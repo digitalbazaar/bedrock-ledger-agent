@@ -10,7 +10,7 @@ const brHttpsAgent = require('bedrock-https-agent');
 const brLedgerAgent = require('bedrock-ledger-agent');
 const brLedgerNode = require('bedrock-ledger-node');
 const cache = require('bedrock-redis');
-const {config, util: {uuid}} = bedrock;
+const {config, util: {callbackify, uuid}} = bedrock;
 const {constants} = config;
 const {documentLoader} = require('bedrock-jsonld-document-loader');
 const helpers = require('./helpers');
@@ -19,6 +19,8 @@ const mockData = require('./mock.data');
 let request = require('request');
 request = request.defaults({json: true, strictSSL: false});
 const url = require('url');
+
+const brLedgerNodeAdd = callbackify(brLedgerNode.add);
 
 const urlObj = {
   protocol: 'https',
@@ -99,7 +101,7 @@ describe.skip('Continuity Integration Part II', () => {
       addPeers: ['genesisRecord', (results, callback) => {
         // add N - 1 more private nodes
         async.times(nodes - 1, (i, callback) => {
-          brLedgerNode.add(null, {
+          brLedgerNodeAdd(null, {
             genesisBlock: results.genesisRecord.block,
             owner: regularActor.account.id
           }, (err, ledgerNode) => {
