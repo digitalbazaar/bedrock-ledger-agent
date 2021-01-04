@@ -5,6 +5,7 @@
 ### Added
 - Added a debug mode to the test project.
 - Added `bedrock-account` & other updated deps to the test project.
+- Implement ledgerPeerService API.
 
 ### Changed
 - **BREAKING**: Upgraded to `bedrock-mongodb` 7.x - 8.x.
@@ -14,7 +15,7 @@
 - Changed some test helpers to be async.
 
 ### Removed
-- **BREAKING**: Removed `bedrock-identity` 
+- **BREAKING**: Removed `bedrock-identity`
 - **BREAKING**: Removed `bedrock-ledger-validator-signature`
 
 ## 3.1.0 - TBD

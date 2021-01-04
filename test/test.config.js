@@ -32,9 +32,6 @@ roles['bedrock-ledger-agent.test'] = {
   ]
 };
 
-// reduce processing interval for testing
-config['ledger-consensus-continuity'].worker.election.gossipInterval = 0;
-
 // decrease delay for gossiping with the same peer
 config['ledger-consensus-continuity'].gossip.coolDownPeriod = 250;
 
