@@ -185,7 +185,7 @@ describe('Ledger Agent HTTP API', () => {
             const result = res.body;
             should.exist(result.id);
             should.exist(result.service);
-            _testService(result.service);
+            _testService({service: result.service});
             result.owner.should.equal(regularActor.account.id);
             result.name.should.equal(options.name);
             result.description.should.equal(options.description);
@@ -224,7 +224,9 @@ describe('Ledger Agent HTTP API', () => {
             should.exist(result.id);
             should.exist(result.service);
             const {service} = result;
-            _testService(service);
+            _testService({
+              service, additionalServices: ['urn:mock:foo-service']
+            });
             should.exist(service[mockPlugin.api.serviceType]);
             service[mockPlugin.api.serviceType].should.be.an('object');
             should.exist(service[mockPlugin.api.serviceType].id);
@@ -726,18 +728,24 @@ describe('Ledger Agent HTTP API', () => {
   });
 });
 
-function _testService(service) {
+function _testService({service, additionalServices = []}) {
+  const baseServices = [
+    'ledgerAgentStatusService',
+    'ledgerConfigService',
+    'ledgerConfigService',
+    'ledgerEventService',
+    'ledgerBlockService',
+    'ledgerQueryService',
+    'ledgerPeerService',
+  ];
+  const allServices = [...baseServices, ...additionalServices];
+  // ensure that the agent has only the appropriate services
+  service.should.have.keys(allServices);
   service.should.be.an('object');
-  should.exist(service.ledgerAgentStatusService);
-  service.ledgerAgentStatusService.should.be.a('string');
-  should.exist(service.ledgerConfigService);
-  service.ledgerConfigService.should.be.a('string');
-  should.exist(service.ledgerOperationService);
-  service.ledgerOperationService.should.be.a('string');
-  should.exist(service.ledgerEventService);
-  service.ledgerEventService.should.be.a('string');
-  should.exist(service.ledgerBlockService);
-  service.ledgerBlockService.should.be.a('string');
-  should.exist(service.ledgerQueryService);
-  service.ledgerQueryService.should.be.a('string');
+  for(const s of baseServices) {
+    service[s].should.be.a('string');
+  }
+  for(const s of additionalServices) {
+    service[s].should.be.an('object');
+  }
 }
