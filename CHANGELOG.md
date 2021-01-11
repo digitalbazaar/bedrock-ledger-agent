@@ -13,6 +13,7 @@
 - **BREAKING**: Changed calls on `req.user.identity` to `req.user.actor`or account.
 - Changed tests to use latest bedrock settings & practices.
 - Changed some test helpers to be async.
+- Use bedrock-ledger-node@11.
 
 ### Removed
 - **BREAKING**: Removed `bedrock-identity`
