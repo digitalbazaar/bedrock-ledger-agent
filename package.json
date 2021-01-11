@@ -32,7 +32,7 @@
     "bedrock": "^4.0.0",
     "bedrock-express": "2.x - 3.x",
     "bedrock-ledger-context": "^16.0.0",
-    "bedrock-ledger-node": "^11.0.0",
+    "bedrock-ledger-node": "^11.1.0",
     "bedrock-mongodb": "7.x - 8.x",
     "bedrock-passport": "3.x - 6.x",
     "bedrock-permission": "^3.0.0",

@@ -25,7 +25,7 @@
     "bedrock-ledger-consensus-continuity-storage": "^3.0.0",
     "bedrock-ledger-consensus-uni": "github:digitalbazaar/bedrock-ledger-consensus-uni#mongo-version-3",
     "bedrock-ledger-context": "^16.0.0",
-    "bedrock-ledger-node": "digitalbazaar/bedrock-ledger-node#ledger-node-peers",
+    "bedrock-ledger-node": "^11.1.0",
     "bedrock-ledger-storage-mongodb": "^4.0.0",
     "bedrock-mongodb": "^8.0.0",
     "bedrock-passport": "^6.0.0",
