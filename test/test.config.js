@@ -35,7 +35,4 @@ roles['bedrock-ledger-agent.test'] = {
 // decrease delay for gossiping with the same peer
 config['ledger-consensus-continuity'].gossip.coolDownPeriod = 250;
 
-// reduce debounce in the event-writer
-config['ledger-consensus-continuity'].writer.debounce = 50;
-
 config['https-agent'].rejectUnauthorized = false;
