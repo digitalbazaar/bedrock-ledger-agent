@@ -1,6 +1,6 @@
 # bedrock-ledger-agent ChangeLog
 
-## 4.0.0 - 2020-04-29
+## 4.0.0 - 2021-04-29
 
 ### Added
 - Added a debug mode to the test project.
