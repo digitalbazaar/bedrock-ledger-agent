@@ -1,6 +1,6 @@
 # bedrock-ledger-agent ChangeLog
 
-## 4.0.0 -
+## 4.0.0 - 2020-04-29
 
 ### Added
 - Added a debug mode to the test project.
@@ -19,7 +19,7 @@
 - **BREAKING**: Removed `bedrock-identity`
 - **BREAKING**: Removed `bedrock-ledger-validator-signature`
 
-## 3.1.0 - TBD
+## 3.1.0 - 2020-08-18
 
 ### Added
 - Add support for `bedrock-accounts` with private ledger agents.
